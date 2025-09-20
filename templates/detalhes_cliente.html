@@ -17,19 +17,23 @@
             <th>Equipamento</th>
             <th>Defeito</th>
             <th>Status</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         {% for ordens in ordens_servico %}
         <tr>
             <td>
-                <a href="{{url_for('detalhes_os', id = ordens.id)}}">{{ordens.equipamento}}</a>
+                {{ordens.equipamento}}
             </td>
             <td>
                 {{ordens.defeito}}
             </td>
             <td>
                 {{ordens.status}}
+            </td>
+            <td>
+                <a class="btn btn-primary" href="{{url_for('detalhes_os', id = ordens.id)}}">Editar</a>
             </td>
         </tr>
         {% endfor %}
