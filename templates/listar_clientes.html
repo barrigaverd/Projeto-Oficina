@@ -10,7 +10,7 @@
     <ul>
         {% for cliente in clientes%}
             <li>
-              {{cliente.nome}} - {{cliente.telefone_celular}} 
+              <a href="{{url_for('detalhes_cliente', id=cliente.id)}}">{{cliente.nome}}</a>
               <a href="{{url_for('deletar_cliente', id=cliente.id)}}">Excluir</a>
               <a href="{{url_for('editar_cliente', id=cliente.id)}}">Editar</a>
             </li>            

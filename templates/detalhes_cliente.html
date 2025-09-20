@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes de {{cliente_a_detalhar.nome}}</title>
+</head>
+<body>
+    <h2>Cliente {{cliente_a_detalhar.nome}} - Detalhes</h2><br><br>
+    <p>Nome: {{cliente_a_detalhar.nome}}</p><br><br>
+    <p>telefone: {{cliente_a_detalhar.telefone_celular}}</p><br><br>
+    <a href="{{url_for('cadastrar_os', cliente_a_detalhar.id)}}">Novo pedido</a>
+    <h3>Pedidos</h3>
+</body>
+</html>
