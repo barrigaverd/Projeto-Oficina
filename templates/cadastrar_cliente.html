@@ -1,19 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Cliente</title>
-</head>
-<body>
-    <h1><a href="{{url_for('home')}}">Oficina do Micro</a></h1><br><br>
+{% extends 'base.html' %}
+    {% block content %}
     <h1>Cadastro de Cliente</h1>
     <form method="post">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" required><br><br>
-        <label for="telefone">Telefone:</label>
-        <input type="tel" id="telefone" name="telefone" required><br><br>
-        <button type="submit">Salvar Cliente</button>
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome:</label>
+            <input class="form-control" type="text" id="nome" name="nome" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="telefone">Telefone:</label>
+            <input class="form-control" type="tel" id="telefone" name="telefone" required>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Salvar Cliente</button>
     </form>
-</body>
-</html>
+    {% endblock %}

@@ -1,27 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastrar OS</title>
-</head>
-<body>
-    <h1><a href="{{url_for('home')}}">Oficina do Micro</a></h1><br><br>
-    <h2>Cadastrar OS</h2><br><br>
+{% extends 'base.html' %}
+    {% block content %}
+    <h2>Cadastrar OS</h2>
     <form method="post">
-        <label for="nome">Cliente: {{cliente.nome}}</label><br><br>
+        <div class="mb-3">
+            <label class="form-label" for="nome">Cliente: {{cliente.nome}}</label>
+        </div>
         
-        <label for="equipamento">Equipamento:</label>
-        <input type="text" name="equipamento"><br><br>
-        <label for="marca">Marca:</label>
-        <input type="text" name="marca"><br><br>
-        <label for="modelo">Modelo:</label>
-        <input type="text" name="modelo"><br><br>
-        <label for="defeito">Defeito:</label>
-        <textarea name="defeito" id="defeito" placeholder="Digite aqui o defeito..."></textarea><br><br>
-        <label for="status">Status:</label>
-        <input type="text" name="status"><br><br>
-        <button type="submit">Salvar OS</button>
+        <div class="mb-3">
+            <label class="form-label" for="equipamento">Equipamento:</label>
+            <input class="form-control" type="text" name="equipamento">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="marca">Marca:</label>
+            <input class="form-control" type="text" name="marca">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="modelo">Modelo:</label>
+            <input class="form-control" type="text" name="modelo">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="defeito">Defeito:</label>
+            <textarea class="form-control" name="defeito" id="defeito" placeholder="Digite aqui o defeito..."></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="status">Status:</label>
+            <input class="form-control" type="text" name="status">
+        </div>
+        
+        <button class="btn btn-primary" type="submit">Salvar OS</button>
     </form>
-</body>
-</html>
+    {% endblock %}

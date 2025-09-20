@@ -1,27 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalhes OS</title>
-</head>
-<body>
-    <h1><a href="{{url_for('home')}}">Oficina do Micro</a></h1><br><br>
-    <h2>Detalhes OS</h2><br><br>
-    <form method="post">
-        <label for="nome">Cliente: {{ordem_servico.cliente.nome}}</label><br><br>
-        
-        <label for="equipamento">Equipamento:</label>
-        <input type="text" name="equipamento" value="{{ordem_servico.equipamento}}"><br><br>
-        <label for="marca">Marca:</label>
-        <input type="text" name="marca" value="{{ordem_servico.marca}}"><br><br>
-        <label for="modelo">Modelo:</label>
-        <input type="text" name="modelo" value="{{ordem_servico.modelo}}"><br><br>
-        <label for="defeito">Defeito:</label>
-        <textarea name="defeito" id="defeito">{{ordem_servico.defeito}}</textarea><br><br>
-        <label for="status">Status:</label>
-        <input type="text" name="status" value="{{ordem_servico.status}}"><br><br>
-        <button type="submit">Salvar OS</button>
-    </form>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Detalhes OS</h2>
+<form method="post">
+    <div class="mb-3">
+    <label class="form-label" for="nome">Cliente: {{ordem_servico.cliente.nome}}</label>
+    </div>
+    <div class="mb-3">
+    <label class="form-label" for="equipamento">Equipamento:</label>
+    <input class="form-control" type="text" name="equipamento" value="{{ordem_servico.equipamento}}">
+    </div>
+
+    <div class="mb-3">
+    <label class="form-label" for="marca">Marca:</label>
+    <input class="form-control" type="text" name="marca" value="{{ordem_servico.marca}}">
+    </div>
+
+    <div class="mb-3">
+    <label class="form-label" for="modelo">Modelo:</label>
+    <input class="form-control" type="text" name="modelo" value="{{ordem_servico.modelo}}">
+    </div>
+
+    <div class="mb-3">
+    <label class="form-label" for="defeito">Defeito:</label>
+    <textarea class="form-control" name="defeito" id="defeito">{{ordem_servico.defeito}}</textarea>
+    </div>
+
+    <div class="mb-3">
+    <label class="form-label" for="status">Status:</label>
+    <input class="form-control" type="text" name="status" value="{{ordem_servico.status}}">
+    </div>
+    
+    <button class="btn btn-primary" type="submit">Salvar OS</button>
+    <a class="btn btn-primary" href="{{url_for('deletar_os', id=ordem_servico.id)}}">Excluir</a>
+</form>
+{% endblock %}

@@ -1,19 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Cliente</title>
-</head>
-<body>
-    <h1><a href="{{url_for('home')}}">Oficina do Micro</a></h1><br><br>
+{% extends 'base.html' %}
+
+    {% block content %}
     <h1>Editar Cliente</h1>
     <form method="post">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" value="{{cliente_a_editar.nome}}" required><br><br>
-        <label for="telefone">Telefone:</label>
-        <input type="tel" id="telefone" name="telefone" value="{{cliente_a_editar.telefone_celular}}"><br><br>
-        <button type="submit">Salvar Cliente</button>
+        <div class="mb-3">
+            <label class="form-label" for="nome">Nome:</label>
+            <input class="form-control type="text" id="nome" name="nome" value="{{cliente_a_editar.nome}}" required><br><br>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label" for="telefone">Telefone:</label>
+            <input class="form-control type="tel" id="telefone" name="telefone" value="{{cliente_a_editar.telefone_celular}}"><br><br>
+        </div>
+        
+        <button class="btn btn-primary" type="submit">Salvar Cliente</button>
     </form>
-</body>
-</html>
+    {% endblock %}

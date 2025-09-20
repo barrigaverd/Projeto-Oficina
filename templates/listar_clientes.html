@@ -1,21 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clientes</title>
-</head>
-<body>
-    <h1><a href="{{url_for('home')}}">Oficina do Micro</a></h1><br><br>
-    <h1>Lista de Clientes</h1>
-    <ul>
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Lista de Clientes</h1>
+<table class="table table-hover table-striped" >
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
         {% for cliente in clientes%}
-            <li>
-              <a href="{{url_for('detalhes_cliente', id=cliente.id)}}">{{cliente.nome}}</a>
-              <a href="{{url_for('deletar_cliente', id=cliente.id)}}">Excluir</a>
-              <a href="{{url_for('editar_cliente', id=cliente.id)}}">Editar</a>
-            </li>            
+            <tr>
+                <td>
+                    <a href="{{url_for('detalhes_cliente', id=cliente.id)}}">{{cliente.nome}}</a>
+                </td>
+                <td>
+                    <a class="btn btn-warning btn-sm" href="{{url_for('editar_cliente', id=cliente.id)}}">Editar</a>
+                    <a class="btn btn-danger btn-sm" href="{{url_for('deletar_cliente', id=cliente.id)}}">Excluir</a>
+                </td>
+            </tr>
         {%endfor%}
-    </ul>
-</body>
-</html>
+    </tbody>
+</table>
+{% endblock %}

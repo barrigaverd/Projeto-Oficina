@@ -124,5 +124,13 @@ def detalhes_os(id):
     
     return render_template("detalhes_os.html", ordem_servico = ordem_servico)
 
+@app.route("/os/deletar/<int:id>")
+def deletar_os(id):
+    os_a_deletar = OrdemServico.query.get(id)
+    id_do_cliente = os_a_deletar.cliente.id
+    db.session.delete(os_a_deletar)
+    db.session.commit()
+    return redirect(url_for("detalhes_cliente", id=id_do_cliente))
+
 if __name__ == "__main__":
     app.run(debug=True)
