@@ -44,12 +44,25 @@ def delete_user(username):
 
 class Cliente(db.Model):
     id = db.Column(db.Integer, primary_key = True)
+    #Contato
     nome = db.Column(db.String(100), nullable=False)
     telefone_celular = db.Column(db.String(20), nullable = False)
-    telefone_auxiliar = db.Column(db.String(20), nullable = False)
-    tipo_cliente = db.Column(db.String())
+    telefone_auxiliar = db.Column(db.String(20))
+    #Tipo
+    tipo_cliente = db.Column(db.String(20))
     cpf = db.Column(db.String(20))
     cnpj = db.Column(db.String(20))
+    #Endereço
+    cep = db.Column(db.String(10))
+    logradouro = db.Column(db.String(150))
+    numero = db.Column(db.String(10))
+    complemento = db.Column(db.String(100))
+    bairro = db.Column(db.String(100))
+    cidade = db.Column(db.String(100))
+    estado = db.Column(db.String(10))
+    #Outros
+    anotacoes = db.Column(db.Text)
+
 
 class OrdemServico(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -110,11 +123,36 @@ def home():
 def cadastrar_cliente():
     if request.method == "POST":
         nome_cliente = request.form["nome"]
-        telefone_cliente = request.form["telefone"]
-        novo_cliente = Cliente(nome=nome_cliente, telefone_celular=telefone_cliente)
+        telefone_celular = request.form["telefone_celular"]
+        telefone_auxiliar = request.form["telefone_auxiliar"]
+        cpf = request.form["cpf"]
+        cnpj = request.form["cnpj"]
+        cep = request.form["cep"]
+        logradouro = request.form["logradouro"]
+        numero = request.form["numero"]
+        complemento = request.form["complemento"]
+        bairro = request.form["bairro"]
+        cidade = request.form["cidade"]
+        estado = request.form["estado"]
+        anotacoes = request.form["anotacoes"]
+        novo_cliente = Cliente(
+            nome=nome_cliente,
+            telefone_celular=telefone_celular,
+            telefone_auxiliar = telefone_auxiliar,
+            cpf = cpf,
+            cnpj = cnpj,
+            cep = cep,
+            logradouro = logradouro,
+            numero = numero,
+            complemento = complemento,
+            bairro = bairro,
+            cidade = cidade,
+            estado = estado,
+            anotacoes = anotacoes
+            )
         db.session.add(novo_cliente)
         db.session.commit()
-        return redirect(url_for("home"))
+        return redirect(url_for("listar_clientes"))
 
     return render_template("cadastrar_cliente.html")
 
@@ -132,9 +170,32 @@ def editar_cliente(id):
     cliente_a_editar = Cliente.query.get_or_404(id)
     if request.method == "POST": 
         nome_cliente = request.form["nome"]
-        telefone_cliente = request.form["telefone"]
+        telefone_celular = request.form["telefone_celular"]
+        telefone_auxiliar = request.form["telefone_auxiliar"]
+        cpf = request.form["cpf"]
+        cnpj = request.form["cnpj"]
+        cep = request.form["cep"]
+        logradouro = request.form["logradouro"]
+        numero = request.form["numero"]
+        complemento = request.form["complemento"]
+        bairro = request.form["bairro"]
+        cidade = request.form["cidade"]
+        estado = request.form["estado"]
+        anotacoes = request.form["anotacoes"]
+
         cliente_a_editar.nome = nome_cliente
-        cliente_a_editar.telefone_celular = telefone_cliente
+        cliente_a_editar.telefone_celular = telefone_celular
+        cliente_a_editar.telefone_auxiliar = telefone_auxiliar
+        cliente_a_editar.cpf = cpf
+        cliente_a_editar.cnpj = cnpj
+        cliente_a_editar.cep = cep
+        cliente_a_editar.logradouro = logradouro
+        cliente_a_editar.numero = numero
+        cliente_a_editar.complemento = complemento
+        cliente_a_editar.bairro = bairro
+        cliente_a_editar.cidade = cidade
+        cliente_a_editar.estado = estado
+        cliente_a_editar.anotacoes = anotacoes
         db.session.commit()
 
         return redirect(url_for("listar_clientes"))
