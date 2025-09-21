@@ -1,13 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="p-5 mb-4 bg-body-tertiary rounded-3">
-  <div class="container-fluid py-5">
-    <h1 class="display-5 fw-bold">Oficina do Micro</h1>
-    <p class="col-md-8 fs-4">Sistema de gerenciamento de Clientes e Ordens de Serviço.</p>
-    
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card p-5 shadow-sm text-center">
+      <h1 class="display-5 fw-bold mb-3">Oficina do Micro</h1>
+      <p class="lead">Sistema de gerenciamento de Clientes e Ordens de Serviço.</p>
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <a class="btn btn-secondary btn-lg" href="{{ url_for('cadastrar_cliente') }}">
+          ➕ Cadastrar Cliente
+        </a>
+        <a class="btn btn-primary btn-lg" href="{{ url_for('listar_clientes') }}">
+          📋 Listar Clientes
+        </a>
+      </div>
     </div>
+  </div>
 </div>
-<a class="btn btn-secondary btn-lg" href="{{url_for('cadastrar_cliente')}}">Cadastrar Cliente</a>
-<a class="btn btn-primary btn-lg" href="{{url_for('listar_clientes')}}">Listar Clientes</a>
 {% endblock %}
+
