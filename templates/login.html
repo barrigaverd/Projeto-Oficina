@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post">
+    <div class="mb-3">
+        <label class="form-label" for="usuario" name="usuario">Usuário:</label>
+        <input class="form-control" type="text" name="username">
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="senha" name="senha">Senha:</label>
+        <input class="form-control" type="password" name="password">
+    </div>
+    
+    <button class="btn" type="submit">Entrar</button>
+    
+</form>
+{% endblock %}
