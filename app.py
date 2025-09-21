@@ -1,9 +1,9 @@
 from http import client
-import re
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
+from flask_migrate import Migrate
 from datetime import datetime
 import click
 
@@ -11,6 +11,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = '0625fa577ac24b41fd655e4935191fb6'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -45,6 +46,10 @@ class Cliente(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     nome = db.Column(db.String(100), nullable=False)
     telefone_celular = db.Column(db.String(20), nullable = False)
+    telefone_auxiliar = db.Column(db.String(20), nullable = False)
+    tipo_cliente = db.Column(db.String())
+    cpf = db.Column(db.String(20))
+    cnpj = db.Column(db.String(20))
 
 class OrdemServico(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -92,6 +97,10 @@ def login():
     return render_template('login.html')
 
 @app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/dashboard")
 @login_required
 def home():
     return render_template("home.html")
