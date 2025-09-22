@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Lista de Peças</h1>
+<table class="table table-hover table-striped" >
+    <thead>
+        <tr>
+            <th>Nome da peça</th>
+            <th>Preço</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for peca in pecas %}
+            <tr>
+                <td>
+                    {{peca.nome_peca}}
+                </td>
+                <td>
+                    R$ {{ "%.2f"|format(peca.preco_unitario|float) }}
+                </td>
+                <td>
+                    <a class="btn btn-warning btn-sm" href="{{url_for('editar_peca', id=peca.id)}}">Editar</a>
+                    <a class="btn btn-danger btn-sm" href="{{url_for('deletar_peca', id=peca.id)}}">Excluir</a>
+                </td>
+            </tr>
+        {%endfor%}
+    </tbody>
+</table>
+<a class="btn btn-primary btn-sm" href="{{ url_for('cadastrar_peca') }}">
+    Cadastrar Peça
+</a>
+{% endblock %}

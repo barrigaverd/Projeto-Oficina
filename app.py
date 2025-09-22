@@ -100,11 +100,20 @@ class OrdemServico(db.Model):
     
 class Servico(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    descricao_servico = db.Column(db.String(150), unique = True, nullable = False)
+    descricao_servico = db.Column(db.String(150), nullable = False)
     detalhes_opcional = db.Column(db.Text)
     preco_unitario = db.Column(db.Float, nullable = False)
     unidade_medida = db.Column(db.String(20))
+    __table_args__ = (db.UniqueConstraint('descricao_servico', name='uq_servico_descricao'),)
 
+class Peca(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    nome_peca = db.Column(db.String(100), nullable = False)
+    detalhes_opcional = db.Column(db.Text)
+    codigo_interno = db.Column(db.String(100))
+    preco_unitario = db.Column(db.Float, nullable = False)
+    unidade_medida = db.Column(db.String(20))
+    __table_args__ = (db.UniqueConstraint('nome_peca', name='uq_peca_nome'),)
 class Usuario(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(80), nullable = False, unique = True)
@@ -373,6 +382,70 @@ def deletar_servico(id):
     db.session.commit()
     return redirect(url_for("listar_servicos"))
 
+@app.route("/peca")
+@login_required
+def listar_pecas():
+    pecas = Peca.query.all()
+
+    return render_template("listar_pecas.html", pecas = pecas)
+
+@app.route("/peca/cadastrar", methods = ["GET", "POST"])
+@login_required
+def cadastrar_peca():
+    if request.method == "POST":
+        nome_peca = request.form["nome_peca"]
+        detalhes_opcional = request.form["detalhes_opcional"]
+        codigo_interno = request.form["codigo_interno"]
+        unidade_medida = request.form["unidade_medida"]
+        preco_unitario = request.form["preco_unitario"]
+        if preco_unitario == "":
+            preco_unitario_novo = 0.0
+        else:
+            preco_unitario_novo = preco_unitario.replace(",", ".")
+
+        nova_peca = Peca(
+            nome_peca=nome_peca,
+            detalhes_opcional=detalhes_opcional,
+            codigo_interno=codigo_interno,
+            unidade_medida = unidade_medida,
+            preco_unitario = preco_unitario_novo,
+            )
+        db.session.add(nova_peca)
+        db.session.commit()
+        return redirect(url_for("listar_pecas"))
+    
+    return render_template("cadastrar_peca.html")
+
+@app.route("/peca/editar/<int:id>", methods=["GET", "POST"])
+@login_required
+def editar_peca(id):
+    peca_a_editar = Peca.query.get_or_404(id)
+    if request.method == "POST": 
+        nome_peca = request.form["nome_peca"]
+        detalhes_opcional = request.form["detalhes_opcional"]
+        codigo_interno = request.form["codigo_interno"]
+        unidade_medida = request.form["unidade_medida"]
+        preco_unitario = request.form["preco_unitario"]
+
+        peca_a_editar.nome_peca = nome_peca
+        peca_a_editar.detalhes_opcional = detalhes_opcional
+        peca_a_editar.codigo_interno = codigo_interno
+        peca_a_editar.unidade_medida = unidade_medida
+        peca_a_editar.preco_unitario = preco_unitario
+
+        db.session.commit()
+
+        return redirect(url_for("listar_pecas"))
+    
+    return render_template("editar_peca.html", peca_a_editar = peca_a_editar)
+
+@app.route("/peca/deletar/<int:id>")
+@login_required
+def deletar_peca(id):
+    peca_a_deletar = Peca.query.get(id)
+    db.session.delete(peca_a_deletar)
+    db.session.commit()
+    return redirect(url_for("listar_pecas"))
 
 if __name__ == "__main__":
     app.run(debug=True)

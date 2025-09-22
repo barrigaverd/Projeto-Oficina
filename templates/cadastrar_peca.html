@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+    {% block content %}
+    <h2>Cadastrar Peça</h2>
+    <form method="post">        
+        <div class="mb-3">
+            <label class="form-label" for="nome_peca">Nome da Peça:</label>
+            <input class="form-control" type="text" name="nome_peca" placeholder="Peça" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="detalhes_opcional">Detalhes opcional:</label>
+            <textarea class="form-control" name="detalhes_opcional" placeholder="Detalhes (opcional)"></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="codigo_interno">Codigo interno:</label>
+            <input class="form-control" type="text" name="codigo_interno" placeholder="Codigo interno">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="unidade_medida">Unidade de medida:</label>
+            <input class="form-control" type="text" name="unidade_medida" placeholder="Unidade de medida">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="preco_unitario">Preço Unitário:</label>
+            <input class="form-control" name="preco_unitario" placeholder="Preço Unitário">
+        </div>
+        <button class="btn btn-primary" type="submit">Salvar peça</button>
+    </form>
+    {% endblock %}
