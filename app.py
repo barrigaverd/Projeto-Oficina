@@ -167,7 +167,9 @@ def index():
 @app.route("/dashboard")
 @login_required
 def home():
-    return render_template("home.html")
+    total_clientes = Cliente.query.count()
+    ordens_abertas = OrdemServico.query.filter(OrdemServico.status != "Concluído").count()
+    return render_template("home.html", total_clientes=total_clientes, ordens_abertas=ordens_abertas)
 
 @app.route("/clientes/cadastrar", methods=["GET", "POST"])
 @login_required

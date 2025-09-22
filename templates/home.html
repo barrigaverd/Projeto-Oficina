@@ -1,17 +1,55 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card text-center">
+            <div class="card-title">
+                Total de Clientes
+            </div>
+            <div class="card-body">
+                <p class="card-text display-4">
+                    {{ total_clientes }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card text-center">
+            <div class="card-title">
+                Ordens de Serviço Abertas
+            </div>
+            <div class="card-body">
+                <p class="card-text display-4">
+                    {{ ordens_abertas }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row justify-content-center">
-  <div class="col-md-8">
+  <div class="col-md-12">
     <div class="card p-5 shadow-sm text-center">
       <h1 class="display-5 fw-bold mb-3">Oficina do Micro</h1>
       <p class="lead">Sistema de gerenciamento de Clientes e Ordens de Serviço.</p>
-      <div class="d-flex justify-content-center gap-3 mt-4">
+      <div class="d-flex justify-content-center gap-2 mt-4">
         <a class="btn btn-secondary btn-lg" href="{{ url_for('cadastrar_cliente') }}">
-          ➕ Cadastrar Cliente
+           Cadastrar Cliente
         </a>
         <a class="btn btn-primary btn-lg" href="{{ url_for('listar_clientes') }}">
-          📋 Listar Clientes
+           Listar Clientes
+        </a>
+        
+        <a class="btn btn-primary btn-lg" href="{{ url_for('listar_servicos') }}">
+           Listar Serviço
+        </a>
+        
+        <a class="btn btn-primary btn-lg" href="{{ url_for('listar_pecas') }}">
+           Listar Peças
+        </a>
+        <a class="btn btn-primary btn-lg" href="{{ url_for('relatorios') }}">
+           Relatórios
         </a>
       </div>
     </div>
