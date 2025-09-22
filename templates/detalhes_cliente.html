@@ -5,11 +5,11 @@
 <div class="card">
     <div class="card-body">
         <div class="card-title">Nome: {{cliente_a_detalhar.nome}}</div>
-        <div class="card-text">telefone: {{cliente_a_detalhar.telefone_celular}}</div>
+        <div class="card-text">Telefone: {{cliente_a_detalhar.telefone_celular}}</div>
     </div>
 </div><br>
 
-<a href="{{ url_for('cadastrar_os', cliente_id=cliente_a_detalhar.id) }}" class="btn btn-primary">Novo Pedido</a><br>
+
 <h3>Pedidos</h3>
 <table class="table table-hover table-striped" >
     <thead>
@@ -39,4 +39,5 @@
         {% endfor %}
     </tbody>
 </table>
+<a href="{{ url_for('cadastrar_os', cliente_id=cliente_a_detalhar.id) }}" class="btn btn-primary">Novo Pedido</a><br>
 {% endblock %}
