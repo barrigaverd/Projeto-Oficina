@@ -1,11 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Detalhes OS</h2>
-<form method="post">
-    <div class="mb-3">
-    <label class="form-label" for="nome">Cliente: {{ordem_servico.cliente.nome}}</label>
+<div class="card">
+    <h5 class="card-title">
+        <strong>Informações do cliente</strong>
+    </h5>
+    <div class="card-body">
+        <div class="card-title">Nome: {{ordem_servico.cliente.nome}}</div>
+        <div class="card-text">Telefone Celular: {{ordem_servico.cliente.telefone_celular}}<br>Telefone auxiliar: {{ordem_servico.cliente.telefone_auxiliar}}</div>
+        <div class="card-text">Endereço: {{ordem_servico.cliente.logradouro}}, Nº{{ordem_servico.cliente.numero}}, Bairro: {{ordem_servico.cliente.bairro}}<br>{{ordem_servico.cliente.cidade}} - {{ordem_servico.cliente.estado}}</div>
     </div>
+</div><br>
+<h2>Informações Básicas</h2>
+<h4>Os nº: {{ordem_servico.numero_formatado}}</h4>
+<form method="post">
     <div class="mb-3">
     <label class="form-label" for="equipamento">Equipamento:</label>
     <input class="form-control" type="text" name="equipamento" value="{{ordem_servico.equipamento}}">

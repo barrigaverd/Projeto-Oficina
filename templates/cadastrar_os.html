@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
     {% block content %}
-    <h2>Cadastrar OS</h2>
-    <form method="post">
-        <div class="mb-3">
-            <label class="form-label" for="nome">Cliente: {{cliente.nome}}</label>
+    <div class="card">
+        <h5 class="card-title">
+            <strong>Informações do cliente</strong>
+        </h5>
+        <div class="card-body">
+            <div class="card-title">Nome: {{cliente.nome}}</div>
+            <div class="card-text">Telefone Celular: {{cliente.telefone_celular}}<br>Telefone auxiliar: {{cliente.telefone_auxiliar}}</div>
+            <div class="card-text">Endereço: {{cliente.logradouro}}, Nº{{cliente.numero}}, Bairro: {{cliente.bairro}}<br>{{cliente.cidade}} - {{cliente.estado}}</div>
         </div>
-        
+    </div><br>
+    <h2>Cadastrar OS</h2>
+    <form method="post">        
         <div class="mb-3">
             <label class="form-label" for="equipamento">Equipamento:</label>
             <input class="form-control" type="text" name="equipamento">

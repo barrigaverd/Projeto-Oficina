@@ -1,6 +1,7 @@
 from http import client
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 from flask_migrate import Migrate
@@ -16,6 +17,8 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
+
+#Criação comando pra criar usuario master
 @app.cli.command("create-user")  # Define o nome do comando no terminal
 @click.argument("username")      # Define o primeiro argumento que o comando espera
 @click.argument("password")      # Define o segundo argumento
@@ -31,6 +34,8 @@ def create_user(username, password):
         db.session.commit()
         print(f"Usuário {username} criado com sucesso!")
 
+
+#Criação comando pra deletar usuario master
 @app.cli.command("delete-user")  # Define o nome do comando no terminal
 @click.argument("username")      # Define o primeiro argumento que o comando espera
 def delete_user(username):
@@ -42,6 +47,8 @@ def delete_user(username):
     else:
         print(f"Usuario {username} não encontrado!")
 
+
+#Classes
 class Cliente(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     #Contato
@@ -67,7 +74,11 @@ class Cliente(db.Model):
 class OrdemServico(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     cliente = db.relationship('Cliente', backref='ordens_servico')
-    #numero_os = db.Column(db.Integer, nullable = False)
+
+    #criação do numero da os
+    numero_sequencial = db.Column(db.Integer, nullable = True)
+    ano = db.Column(db.Integer, nullable = True)
+
     cliente_id = db.Column(db.Integer, db.ForeignKey('cliente.id'), nullable = False)
     #validade_do_orcamento = db.Column(db.String(100))
     #prazo_de_execucao = db.Column(db.String(100))
@@ -81,11 +92,17 @@ class OrdemServico(db.Model):
     #valor_total = db.Column(db.Float)
     data_de_criacao = db.Column(db.DateTime, nullable = False, default = datetime.now)
 
+    @property
+    def numero_formatado(self):
+        return f"{self.numero_sequencial:03d}-{self.ano}"
+
 class Usuario(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(80), nullable = False, unique = True)
     password_hash = db.Column(db.String(128), nullable = False)
 
+
+#Funções principais
 @login_manager.user_loader
 def load_user(user_id):
     return Usuario.query.get(int(user_id))
@@ -221,6 +238,17 @@ def detalhes_cliente(id):
 def cadastrar_os(cliente_id):
     cliente = Cliente.query.get_or_404(cliente_id)
     if request.method == "POST":
+        ano_atual = datetime.utcnow().year
+
+        # Encontra o maior numero_sequencial para o ano atual
+        maior_numero_os_do_ano = db.session.query(func.max(OrdemServico.numero_sequencial)).filter_by(ano=ano_atual).scalar()
+
+        # Se não houver nenhuma OS este ano, começa em 1. Senão, incrementa.
+        if maior_numero_os_do_ano is None:
+            novo_numero_sequencial = 1
+        else:
+            novo_numero_sequencial = maior_numero_os_do_ano + 1
+
         equipamento = request.form["equipamento"]
         marca = request.form["marca"]
         modelo = request.form["modelo"]
@@ -229,6 +257,8 @@ def cadastrar_os(cliente_id):
 
         nova_os = OrdemServico(
             cliente_id = cliente_id,
+            numero_sequencial = novo_numero_sequencial,
+            ano = ano_atual,
             equipamento=equipamento,
             marca = marca,
             modelo = modelo,
