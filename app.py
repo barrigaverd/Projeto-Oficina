@@ -9,6 +9,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from flask_migrate import Migrate
 from datetime import datetime
 import click
+import markdown2
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0625fa577ac24b41fd655e4935191fb6'
@@ -95,6 +96,12 @@ class OrdemServico(db.Model):
     data_de_criacao = db.Column(db.DateTime, nullable = False, default = datetime.now)
     itens = db.relationship('ItemOS', backref='ordem_servico', lazy=True, cascade="all, delete-orphan")
 
+    @property
+    def valor_calculado(self):
+        total = 0
+        for item in self.itens:
+            total += item.quantidade * item.preco_cobrado
+        return total
     @property
     def numero_formatado(self):
         return f"{self.numero_sequencial:03d}-{self.ano}"
@@ -494,6 +501,24 @@ def remover_item(id):
     db.session.delete(item_a_deletar)
     db.session.commit()
     return redirect(url_for("detalhes_os", id = os_id))
+
+@app.route("/relatorios", methods=["GET", "POST"])
+@login_required
+def relatorios():
+    ordens_exibidas = []
+    if request.method == "POST":
+        data_inicio = datetime.strptime(request.form["data_inicio"], '%Y-%m-%d')
+        data_fim = datetime.strptime(request.form["data_fim"], '%Y-%m-%d')
+        ordens_exibidas = OrdemServico.query.filter(
+            OrdemServico.data_de_criacao >= data_inicio,
+            OrdemServico.data_de_criacao <= data_fim
+            ).all()
+        
+    elif request.method == "GET":
+        ordens_exibidas = OrdemServico.query.order_by(OrdemServico.data_de_criacao.desc()).limit(10).all()
+        
+
+    return render_template("relatorios.html", ordens_exibidas=ordens_exibidas)
 
 if __name__ == "__main__":
     app.run(debug=True)
