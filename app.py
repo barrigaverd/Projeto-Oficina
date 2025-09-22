@@ -1,4 +1,6 @@
+from enum import unique
 from http import client
+from os import replace
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
@@ -95,6 +97,13 @@ class OrdemServico(db.Model):
     @property
     def numero_formatado(self):
         return f"{self.numero_sequencial:03d}-{self.ano}"
+    
+class Servico(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    descricao_servico = db.Column(db.String(150), unique = True, nullable = False)
+    detalhes_opcional = db.Column(db.Text)
+    preco_unitario = db.Column(db.Float, nullable = False)
+    unidade_medida = db.Column(db.String(20))
 
 class Usuario(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
@@ -302,6 +311,68 @@ def deletar_os(id):
     db.session.delete(os_a_deletar)
     db.session.commit()
     return redirect(url_for("detalhes_cliente", id=id_do_cliente))
+
+@app.route("/servicos")
+@login_required
+def listar_servicos():
+    servicos = Servico.query.all()
+
+    return render_template("listar_servicos.html", servicos = servicos)
+
+@app.route("/servicos/cadastrar", methods = ["GET", "POST"])
+@login_required
+def cadastrar_servico():
+    if request.method == "POST":
+        descricao_servico = request.form["descricao_servico"]
+        detalhes_opcional = request.form["detalhes_opcional"]
+        unidade_medida = request.form["unidade_medida"]
+        preco_unitario = request.form["preco_unitario"]
+        if preco_unitario == "":
+            preco_unitario_novo = 0.0
+        else:
+            preco_unitario_novo = preco_unitario.replace(",", ".")
+
+        novo_servico = Servico(
+            descricao_servico=descricao_servico,
+            detalhes_opcional=detalhes_opcional,
+            unidade_medida = unidade_medida,
+            preco_unitario = preco_unitario_novo,
+            )
+        db.session.add(novo_servico)
+        db.session.commit()
+        return redirect(url_for("listar_servicos"))
+    
+    return render_template("cadastrar_servico.html")
+
+@app.route("/servicos/editar/<int:id>", methods=["GET", "POST"])
+@login_required
+def editar_servico(id):
+    servico_a_editar = Servico.query.get_or_404(id)
+    if request.method == "POST": 
+        descricao_servico = request.form["descricao_servico"]
+        detalhes_opcional = request.form["detalhes_opcional"]
+        unidade_medida = request.form["unidade_medida"]
+        preco_unitario = request.form["preco_unitario"]
+
+        servico_a_editar.descricao_servico = descricao_servico
+        servico_a_editar.detalhes_opcional = detalhes_opcional
+        servico_a_editar.unidade_medida = unidade_medida
+        servico_a_editar.preco_unitario = preco_unitario
+
+        db.session.commit()
+
+        return redirect(url_for("listar_servicos"))
+    
+    return render_template("editar_servicos.html", servico_a_editar = servico_a_editar)
+
+@app.route("/servicos/deletar/<int:id>")
+@login_required
+def deletar_servico(id):
+    servico_a_deletar = Servico.query.get(id)
+    db.session.delete(servico_a_deletar)
+    db.session.commit()
+    return redirect(url_for("listar_servicos"))
+
 
 if __name__ == "__main__":
     app.run(debug=True)

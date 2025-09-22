@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Lista de Serviços</h1>
+<table class="table table-hover table-striped" >
+    <thead>
+        <tr>
+            <th>Descrição</th>
+            <th>Preço</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for servico in servicos %}
+            <tr>
+                <td>
+                    {{servico.descricao_servico}}
+                </td>
+                <td>
+                    R$ {{ "%.2f"|format(servico.preco_unitario|float) }}
+                </td>
+                <td>
+                    <a class="btn btn-warning btn-sm" href="{{url_for('editar_servico', id=servico.id)}}">Editar</a>
+                    <a class="btn btn-danger btn-sm" href="{{url_for('deletar_servico', id=servico.id)}}">Excluir</a>
+                </td>
+            </tr>
+        {%endfor%}
+    </tbody>
+</table>
+<a class="btn btn-primary btn-sm" href="{{ url_for('cadastrar_servico') }}">
+    Cadastrar Serviço
+</a>
+{% endblock %}

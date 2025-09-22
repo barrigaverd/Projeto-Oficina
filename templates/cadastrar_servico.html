@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+    {% block content %}
+    <h2>Cadastrar Serviço</h2>
+    <form method="post">        
+        <div class="mb-3">
+            <label class="form-label" for="descricao_servico">Descrição do serviço:</label>
+            <input class="form-control" type="text" name="descricao_servico" placeholder="Qual é o serviço" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="detalhes_opcional">Detalhes opcional:</label>
+            <textarea class="form-control" name="detalhes_opcional" placeholder="Detalhes (opcional)"></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="unidade_medida">Unidade de medida:</label>
+            <input class="form-control" type="text" name="unidade_medida" placeholder="Unidade de medida">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="preco_unitario">Preço Unitário:</label>
+            <input class="form-control" name="preco_unitario" placeholder="Preço Unitário">
+        </div>
+        <button class="btn btn-primary" type="submit">Salvar serviço</button>
+    </form>
+    {% endblock %}

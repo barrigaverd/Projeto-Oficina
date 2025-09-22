@@ -1,8 +1,8 @@
-"""Criação inicial do banco de dados
+"""Criação inicial do banco de dados na nova máquina
 
-Revision ID: 9cccf77491da
+Revision ID: db39a6e15121
 Revises: 
-Create Date: 2025-09-22 10:47:37.703460
+Create Date: 2025-09-22 12:11:40.736849
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '9cccf77491da'
+revision = 'db39a6e15121'
 down_revision = None
 branch_labels = None
 depends_on = None

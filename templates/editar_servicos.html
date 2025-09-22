@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+    <h1>Editar Cliente</h1>
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label" for="descricao_servico">Descricao Servico:</label>
+            <input class="form-control" type="text" id="descricao_servico" name="descricao_servico" value="{{servico_a_editar.descricao_servico}}" placeholder="Descrição do serviço" required>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label" for="detalhes_opcional">Detalhes opcional:</label>
+            <input class="form-control" type="tel" id="detalhes_opcional" name="detalhes_opcional" value="{{servico_a_editar.detalhes_opcional}}" placeholder="Detalhes (opcional)">
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="unidade_medida">Unidade Medida:</label>
+            <input class="form-control" type="tel" id="unidade_medida" name="unidade_medida" placeholder="Unidade de medida" value="{{servico_a_editar.unidade_medida}}">
+        </div>
+        <div class="mb-3 ">
+            <label for="cep" class="form-label">Preço unitário:</label>
+            <input type="text" class="form-control" id="preco_unitario" name="preco_unitario" placeholder="Preço unitário" value="{{servico_a_editar.preco_unitario}}">
+        </div>
+        
+        <button class="btn btn-primary" type="submit">Salvar serviço</button>
+    </form>
+    {% endblock %}
