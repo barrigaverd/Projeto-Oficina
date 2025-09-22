@@ -38,8 +38,69 @@
     <label class="form-label" for="status">Status:</label>
     <input class="form-control" type="text" name="status" value="{{ordem_servico.status}}">
     </div>
-    
     <button class="btn btn-primary" type="submit">Salvar OS</button>
     <a class="btn btn-primary" href="{{url_for('deletar_os', id=ordem_servico.id)}}">Excluir</a>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Descrição do Serviço</th>
+            <th>Quantidade</th>
+            <th>Preço Unit. (R$)</th>
+            <th>Subtotal (R$)</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in ordem_servico.itens %}
+        <tr>
+            <td>
+                {{ item.servico.descricao_servico }}
+            </td>
+            <td>
+                {{ item.quantidade }}
+            </td>
+            <td>
+                {{ "%.2f"|format(item.preco_cobrado|float) }}
+            </td>
+            <td>
+                R$ {{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}
+            </td>
+            <td>
+                <a class="btn btn-danger" href="{{url_for('remover_item', id=item.id)}}">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr> <h4>Adicionar Serviço</h4>
+
+<form method="post" action="{{ url_for('adicionar_item', os_id=ordem_servico.id) }}">
+    
+    <div class="mb-3">
+        <label for="servico" class="form-label">Serviço:</label>
+        <select name="servico_id" class="form-select" required>
+            <option value="">Selecione um serviço...</option>
+            {% for servico in lista_servicos %}
+                <option value="{{ servico.id }}">{{ servico.descricao_servico }} - R$ {{ "%.2f"|format(servico.preco_unitario|float) }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="quantidade" class="form-label">Quantidade</label>
+            <input type="number" class="form-control" name="quantidade" value="1" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="preco_cobrado" class="form-label">Preço Cobrado (R$)</label>
+            <input type="text" class="form-control" name="preco_cobrado" placeholder="Deixe em branco para usar o preço padrão">
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">Adicionar Serviço</button>
+
 </form>
 {% endblock %}

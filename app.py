@@ -93,6 +93,7 @@ class OrdemServico(db.Model):
     status = db.Column(db.String(50), nullable = False)
     #valor_total = db.Column(db.Float)
     data_de_criacao = db.Column(db.DateTime, nullable = False, default = datetime.now)
+    itens = db.relationship('ItemOS', backref='ordem_servico', lazy=True, cascade="all, delete-orphan")
 
     @property
     def numero_formatado(self):
@@ -105,6 +106,7 @@ class Servico(db.Model):
     preco_unitario = db.Column(db.Float, nullable = False)
     unidade_medida = db.Column(db.String(20))
     __table_args__ = (db.UniqueConstraint('descricao_servico', name='uq_servico_descricao'),)
+    itens_os = db.relationship('ItemOS', backref='servico', lazy=True)
 
 class Peca(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -114,6 +116,13 @@ class Peca(db.Model):
     preco_unitario = db.Column(db.Float, nullable = False)
     unidade_medida = db.Column(db.String(20))
     __table_args__ = (db.UniqueConstraint('nome_peca', name='uq_peca_nome'),)
+
+class ItemOS(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    quantidade = db.Column(db.Integer, nullable = False)
+    preco_cobrado = db.Column(db.Float, nullable = False)
+    ordem_servico_id = db.Column(db.Integer, db.ForeignKey('ordem_servico.id'))
+    servico_id = db.Column(db.Integer, db.ForeignKey('servico.id'))
 class Usuario(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(80), nullable = False, unique = True)
@@ -293,6 +302,7 @@ def cadastrar_os(cliente_id):
 @login_required
 def detalhes_os(id):
     ordem_servico = OrdemServico.query.get(id)
+    lista_servicos = Servico.query.all()
     if request.method == "POST":
         equipamento = request.form["equipamento"]
         marca = request.form["marca"]
@@ -310,7 +320,7 @@ def detalhes_os(id):
 
         return redirect(url_for("detalhes_cliente", id=ordem_servico.cliente_id))
     
-    return render_template("detalhes_os.html", ordem_servico = ordem_servico)
+    return render_template("detalhes_os.html", ordem_servico = ordem_servico, lista_servicos = lista_servicos)
 
 @app.route("/os/deletar/<int:id>")
 @login_required
@@ -446,6 +456,44 @@ def deletar_peca(id):
     db.session.delete(peca_a_deletar)
     db.session.commit()
     return redirect(url_for("listar_pecas"))
+
+@app.route("/item/adicionar/<int:os_id>", methods=["GET", "POST"])
+@login_required
+def adicionar_item(os_id):
+    if request.method == "POST":
+        quantidade = request.form["quantidade"]
+        preco_cobrado = request.form["preco_cobrado"]
+        
+
+        servico_id = request.form["servico_id"]
+        servico = Servico.query.get(servico_id)
+
+        if preco_cobrado == "":
+            preco_cobrado_novo = servico.preco_unitario
+        else:
+            preco_cobrado_novo = preco_cobrado.replace(",", ".")
+
+        novo_item = ItemOS(
+            quantidade = int(quantidade),
+            preco_cobrado = float(preco_cobrado_novo),
+            ordem_servico_id = os_id,
+            servico_id = servico_id
+        )
+
+        db.session.add(novo_item)
+        db.session.commit()
+        return redirect(url_for("detalhes_os", id=os_id))
+    
+    return render_template("detalhes_os.html")
+
+@app.route("/item/deletar/<int:id>")
+@login_required
+def remover_item(id):
+    item_a_deletar = ItemOS.query.get(id)
+    os_id = item_a_deletar.ordem_servico.id
+    db.session.delete(item_a_deletar)
+    db.session.commit()
+    return redirect(url_for("detalhes_os", id = os_id))
 
 if __name__ == "__main__":
     app.run(debug=True)
