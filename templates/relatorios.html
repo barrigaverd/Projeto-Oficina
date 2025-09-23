@@ -1,59 +1,69 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Relatórios de Ordens de Serviço</h2>
-    <hr>
+<div class="d-flex justify-content-center">
+  <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 80rem;">
     
-    <form method="post" class="mb-4">
-        <div class="row align-items-end">
-            <div class="col-md-4">
-                <label for="data_inicio" class="form-label">Data de Início:</label>
-                <input type="date" class="form-control" name="data_inicio" id="data_inicio" required>
-            </div>
-            <div class="col-md-4">
-                <label for="data_fim" class="form-label">Data Final:</label>
-                <input type="date" class="form-control" name="data_fim" id="data_fim" required>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">Gerar Relatório</button>
-            </div>
+    <!-- Cabeçalho -->
+    <h4 class="card-header text-center fw-bold">Relatórios</h4>
+
+    <div class="card-body">
+      <!-- Filtro datas -->
+      <form method="post" class="row g-3 align-items-center mb-4">
+        <div class="col-md-4">
+          <label for="data_inicio" class="form-label">Data de Início</label>
+          <input type="date" class="form-control" name="data_inicio" id="data_inicio" required>
+        </div>
+        <div class="col-md-4">
+          <label for="data_fim" class="form-label">Data Final</label>
+          <input type="date" class="form-control" name="data_fim" id="data_fim" required>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+          <button type="submit" class="btn btn-primary w-100">Gerar Relatório</button>
+        </div>
+     </form>
+    <form method="post">
+        <div class="d-flex gap-2 mb-3">
+            <input class="form-control" name="busca_nome" type="search" placeholder="Pesquisar por nome..." aria-label="Pesquisar" required>
+            <button type="submit" class="btn btn-primary">Pesquisar</button>
         </div>
     </form>
-    <table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Numero OS</th>
-            <th>Nome Cliente</th>
-            <th>Equipamento</th>
-            <th>Data de criação</th>
-            <th>Status</th>
-            <th>Valor total</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for ordem in ordens_exibidas %}
-        <tr>
-            <td>
-                {{ ordem.numero_formatado }}
-            </td>
-            <td>
-                {{ ordem.cliente.nome }}
-            </td>
-            <td>
-                {{ ordem.equipamento }}
-            </td>
-            <td>
-                {{ ordem.data_de_criacao }}
-            </td>
-            <td>
-                {{ ordem.status }}
-            </td>
-            <td>
-                {{ "%.2f"|format(ordem.valor_calculado|float) }}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        
+     
 
+      <!-- Tabela -->
+      <div class="table-responsive">
+        <table class="table table-sm table-hover table-striped align-middle">
+          <thead class="table-title">
+            <tr>
+              <th>Número OS</th>
+              <th>Nome Cliente</th>
+              <th>Equipamento</th>
+              <th>Valor total</th>
+              <th class="text-center">Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ordem in ordens_exibidas %}
+            <tr>
+              <td>{{ ordem.numero_formatado }}</td>
+              <td>{{ ordem.cliente.nome }}</td>
+              <td>{{ ordem.equipamento }}</td>
+              <td>R$ {{ "%.2f"|format(ordem.valor_calculado|float) }}</td>
+              <td class="text-center">
+                <a class="btn btn-success btn-sm" href="{{url_for('detalhes_os', id=ordem.id)}}">
+                  Exibir detalhes
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
 {% endblock %}
+
+

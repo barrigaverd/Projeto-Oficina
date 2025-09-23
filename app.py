@@ -507,19 +507,35 @@ def remover_item(id):
 @app.route("/relatorios", methods=["GET", "POST"])
 @login_required
 def relatorios():
-    ordens_exibidas = []
+    # Começa com uma query base que será modificada
+    query = OrdemServico.query
+
     if request.method == "POST":
-        data_inicio = datetime.strptime(request.form["data_inicio"], '%Y-%m-%d')
-        data_fim = datetime.strptime(request.form["data_fim"], '%Y-%m-%d')
-        ordens_exibidas = OrdemServico.query.filter(
-            OrdemServico.data_de_criacao >= data_inicio,
-            OrdemServico.data_de_criacao <= data_fim
-            ).all()
+        # Pega os dados do formulário
+        busca_nome = request.form.get('busca_nome', '')
+        data_inicio_str = request.form.get('data_inicio')
+        data_fim_str = request.form.get('data_fim')
+
+        # Se o usuário preencheu um nome, adiciona o filtro de nome
+        if busca_nome:
+            query = query.join(Cliente).filter(Cliente.nome.ilike(f'%{busca_nome}%'))
+
+        # Se o usuário preencheu as datas, adiciona o filtro de datas
+        if data_inicio_str and data_fim_str:
+            data_inicio = datetime.strptime(data_inicio_str, '%Y-%m-%d')
+            data_fim = datetime.strptime(data_fim_str, '%Y-%m-%d')
+            query = query.filter(
+                OrdemServico.data_de_criacao >= data_inicio,
+                OrdemServico.data_de_criacao <= data_fim
+            )
         
-    elif request.method == "GET":
+        # Executa a query construída com os filtros
+        ordens_exibidas = query.order_by(OrdemServico.data_de_criacao.desc()).all()
+
+    else: # Lógica para o GET (quando a página é carregada pela primeira vez)
         ordens_exibidas = OrdemServico.query.order_by(OrdemServico.data_de_criacao.desc()).limit(10).all()
         
-
+    # Renderiza o template, passando a lista de ordens
     return render_template("relatorios.html", ordens_exibidas=ordens_exibidas)
 
 if __name__ == "__main__":
