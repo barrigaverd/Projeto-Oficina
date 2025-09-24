@@ -198,6 +198,11 @@ def logout():
     logout_user()
     return redirect(url_for("login"))
 
+@app.route("/logout_cliente")
+def logout_cliente():
+    logout_user()
+    return redirect(url_for("login_cliente"))
+
 @app.route("/login", methods = ("GET", "POST"))
 def login():
     if request.method == "POST":
@@ -212,7 +217,7 @@ def login():
 
     return render_template('login.html')
 
-@app.route("/login-cliente", methods = ("GET", "POST"))
+@app.route("/login_cliente", methods = ("GET", "POST"))
 def login_cliente():
     if request.method == "POST":
         username = request.form["username"]

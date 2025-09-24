@@ -1,46 +1,62 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="d-flex justify-content-start">
+    <a href="{{ request.referrer or url_for('dashboard') }}" class="btn btn-sm btn-secondary">
+        Voltar
+    </a>
+</div>
+<div class="d-flex text-center mt-2">
+    <div class="card shadow-sm w-100 rounded-3 mx-auto my-3">
+        <h5 class="card-header">
+            <strong>Informações do cliente</strong>
+        </h5>
+        <div class="card-body">
+            <div class="card-title">Nome: {{ordem_servico.cliente.nome}}</div>
+            <div class="card-text">Telefone Celular: {{ordem_servico.cliente.telefone_celular}}<br>Telefone auxiliar: {{ordem_servico.cliente.telefone_auxiliar}}</div>
+            <div class="card-text">Endereço: {{ordem_servico.cliente.logradouro}}, Nº{{ordem_servico.cliente.numero}}, Bairro: {{ordem_servico.cliente.bairro}}<br>{{ordem_servico.cliente.cidade}} - {{ordem_servico.cliente.estado}}</div>
+        </div>
+    </div>
+</div>
+
 <div class="card">
-    <h5 class="card-title">
-        <strong>Informações do cliente</strong>
-    </h5>
-    <div class="card-body">
-        <div class="card-title">Nome: {{ordem_servico.cliente.nome}}</div>
-        <div class="card-text">Telefone Celular: {{ordem_servico.cliente.telefone_celular}}<br>Telefone auxiliar: {{ordem_servico.cliente.telefone_auxiliar}}</div>
-        <div class="card-text">Endereço: {{ordem_servico.cliente.logradouro}}, Nº{{ordem_servico.cliente.numero}}, Bairro: {{ordem_servico.cliente.bairro}}<br>{{ordem_servico.cliente.cidade}} - {{ordem_servico.cliente.estado}}</div>
-    </div>
-</div><br>
-<h2>Informações Básicas</h2>
-<h4>Detalhes da OS #{{ordem_servico.numero_formatado}}</h4>
-<form method="post">
-    <div class="mb-3">
-    <label class="form-label" for="equipamento">Equipamento:</label>
-    <input class="form-control" type="text" name="equipamento" value="{{ordem_servico.equipamento}}">
-    </div>
+    <h5 class="card-header text-center">Detalhes da OS #{{ordem_servico.numero_formatado}}</h5>
+    
+    <form class="card-body" method="post">
+        <div class="mb-2">
+        <label class="form-label" for="equipamento">Equipamento:</label>
+        <input class="form-control" type="text" name="equipamento" value="{{ordem_servico.equipamento}}">
+        </div>
 
-    <div class="mb-3">
-    <label class="form-label" for="marca">Marca:</label>
-    <input class="form-control" type="text" name="marca" value="{{ordem_servico.marca}}">
-    </div>
+        <div class="mb-2">
+        <label class="form-label" for="marca">Marca:</label>
+        <input class="form-control" type="text" name="marca" value="{{ordem_servico.marca}}">
+        </div>
 
-    <div class="mb-3">
-    <label class="form-label" for="modelo">Modelo:</label>
-    <input class="form-control" type="text" name="modelo" value="{{ordem_servico.modelo}}">
-    </div>
+        <div class="mb-2">
+        <label class="form-label" for="modelo">Modelo:</label>
+        <input class="form-control" type="text" name="modelo" value="{{ordem_servico.modelo}}">
+        </div>
 
-    <div class="mb-3">
-    <label class="form-label" for="defeito">Defeito:</label>
-    <textarea class="form-control" name="defeito" id="defeito">{{ordem_servico.defeito}}</textarea>
-    </div>
+        <div class="mb-2">
+        <label class="form-label" for="defeito">Defeito:</label>
+        <textarea class="form-control" name="defeito" id="defeito">{{ordem_servico.defeito}}</textarea>
+        </div>
+        <select class="form-select mb-3" name="status" aria-label="Selecione exemplo padrao">
+            {% set status_opcoes = ['Pendente', 'Aguadando aprovação', 'Aprovado', 'Em andamento', 'Aguardando pagamento', 'Concluído', 'Garantia', 'Cancelado']%}
+            <option selected>Status da OS:</option>
+            {% for status_opcao in status_opcoes %}
+            <option value="{{ status_opcao }}" 
+              {% if status_opcao == ordem_servico.status %} selected {% endif %}>
+            {{ status_opcao }}
+            </option>
+            {% endfor %}
 
-    <div class="mb-3">
-    <label class="form-label" for="status">Status:</label>
-    <input class="form-control" type="text" name="status" value="{{ordem_servico.status}}">
-    </div>
-    <button class="btn btn-primary" type="submit">Salvar OS</button>
-    <a class="btn btn-primary" href="{{url_for('deletar_os', id=ordem_servico.id)}}">Excluir</a>
-</form>
+        </select>
+
+        <button class="btn btn-sm btn-primary" type="submit">Salvar OS</button>
+        <a class="btn btn-sm btn-primary" href="{{url_for('deletar_os', id=ordem_servico.id)}}">Excluir</a>
+    </form>
 
 <hr>
 <h4>Serviços na OS</h4>

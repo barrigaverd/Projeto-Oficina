@@ -67,30 +67,57 @@
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">Oficina do Micro</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="#">Serviços</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Contato</a>
-        </li>
-        <li class="nav-item">
-          <a class="btn btn-sm btn-primary ms-2" href="{{ url_for('login_cliente') }}">Área do Cliente</a>
-        </li>
-        <li class="nav-item">
-          <a class="btn btn-sm btn-dark ms-2" href="{{ url_for('login') }}">Área do Administrador</a>
-        </li>
-      </ul>
+  <nav class="navbar navbar-expand-lg shadow-sm mb-4" data-bs-theme="dark">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+        <i class="bi bi-tools"></i> Oficina do Micro
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'dashboard_cliente' %}active{% endif %}" href="{{ url_for('dashboard_cliente') }}">
+              <i class="bi bi-people"></i> Minhas OS
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'contato' %}active{% endif %}" href="#">
+              <i class="bi bi-telephone"></i> Contato
+            </a>
+          </li>
+          
+          {% if not current_user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('login_cliente') }}">
+              <i class="bi bi-person-circle"></i> Área do Cliente
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('login') }}">
+              <i class="bi bi-shield-lock"></i> Área do Administrador
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+  
+        <!-- Botão alternar tema -->
+        <span class="px-2">
+          <button id="themeToggle" class="theme-toggle" title="Alternar tema">🌙</button>
+        </span>
+  
+        <!-- Botão sair -->
+        {% if current_user.is_authenticated %}
+          <a class="nav-link px-3 d-inline-block text-danger fw-bold" href="{{ url_for('logout_cliente') }}">
+            <i class="bi bi-box-arrow-right"></i> Sair
+          </a>
+        {% endif %}
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
+  
+  
 
 <main class="">
         <div class="container mt-4">

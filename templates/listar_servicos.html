@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="d-flex justify-content-start">
+    <a href="{{ request.referrer or url_for('dashboard') }}" class="btn btn-sm btn-secondary">
+        Voltar
+    </a>
+</div>
+
 <h1>Lista de Serviços</h1>
 <table class="table table-hover table-striped" >
     <thead>
@@ -27,7 +33,10 @@
         {%endfor%}
     </tbody>
 </table>
-<a class="btn btn-primary btn-sm" href="{{ url_for('cadastrar_servico') }}">
-    Cadastrar Serviço
-</a>
+<div class="d-flex justify-content-center">
+    <a class="btn btn-primary btn-sm" href="{{ url_for('cadastrar_servico') }}">
+        Cadastrar Serviço
+    </a>
+</div>
+
 {% endblock %}

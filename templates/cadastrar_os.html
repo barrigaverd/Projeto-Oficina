@@ -28,10 +28,18 @@
             <label class="form-label" for="defeito">Defeito:</label>
             <textarea class="form-control" name="defeito" id="defeito" placeholder="Digite aqui o defeito..."></textarea>
         </div>
-        <div class="mb-3">
-            <label class="form-label" for="status">Status:</label>
-            <input class="form-control" type="text" name="status">
-        </div>
+        <select class="form-select mb-3" name="status" aria-label="Selecione exemplo padrao">
+            <option selected>Status da OS:</option>
+            <option value="Pendente">Pendente</option>
+            <option value="Aguardando aprovação">Aguardando aprovação</option>
+            <option value="Aprovado">Aprovado</option>
+            <option value="Em andamento">Em andamento</option>
+            <option value="Aguardando pagamento">Aguardando pagamento</option>
+            <option value="Concluído">Concluído</option>
+            <option value="Garantia">Garantia</option>
+            <option value="Cancelado">Cancelado</option>
+        </select>
+       
         
         <button class="btn btn-primary" type="submit">Salvar OS</button>
     </form>
