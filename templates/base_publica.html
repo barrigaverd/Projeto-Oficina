@@ -121,7 +121,9 @@
 
 <main class="">
         <div class="container mt-4">
-          
+          <a href="{{ request.referrer or url_for('dashboard_cliente') }}" class="btn btn-secondary">
+            Voltar
+          </a>
           {% block content %}
           {% endblock %}
         </div>
