@@ -42,43 +42,63 @@
     <a class="btn btn-primary" href="{{url_for('deletar_os', id=ordem_servico.id)}}">Excluir</a>
 </form>
 
-<table class="table table-striped">
+<hr>
+<h4>Serviços na OS</h4>
+<table class="table justify-content-between table-striped table-sm text-center">
     <thead>
         <tr>
-            <th>Descrição do Serviço</th>
-            <th>Quantidade</th>
-            <th>Preço Unit. (R$)</th>
-            <th>Subtotal (R$)</th>
-            <th>Ações</th>
+            <th>Descrição</th>
+            <th>Qtd</th>
+            <th>Preço Unit.</th>
+            <th>Subtotal</th>
+            <th>Ação</th>
         </tr>
     </thead>
     <tbody>
-        {% for item in ordem_servico.itens %}
+        {% for item in ordem_servico.itens_servico %}
         <tr>
+            <td>{{ item.servico.descricao_servico }}</td>
+            <td>{{ item.quantidade }}</td>
+            <td>R$ {{ "%.2f"|format(item.preco_cobrado|float) }}</td>
+            <td>R$ {{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}</td>
             <td>
-                {{ item.servico.descricao_servico }}
-            </td>
-            <td>
-                {{ item.quantidade }}
-            </td>
-            <td>
-                {{ "%.2f"|format(item.preco_cobrado|float) }}
-            </td>
-            <td>
-                R$ {{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}
-            </td>
-            <td>
-                <a class="btn btn-danger" href="{{url_for('remover_item', id=item.id)}}">Excluir</a>
+                <a class="btn btn-danger btn-sm" href="{{url_for('remover_servico', id=item.id)}}">Remover</a>
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<hr> <h4>Adicionar Serviço</h4>
+<h4 class="mt-4">Peças na OS</h4>
+<table class="table justify-content-between table-striped table-sm text-center">
+    <thead>
+        <tr>
+            <th>Nome da Peça</th>
+            <th>Qtd</th>
+            <th>Preço Unit.</th>
+            <th>Subtotal</th>
+            <th>Ação</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in ordem_servico.itens_peca %}
+        <tr>
+            <td>{{ item.peca.nome_peca }}</td>
+            <td>{{ item.quantidade }}</td>
+            <td>R$ {{ "%.2f"|format(item.preco_cobrado|float) }}</td>
+            <td>R$ {{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}</td>
+            <td>
+                <a class="btn btn-danger btn-sm" href="{{url_for('remover_peca', id=item.id)}}">Remover</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
-<form method="post" action="{{ url_for('adicionar_item', os_id=ordem_servico.id) }}">
-    
+
+<hr>
+<h4 class="mt-4">Adicionar Serviço</h4>
+<form method="post" action="{{ url_for('adicionar_servico', os_id=ordem_servico.id) }}">
     <div class="mb-3">
         <label for="servico" class="form-label">Serviço:</label>
         <select name="servico_id" class="form-select" required>
@@ -88,7 +108,6 @@
             {% endfor %}
         </select>
     </div>
-
     <div class="row">
         <div class="col-md-6 mb-3">
             <label for="quantidade" class="form-label">Quantidade</label>
@@ -99,9 +118,34 @@
             <input type="text" class="form-control" name="preco_cobrado" placeholder="Deixe em branco para usar o preço padrão">
         </div>
     </div>
+    <button type="submit" class="btn btn-success">Adicionar Serviço</button>
+    <a class="btn btn-secondary" href="{{url_for('cadastrar_servico')}}">Novo Serviço</a>
+</form>
 
-    <button type="submit" class="btn btn-success">Adicionar Serviço a OS</button>
-    <a class="btn btn-primary" href="{{url_for('cadastrar_servico')}}">Cadastrar Serviço</a>
 
+<hr>
+<h4 class="mt-4">Adicionar Peça</h4>
+<form method="post" action="{{ url_for('adicionar_peca', os_id=ordem_servico.id) }}">
+    <div class="mb-3">
+        <label for="peca" class="form-label">Peça:</label>
+        <select name="peca_id" class="form-select" required>
+            <option value="">Selecione uma peça...</option>
+            {% for peca in lista_pecas %}
+                <option value="{{ peca.id }}">{{ peca.nome_peca }} - R$ {{ "%.2f"|format(peca.preco_unitario|float) }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="quantidade" class="form-label">Quantidade</label>
+            <input type="number" class="form-control" name="quantidade" value="1" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="preco_cobrado" class="form-label">Preço Cobrado (R$)</label>
+            <input type="text" class="form-control" name="preco_cobrado" placeholder="Deixe em branco para usar o preço padrão">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success">Adicionar Peça</button>
+    <a class="btn btn-secondary" href="{{url_for('cadastrar_peca')}}">Nova Peça</a>
 </form>
 {% endblock %}

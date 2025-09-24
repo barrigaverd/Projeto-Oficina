@@ -4,8 +4,15 @@
     <form method="post">
         <div class="mb-3">
             <label for="nome" class="form-label">Nome:</label>
-            <input class="form-control" type="text" id="nome" name="nome" required placeholder="Qual o nome do cliente?">
+            <input class="form-control" type="text" id="nome_cliente" name="nome" required placeholder="Qual o nome do cliente?">
         </div>
+        <div class="card mb-3">
+            <label for="username_cliente" class="form-label card-title">Nome de usuário:</label>
+            <input class="form-control" type="text" id="username_cliente" name="username_cliente" required placeholder="Nome de usuário...">
+            <label for="password_cliente" class="form-label card-title">Senha:</label>
+            <input class="form-control" type="password" id="password_cliente" name="password_cliente" required placeholder="Digite a senha...">
+        </div>
+        
         <div class="mb-3">
             <label class="form-label" for="telefone_celular">Telefone Celular:</label>
             <input class="form-control" type="tel" id="telefone_celular" name="telefone_celular" required placeholder="Telefone com DDD">
@@ -93,5 +100,37 @@
         campoCnpj.classList.remove('d-none');
         }
     });
+    
+    // Pega os campos do HTML pelos IDs que definimos
+    const nomeClienteInput = document.getElementById('nome_cliente'); 
+    const usernameInput = document.getElementById('username_cliente');
+    const passwordInput = document.getElementById('password_cliente');
+
+    // Adiciona um "ouvinte" que é acionado quando o usuário para de digitar no campo Nome
+    nomeClienteInput.addEventListener('blur', function() {
+        // Só gera se os campos de username e senha estiverem vazios
+        if (usernameInput.value === '' && passwordInput.value === '') {
+            const nomeCompleto = nomeClienteInput.value.trim().toLowerCase(); //pega o nome do cliente retira os espaços no inicio e no final
+            if (nomeCompleto) { // verifica se é True
+                const partesNome = nomeCompleto.split(' '); //lista separada por espaços ["sergio", "ugoline"]
+                const primeiroNome = partesNome[0].replace(/[^a-z0-9]/g, ''); // Primeiro nome e remove caracteres especiais "sergio"
+                const anoAtual = new Date().getFullYear(); //"2025"
+
+                // Gera um username sugerido (ex: 'sergio.p')
+                let usernameSugerido = primeiroNome; //"sergio"
+                if (partesNome.length > 1) { //se o tamanho da lista ["sergio", "ugoline"] for maior que 1
+                usernameSugerido += '.' + partesNome[partesNome.length - 1].charAt(0); // usernameSugerido = "sergiougoline"
+                }
+
+                // Gera uma senha sugerida (ex: 'sergio@2025')
+                const senhaSugerida = primeiroNome + '@' + anoAtual; // senhaSugerida = "sergio@2025"
+
+                // Preenche os campos de input com os valores gerados
+                usernameInput.value = usernameSugerido;
+                passwordInput.value = senhaSugerida;
+            };
+        };
+    });
+    
     </script>
     {% endblock %}

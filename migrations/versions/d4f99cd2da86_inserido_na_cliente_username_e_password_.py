@@ -1,8 +1,8 @@
-"""att
+"""inserido na Cliente username e password hash
 
-Revision ID: 879b8868b094
+Revision ID: d4f99cd2da86
 Revises: 
-Create Date: 2025-09-23 09:55:19.577184
+Create Date: 2025-09-23 19:21:39.772951
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '879b8868b094'
+revision = 'd4f99cd2da86'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,6 +21,8 @@ def upgrade():
     op.create_table('cliente',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nome', sa.String(length=100), nullable=False),
+    sa.Column('username_cliente', sa.String(length=20), nullable=False),
+    sa.Column('password_hash', sa.String(length=60), nullable=False),
     sa.Column('telefone_celular', sa.String(length=20), nullable=False),
     sa.Column('telefone_auxiliar', sa.String(length=20), nullable=True),
     sa.Column('tipo_cliente', sa.String(length=20), nullable=True),
@@ -34,7 +36,8 @@ def upgrade():
     sa.Column('cidade', sa.String(length=100), nullable=True),
     sa.Column('estado', sa.String(length=10), nullable=True),
     sa.Column('anotacoes', sa.Text(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('username_cliente')
     )
     op.create_table('peca',
     sa.Column('id', sa.Integer(), nullable=False),
