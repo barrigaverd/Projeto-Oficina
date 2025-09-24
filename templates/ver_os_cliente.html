@@ -1,7 +1,11 @@
 {% extends 'base_publica.html' %}
 
 {% block content %}
-<div class="card text-center">
+<a href="{{ request.referrer or url_for('home') }}" class="btn btn-secondary">
+    Voltar
+</a>
+<h2 class="text-center">Informações Básicas</h2>
+<div class="card text-center mt-3">
       <h5 class="card-header">
           <strong>Informações do cliente</strong>
       </h5>
@@ -10,90 +14,96 @@
           <div class="card-text">Telefone Celular: {{ordem_servico.cliente.telefone_celular}}<br>Telefone auxiliar: {{ordem_servico.cliente.telefone_auxiliar}}</div>
           <div class="card-text">Endereço: {{ordem_servico.cliente.logradouro}}, Nº{{ordem_servico.cliente.numero}}, Bairro: {{ordem_servico.cliente.bairro}}<br>{{ordem_servico.cliente.cidade}} - {{ordem_servico.cliente.estado}}</div>
       </div>
-  </div><br>
-    <h2>Informações Básicas</h2>
+</div><br>
+    
     
     <div class="d-flex justify-content-center">
-      <div class="card shadow-sm w-100 rounded-3 text-center ms-auto my-3 px-3 py-3">
+      <div class="card shadow-sm w-100 rounded-3 text-center ms-auto mb-4 ">
         <div>
           <h4 class="card-header text-center">Detalhes da OS #{{ordem_servico.numero_formatado}}</h4>
         </div>
-        <div class="mb-3">
+        <div class="my-1">
           <label class="form-label" for="equipamento">Equipamento: {{ordem_servico.equipamento}}</label>
           </div>
-          <div class="mb-3">
+          <div class="mb-1">
           <label class="form-label" for="marca">Marca: {{ordem_servico.marca}}</label>
           </div>
       
-          <div class="mb-3">
+          <div class="mb-1">
           <label class="form-label" for="modelo">Modelo: {{ordem_servico.modelo}}</label>
           </div>
       
-          <div class="mb-3">
+          <div class="mb-1">
           <label class="form-label" for="defeito">Defeito: {{ordem_servico.defeito}}</label>
           </div>
       
-          <div class="mb-3">
-          <label class="form-label" for="status">Status em tempo real: {{ordem_servico.status}}</label>
+          <div class="mb-1">
+          <label class="form-label" for="status">Status em tempo real: <span class="badge bg-success align-middle">{{ordem_servico.status}}</span></label>
           </div>
       </div>
     </div>
-    <table class="table table-striped">
-      <thead>
-          <tr>
-              <th>Descrição do Serviço</th>
-              <th>Quantidade</th>
-              <th>Preço Unit. (R$)</th>
-              <th>Subtotal (R$)</th>
-          </tr>
-      </thead>
-      <tbody>
-          {% for item in ordem_servico.itens_servico %}
-          <tr>
-              <td>
-                  {{ item.servico.descricao_servico }}
-              </td>
-              <td>
-                  {{ item.quantidade }}
-              </td>
-              <td>
-                  {{ "%.2f"|format(item.preco_cobrado|float) }}
-              </td>
-              <td>
-                  R$ {{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}
-              </td>
-              
-          </tr>
-          {% endfor %}
-      </tbody>
-  </table>
-  <table class="table table-responsive table-striped">
-      <thead>
-          <tr>
-              <th>Descrição da Peça</th>
-              <th>Quantidade</th>
-              <th>Preço Unit. (R$)</th>
-              <th>Subtotal (R$)</th>
-          </tr>
-      </thead>
-      <tbody>
-          {% for peca in ordem_servico.itens_peca %}
-          <tr>
-              <td>
-                  {{ peca.peca.nome_peca }}
-              </td>
-              <td>
-                  {{ peca.quantidade }}
-              </td>
-              <td>
-                  {{ "%.2f"|format(peca.preco_cobrado|float) }}
-              </td>
-              <td>
-                  R$ {{ "%.2f"|format((peca.quantidade * peca.preco_cobrado)|float) }}
-              </td>
-              
-          </tr>
-          {% endfor %}
-      </tbody>
-  </table>
+    <div class="card mb-4">
+        <h4 class="text-center card-header">Serviços na OS</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr class="text-center card-title">
+                        <th>Descrição do Serviço</th>
+                        <th>Quantidade</th>
+                        <th>Preço Unit. (R$)</th>
+                        <th>Subtotal (R$)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in ordem_servico.itens_servico %}
+                    <tr class="text-center card-text">
+                        <td>
+                            {{ item.servico.descricao_servico }}
+                        </td>
+                        <td>
+                            {{ item.quantidade }}
+                        </td>
+                        <td>
+                            {{ "%.2f"|format(item.preco_cobrado|float) }}
+                        </td>
+                        <td>
+                            R$ {{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}
+                        </td>
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+    </div>
+    <div class="card mb-4">
+        <h4 class="text-center card-header">Peças na OS</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr class="text-center card-text">
+                        <th>Descrição da Peça</th>
+                        <th>Quantidade</th>
+                        <th>Preço Unit. (R$)</th>
+                        <th>Subtotal (R$)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for peca in ordem_servico.itens_peca %}
+                    <tr class="text-center card-text">
+                        <td>
+                            {{ peca.peca.nome_peca }}
+                        </td>
+                        <td>
+                            {{ peca.quantidade }}
+                        </td>
+                        <td>
+                            {{ "%.2f"|format(peca.preco_cobrado|float) }}
+                        </td>
+                        <td>
+                            R$ {{ "%.2f"|format((peca.quantidade * peca.preco_cobrado)|float) }}
+                        </td>
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+    </div>
 {% endblock %}
