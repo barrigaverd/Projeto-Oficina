@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="row mb-4">
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="card text-center">
             <div class="card-title">
                 Total de Clientes
@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="card text-center">
             <div class="card-title">
                 Ordens de Serviço Abertas
@@ -23,6 +23,18 @@
             <div class="card-body">
                 <p class="card-text display-4">
                     {{ ordens_abertas }}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-title">
+                Ordens de Serviço Concluídas
+            </div>
+            <div class="card-body">
+                <p class="card-text display-4">
+                    {{ ordens_concluidas }}
                 </p>
             </div>
         </div>
