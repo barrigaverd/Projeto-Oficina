@@ -1,151 +1,158 @@
 {% extends 'base.html' %}
-    {% block content %}
-    
-    <div class="card mt-3 shadow-sm ">
-        <h1 class="card-header text-center">Cadastro de Cliente</h1>
-        
-            <form class="card-body" method="post">
-                <div class="row align-items-center"></div>
-                    <div class="col">
-                        <div class="mb-3">
-                            <label for="nome" class="form-label">Nome:</label>
-                            <input class="form-control" type="text" id="nome_cliente" name="nome" required placeholder="Qual o nome do cliente?">
-                        </div>
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <p for="username_cliente" class="form-label card-title">Nome de usuário:</p>
-                                <input class="form-control" type="text" id="username_cliente" name="username_cliente" required placeholder="Nome de usuário...">
-                                <label for="password_cliente" class="form-label card-title">Senha:</label>
-                                <input class="form-control" type="password" id="password_cliente" name="password_cliente" required placeholder="Digite a senha...">
-                            </div>
-                        </div>
-                    
-                        <div class="mb-3">
-                            <label class="form-label" for="telefone_celular">Telefone Celular:</label>
-                            <input class="form-control" type="tel" id="telefone_celular" name="telefone_celular" required placeholder="Telefone com DDD">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="telefone_auxiliar">Telefone Auxiliar:</label>
-                            <input class="form-control" type="tel" id="telefone_auxiliar" name="telefone_auxiliar" placeholder="Telefone com DDD">
-                        </div>
-                        <div class="mb-3">
-                            <label for="tipo_cliente" class="form-label">Tipo de Cliente:</label>
-                                <select class="form-select" id="tipo_cliente" name="tipo_cliente">
-                                    <option selected value="">Selecione...</option>
-                                    <option value="fisica">Pessoa Física</option>
-                                    <option value="juridica">Pessoa Jurídica</option>
-                                </select>
-                        </div>
-                    </div>
-                    
-                    <div class="col">
-                        <div class="mb-3 d-none" id="campo_cpf">
-                        <label for="cpf" class="form-label">CPF:</label>
-                        <input type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF">
-                        </div>
+{% block content %}
 
-                        <div class="mb-3 d-none" id="campo_cnpj">
-                            <label for="cnpj" class="form-label">CNPJ:</label>
-                            <input type="text" class="form-control" id="cnpj" name="cnpj" placeholder="CNPJ">
-                        </div>
-                        <div class="mb-3 ">
-                            <label for="endereco" class="form-label">Endereço:</label>
-                        </div>
-                        <div class="mb-3 ">
-                            <label for="cep" class="form-label">CEP:</label>
-                            <input type="text" class="form-control" id="cep" name="cep" placeholder="CEP">
-                        </div>
-                        <div class="mb-3 ">
-                            <label for="logradouro" class="form-label">Logradouro:</label>
-                            <input type="text" class="form-control" id="logradouro" name="logradouro" placeholder="Logradouro (rua, avenida etc.)">
-                        </div>
-                        <div class="mb-3 ">
-                            <label for="numero" class="form-label">Numero:</label>
-                            <input type="text" class="form-control" id="numero" name="numero" placeholder="Número">
-                        </div>
-                        <div class="mb-3 ">
-                            <label for="complemento" class="form-label">Complemento:</label>
-                            <input type="text" class="form-control" id="complemento" name="complemento" placeholder="Complemento (apto, casa etc.)">
-                        </div>
-                        <div class="mb-3 ">
-                            <label for="bairro" class="form-label">Bairro:</label>
-                            <input type="text" class="form-control" id="bairro" name="bairro" placeholder="Bairro">
-                        </div>
-                        <div class="mb-3 ">
-                            <label for="cidade" class="form-label">Cidade:</label>
-                            <input type="text" class="form-control" id="cidade" name="cidade" placeholder="Cidade">
-                        </div>
-                        <div class="mb-3 ">
-                            <label for="estado" class="form-label">Estado:</label>
-                            <input type="text" class="form-control" id="estado" name="estado" placeholder="Estado">
-                        </div>
-                        <div class="mb-3">
-                            <label for="anotacoes" class="form-label">Anotações:</label>
-                            <textarea class="form-control" id="anotacoes" name="anotacoes" rows="3"></textarea>
-                        </div>
-                    </div>
-                </div>
-                
-                <button class="btn btn-primary" type="submit">Salvar Cliente</button>
-            </form>
+<div class="card mt-3 shadow-sm">
+  <h4 class="card-header text-center fw-bold">Cadastro de Cliente</h4>
+  <form class="card-body row g-4" method="post">
+    
+    <!-- Coluna 1 -->
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="nome_cliente" class="form-label">Nome:</label>
+        <input class="form-control" type="text" id="nome_cliente" name="nome" required placeholder="Qual o nome do cliente?">
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-body p-3">
+          <h6 class="card-title mb-2">Acesso do Cliente</h6>
+          <div class="mb-3">
+            <label for="username_cliente" class="form-label">Nome de usuário:</label>
+            <input class="form-control" type="text" id="username_cliente" name="username_cliente" required placeholder="Nome de usuário...">
+          </div>
+          <div class="mb-3">
+            <label for="password_cliente" class="form-label">Senha:</label>
+            <input class="form-control" type="password" id="password_cliente" name="password_cliente" required placeholder="Digite a senha...">
+          </div>
         </div>
-    
-    </div>
-    
-    {% endblock %}
-    {% block scripts %}
-    <script>
-    // Pega os elementos do HTML pelos seus IDs
-    const tipoClienteSelect = document.getElementById('tipo_cliente');
-    const campoCpf = document.getElementById('campo_cpf');
-    const campoCnpj = document.getElementById('campo_cnpj');
+      </div>
 
-    // Adiciona um "ouvinte" que espera por mudanças no campo de seleção
-    tipoClienteSelect.addEventListener('change', function() {
-        // Esconde os dois campos para garantir que tudo comece "limpo"
+      <div class="mb-3">
+        <label for="telefone_celular" class="form-label">Telefone Celular:</label>
+        <input class="form-control" type="tel" id="telefone_celular" name="telefone_celular" required placeholder="Telefone com DDD">
+      </div>
+
+      <div class="mb-3">
+        <label for="telefone_auxiliar" class="form-label">Telefone Auxiliar:</label>
+        <input class="form-control" type="tel" id="telefone_auxiliar" name="telefone_auxiliar" placeholder="Telefone com DDD">
+      </div>
+
+      <div class="mb-3">
+        <label for="tipo_cliente" class="form-label">Tipo de Cliente:</label>
+        <select class="form-select" id="tipo_cliente" name="tipo_cliente">
+          <option selected value="">Selecione...</option>
+          <option value="fisica">Pessoa Física</option>
+          <option value="juridica">Pessoa Jurídica</option>
+        </select>
+      </div>
+
+      <div class="mb-3 d-none" id="campo_cpf">
+        <label for="cpf" class="form-label">CPF:</label>
+        <input type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF">
+      </div>
+
+      <div class="mb-3 d-none" id="campo_cnpj">
+        <label for="cnpj" class="form-label">CNPJ:</label>
+        <input type="text" class="form-control" id="cnpj" name="cnpj" placeholder="CNPJ">
+      </div>
+    </div>
+
+    <!-- Coluna 2 -->
+    <div class="col-md-6">
+      <h6 class="fw-bold mb-3">Endereço</h6>
+
+      <div class="mb-3">
+        <label for="cep" class="form-label">CEP:</label>
+        <input type="text" class="form-control" id="cep" name="cep" placeholder="CEP">
+      </div>
+
+      <div class="mb-3">
+        <label for="logradouro" class="form-label">Logradouro:</label>
+        <input type="text" class="form-control" id="logradouro" name="logradouro" placeholder="Rua, avenida, etc.">
+      </div>
+
+      <div class="mb-3">
+        <label for="numero" class="form-label">Número:</label>
+        <input type="text" class="form-control" id="numero" name="numero" placeholder="Número">
+      </div>
+
+      <div class="mb-3">
+        <label for="complemento" class="form-label">Complemento:</label>
+        <input type="text" class="form-control" id="complemento" name="complemento" placeholder="Apto, casa, etc.">
+      </div>
+
+      <div class="mb-3">
+        <label for="bairro" class="form-label">Bairro:</label>
+        <input type="text" class="form-control" id="bairro" name="bairro" placeholder="Bairro">
+      </div>
+
+      <div class="mb-3">
+        <label for="cidade" class="form-label">Cidade:</label>
+        <input type="text" class="form-control" id="cidade" name="cidade" placeholder="Cidade">
+      </div>
+
+      <div class="mb-3">
+        <label for="estado" class="form-label">Estado:</label>
+        <input type="text" class="form-control" id="estado" name="estado" placeholder="Estado">
+      </div>
+
+      <div class="mb-3">
+        <label for="anotacoes" class="form-label">Anotações:</label>
+        <textarea class="form-control" id="anotacoes" name="anotacoes" rows="4" placeholder="Observações adicionais..."></textarea>
+      </div>
+    </div>
+
+    <!-- Botão -->
+    <div class="col-12 text-center">
+      <button class="btn btn-primary px-4" type="submit">💾 Salvar Cliente</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+     document.addEventListener("DOMContentLoaded", () => {
+        const tipoClienteSelect = document.getElementById('tipo_cliente');
+        const campoCpf = document.getElementById('campo_cpf');
+        const campoCnpj = document.getElementById('campo_cnpj');
+
+        tipoClienteSelect.addEventListener('change', function() {
         campoCpf.classList.add('d-none');
         campoCnpj.classList.add('d-none');
 
-        // Verifica o valor que foi selecionado
         if (this.value === 'fisica') {
-        // Se for 'fisica', mostra o campo CPF
-        campoCpf.classList.remove('d-none');
+            campoCpf.classList.remove('d-none');
         } else if (this.value === 'juridica') {
-        // Se for 'juridica', mostra o campo CNPJ
-        campoCnpj.classList.remove('d-none');
+            campoCnpj.classList.remove('d-none');
         }
+        });
     });
+
     
-    // Pega os campos do HTML pelos IDs que definimos
-    const nomeClienteInput = document.getElementById('nome_cliente'); 
-    const usernameInput = document.getElementById('username_cliente');
-    const passwordInput = document.getElementById('password_cliente');
 
-    // Adiciona um "ouvinte" que é acionado quando o usuário para de digitar no campo Nome
-    nomeClienteInput.addEventListener('blur', function() {
-        // Só gera se os campos de username e senha estiverem vazios
-        if (usernameInput.value === '' && passwordInput.value === '') {
-            const nomeCompleto = nomeClienteInput.value.trim().toLowerCase(); //pega o nome do cliente retira os espaços no inicio e no final
-            if (nomeCompleto) { // verifica se é True
-                const partesNome = nomeCompleto.split(' '); //lista separada por espaços ["sergio", "ugoline"]
-                const primeiroNome = partesNome[0].replace(/[^a-z0-9]/g, ''); // Primeiro nome e remove caracteres especiais "sergio"
-                const anoAtual = new Date().getFullYear(); //"2025"
 
-                // Gera um username sugerido (ex: 'sergio.p')
-                let usernameSugerido = primeiroNome; //"sergio"
-                if (partesNome.length > 1) { //se o tamanho da lista ["sergio", "ugoline"] for maior que 1
-                usernameSugerido += '.' + partesNome[partesNome.length - 1].charAt(0); // usernameSugerido = "sergiougoline"
-                }
 
-                // Gera uma senha sugerida (ex: 'sergio@2025')
-                const senhaSugerida = primeiroNome + '@' + anoAtual; // senhaSugerida = "sergio@2025"
+  const nomeClienteInput = document.getElementById('nome_cliente');
+  const usernameInput = document.getElementById('username_cliente');
+  const passwordInput = document.getElementById('password_cliente');
 
-                // Preenche os campos de input com os valores gerados
-                usernameInput.value = usernameSugerido;
-                passwordInput.value = senhaSugerida;
-            };
-        };
-    });
-    
-    </script>
-    {% endblock %}
+  nomeClienteInput.addEventListener('blur', function() {
+    if (usernameInput.value === '' && passwordInput.value === '') {
+      const nomeCompleto = nomeClienteInput.value.trim().toLowerCase();
+      if (nomeCompleto) {
+        const partesNome = nomeCompleto.split(' ');
+        const primeiroNome = partesNome[0].replace(/[^a-z0-9]/g, '');
+        const anoAtual = new Date().getFullYear();
+        let usernameSugerido = primeiroNome;
+        if (partesNome.length > 1) {
+          usernameSugerido += '.' + partesNome[partesNome.length - 1].charAt(0);
+        }
+        const senhaSugerida = primeiroNome + '@' + anoAtual;
+        usernameInput.value = usernameSugerido;
+        passwordInput.value = senhaSugerida;
+      }
+    }
+  });
+</script>
+{% endblock %}
