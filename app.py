@@ -1,6 +1,7 @@
 from enum import unique
 from http import client
 from os import replace
+from sqlite3.dbapi2 import Timestamp
 from flask import Flask, render_template, request, redirect, url_for, abort, Response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
@@ -14,6 +15,9 @@ from functools import wraps
 from io import BytesIO
 from xhtml2pdf import pisa
 import os
+from werkzeug.utils import secure_filename
+
+
 
 #função Fábrica de Decoradores de login
 def role_required(role):
@@ -47,6 +51,13 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static\\uploads')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 #Criação comando pra criar usuario master
 @app.cli.command("create-user")  # Define o nome do comando no terminal
@@ -130,6 +141,8 @@ class OrdemServico(db.Model):
     itens_servico = db.relationship('ItemServico', backref='ordem_servico', lazy=True, cascade="all, delete-orphan")
     itens_peca = db.relationship('ItemPeca', backref='ordem_servico', lazy=True, cascade="all, delete-orphan")
 
+    fotos = db.relationship('Foto', backref='ordem_servico', lazy=True, cascade="all, delete-orphan")
+
     @property
     def valor_calculado(self):
         total_servicos = sum(item.quantidade * item.preco_cobrado for item in self.itens_servico)
@@ -180,6 +193,12 @@ class Usuario(db.Model, UserMixin):
 
     def get_id(self):
         return f"usuario-{self.id}"
+
+class Foto(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    nome_arquivo = db.Column(db.String(20))
+    legenda = db.Column(db.String(150))
+    ordem_servico_id = db.Column(db.Integer, db.ForeignKey('ordem_servico.id'))
 
 
 #Funções principais
@@ -713,6 +732,62 @@ def gerar_pdf_os(os_id):
 def exibir_pdf_os(os_id):
     ordem_servico = OrdemServico.query.get_or_404(os_id)
     return render_template("template_pdf.html", ordem_servico=ordem_servico)
+
+@app.route("/os/<int:os_id>/adicionar_foto", methods=["POST"])
+@login_required
+@role_required('funcionario')
+def adicionar_foto(os_id):
+    if 'foto' not in request.files:
+        return redirect(request.referrer or url_for('detalhes_os', id=os_id))
+    
+    file = request.files['foto']
+    legenda = request.form.get('legenda', '')
+
+    if file.filename == '' or not allowed_file(file.filename):
+        return redirect(request.referrer or url_for('detalhes_os', id=os_id))
+    
+    if file:
+        # Make the filename unique to avoid overwriting files
+        timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+        original_filename = secure_filename(file.filename)
+        novo_nome_arquivo = f"{timestamp}_{original_filename}"
+        
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], novo_nome_arquivo))
+
+        # 4. Save the reference in the database
+        nova_foto = Foto(
+            nome_arquivo=novo_nome_arquivo,
+            legenda=legenda,
+            ordem_servico_id=os_id
+        )
+        db.session.add(nova_foto)
+        db.session.commit()
+
+    return redirect(url_for('detalhes_os', id=os_id))
+
+@app.route("/os/<int:foto_id>/remover_foto", methods=["POST"])
+@login_required
+@role_required('funcionario')
+def remover_foto(foto_id):
+    foto_a_remover = Foto.query.get_or_404(foto_id)
+
+    os_id = foto_a_remover.ordem_servico_id
+
+    caminho_arquivo = os.path.join(app.config['UPLOAD_FOLDER'], foto_a_remover.nome_arquivo)
+
+    try:
+        # 3. Deleta o arquivo físico do servidor
+        os.remove(caminho_arquivo)
+        
+        # 4. Deleta o registro do banco de dados
+        db.session.delete(foto_a_remover)
+        db.session.commit()
+    except Exception as e:
+        # (Opcional) Adicionar uma mensagem de erro se algo der errado
+        print(f"Erro ao deletar foto: {e}")
+        db.session.rollback()
+
+    return redirect(url_for('detalhes_os', id=os_id))
 
 if __name__ == "__main__":
     app.run(debug=True)

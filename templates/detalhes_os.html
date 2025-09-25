@@ -55,6 +55,68 @@
         <a class="btn btn-sm btn-primary" href="{{url_for('exibir_pdf_os', os_id=ordem_servico.id)}}">exibir PDF</a>
     </form>
 </div>
+
+<div class="card mt-4">
+    <h4 class="card-header">Fotos do Equipamento</h4>
+    <div class="card-body">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+
+            {# Inicia o loop para cada foto associada a esta OS #}
+            {% for foto in ordem_servico.fotos %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    
+                    {# Cria o link para a imagem na pasta de uploads envolvendo a imagem #}
+                    <a href="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}" target="_blank">
+                        <img src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}" 
+                             class="card-img-top" 
+                             alt="{{ foto.legenda or 'Foto da OS' }}" 
+                             style="height: 200px; object-fit: cover;">
+                    </a>
+                    
+                    {# Mostra a legenda se ela existir #}
+                    {% if foto.legenda %}
+                    <div class="card-body">
+                        <p class="card-text">{{ foto.legenda }}</p>
+                    </div>
+                    {% endif %}
+
+                    {# Adiciona um rodapé com um botão de excluir #}
+                    <div class="card-footer text-end">
+                        <form action="{{ url_for('remover_foto', foto_id=foto.id) }}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+
+<div class="card mt-3">
+    <h4 class="card-header">Adicionar Fotos</h4>
+    <form class="card-body" method="post" action="{{ url_for('adicionar_foto', os_id=ordem_servico.id) }}" enctype="multipart/form-data">
+        <div class="row align-items-end">
+            <div class="col-md-5">
+                <label for="foto" class="form-label">Selecionar Foto</label>
+                <input type="file" class="form-control" name="foto" required>
+            </div>
+            <div class="col-md-5">
+                <label for="legenda" class="form-label">Legenda (opcional)</label>
+                <input type="text" class="form-control" name="legenda" placeholder="Ex: Tela antes do reparo">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-info w-100">Enviar Foto</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
 <div class="card mt-3">
     <h4 class="card-header text-center">Serviços na OS</h4>
     <table class="table justify-content-between table-striped table-sm text-center ">
