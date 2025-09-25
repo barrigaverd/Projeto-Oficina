@@ -1,7 +1,7 @@
 from enum import unique
 from http import client
 from os import replace
-from flask import Flask, render_template, request, redirect, url_for, abort
+from flask import Flask, render_template, request, redirect, url_for, abort, Response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from flask_bcrypt import Bcrypt
@@ -11,6 +11,8 @@ from datetime import datetime
 import click
 import markdown2
 from functools import wraps
+from io import BytesIO
+from xhtml2pdf import pisa
 
 #função Fábrica de Decoradores de login
 def role_required(role):
@@ -669,6 +671,43 @@ def relatorios():
         
     # Renderiza o template, passando a lista de ordens
     return render_template("relatorios.html", ordens_exibidas=ordens_exibidas)
+
+@app.route("/os/pdf/<int:os_id>")
+@login_required
+@role_required('funcionario')
+def gerar_pdf_os(os_id):
+    # 1. Busca os dados (igual a antes)
+    ordem_servico = OrdemServico.query.get_or_404(os_id)
+    
+    # 2. Renderiza um template HTML para uma string (igual a antes)
+    # Lembre-se que tínhamos falado em criar um pdf_template.html limpo
+    html_renderizado = render_template("template_pdf.html", ordem_servico=ordem_servico)
+    
+    # 3. Prepara um "arquivo" em memória para receber o PDF
+    result = BytesIO()
+    
+    # 4. Mágica do xhtml2pdf: converte o HTML para PDF e salva no "result"
+    pdf = pisa.pisaDocument(BytesIO(html_renderizado.encode("UTF-8")), result)
+    
+    # 5. Se não houve erro na conversão...
+    if not pdf.err:
+        # Cria um nome de arquivo dinâmico
+        nome_arquivo = f"OS-{ordem_servico.numero_formatado}.pdf"
+        # Retorna o PDF para o navegador como um download
+        return Response(
+            result.getvalue(),
+            mimetype="application/pdf",
+            headers={"Content-disposition": f"attachment; filename={nome_arquivo}"}
+        )
+    
+    # Se houve algum erro, retorna uma mensagem simples
+    return "Ocorreu um erro ao gerar o PDF.", 500
+
+@app.route("/os/exibir_pdf/<int:os_id>")
+@login_required
+def exibir_pdf_os(os_id):
+    ordem_servico = OrdemServico.query.get_or_404(os_id)
+    return render_template("template_pdf.html", ordem_servico=ordem_servico)
 
 if __name__ == "__main__":
     app.run(debug=True)

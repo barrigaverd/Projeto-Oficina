@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ordem de Serviço #{{ ordem_servico.numero_formatado }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: #333;
+            margin: 0;
+        }
+        .header-table, .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+        .header-table td {
+            vertical-align: top;
+        }
+        .items-table th, .items-table td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            text-align: left;
+        }
+        .items-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .text-right {
+            text-align: right;
+        }
+        h1, h2 {
+            margin: 0;
+        }
+        .section-header {
+            background-color: #f2f2f2;
+            padding: 6px;
+            font-weight: bold;
+            margin: 12px 0 6px 0;
+        }
+        .total-table {
+            width: 40%;
+            margin-left: auto;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+        .total-table td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <table class="header-table">
+        <tr>
+            <td>
+                <h1>Oficina do Micro</h1>
+                <p>
+                    Rua Freitas de Oliveira, 350, Loja C<br>
+                    Alvorada, Ibirité/MG
+                </p>
+            </td>
+            <td class="text-right">
+                <h2>Ordem de Serviço #{{ ordem_servico.numero_formatado }}</h2>
+                <p>Data: {{ ordem_servico.data_de_criacao.strftime('%d/%m/%Y') }}</p>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-header">Informações do Cliente</div>
+    <p>
+        <strong>Nome:</strong> {{ ordem_servico.cliente.nome }}<br>
+        <strong>Telefone:</strong> {{ ordem_servico.cliente.telefone_celular }}
+    </p>
+
+    <div class="section-header">Detalhes do Equipamento</div>
+    <p>
+        <strong>Equipamento:</strong> {{ ordem_servico.equipamento }}<br>
+        <strong>Marca / Modelo:</strong> {{ ordem_servico.marca }} / {{ ordem_servico.modelo }}<br>
+        <strong>Defeito Relatado:</strong> {{ ordem_servico.defeito }}
+    </p>
+
+    <div class="section-header">Serviços</div>
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>Descrição</th>
+                <th class="text-right">Qtd</th>
+                <th class="text-right">Preço Unit. (R$)</th>
+                <th class="text-right">Subtotal (R$)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in ordem_servico.itens_servico %}
+            <tr>
+                <td>{{ item.servico.descricao_servico }}</td>
+                <td class="text-right">{{ item.quantidade }}</td>
+                <td class="text-right">{{ "%.2f"|format(item.preco_cobrado|float) }}</td>
+                <td class="text-right">{{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="section-header">Peças</div>
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>Descrição</th>
+                <th class="text-right">Qtd</th>
+                <th class="text-right">Preço Unit. (R$)</th>
+                <th class="text-right">Subtotal (R$)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in ordem_servico.itens_peca %}
+            <tr>
+                <td>{{ item.peca.nome_peca }}</td>
+                <td class="text-right">{{ item.quantidade }}</td>
+                <td class="text-right">{{ "%.2f"|format(item.preco_cobrado|float) }}</td>
+                <td class="text-right">{{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="total-table">
+        <tr>
+            <td>TOTAL GERAL:</td>
+            <td class="text-right">R$ {{ "%.2f"|format(ordem_servico.valor_calculado|float) }}</td>
+        </tr>
+    </table>
+</body>
+</html>

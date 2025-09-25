@@ -21,7 +21,7 @@
               <td>R$ {{ "%.2f"|format(ordem.valor_calculado|float) }}</td>
               <td>
                 <a href="{{url_for('ver_os_cliente', id=ordem.id)}}" class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></a>
-                <a href="#" class="btn btn-sm btn-primary"><i class="bi bi-file-earmark-pdf-fill"></i></a>
+                <a href="{{url_for('exibir_pdf_os', os_id=ordem.id)}}" class="btn btn-sm btn-primary"><i class="bi bi-file-earmark-pdf-fill"></i></a>
               </td>
             </tr>
             {% endfor %}

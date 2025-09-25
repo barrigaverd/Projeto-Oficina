@@ -3,7 +3,7 @@
 {% block content %}
 
 <h2 class="text-center">Informações Básicas</h2>
-<div class="card text-center mt-3">
+<div class="card shadow-sm text-center mt-3">
       <h5 class="card-header">
           <strong>Informações do cliente</strong>
       </h5>
@@ -36,11 +36,11 @@
           </div>
       
           <div class="mb-1">
-          <p class="card-text" for="status">Status em tempo real: <span class="badge bg-success align-middle">{{ordem_servico.status}}</span></p>
+          <p class="card-text" for="status">Status em tempo real: <span id="status" class="badge bg-secondary align-middle">{{ordem_servico.status}}</span></p>
           </div>
       </div>
     </div>
-    <div class="card mb-4">
+    <div class="card shadow-sm mb-4">
         <h4 class="text-center card-header">Serviços na OS</h4>
             <table class="table table-striped">
                 <thead>
@@ -72,7 +72,7 @@
                 </tbody>
             </table>
     </div>
-    <div class="card mb-4">
+    <div class="card shadow-sm mb-4">
         <h4 class="text-center card-header">Peças na OS</h4>
             <table class="table table-striped">
                 <thead>
@@ -104,4 +104,22 @@
                 </tbody>
             </table>
     </div>
+    <div class="card shadow-sm w-100 justify-content-center align-middle">
+        <div class="card-header">
+            Total
+        </div>
+        <div class="card-body">
+            <div class="card-text">
+                R$ {{ "%.2f"|format(((ordem_servico.valor_calculado))|float) }}
+            </div>
+
+        </div>
+    </div>
+    <script>
+        status = document.querySelector("#status") 
+            if (status.textContent == "Concluído"){
+                status.classList.add('bg-success'); // Adds the green background
+                status.classList.add('text-white'); // Makes the text white for better contrast
+            }
+    </script>
 {% endblock %}
