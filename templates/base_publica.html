@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="pt-br" data-bs-theme="dark">
+<html lang="pt-br" data-bs-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Oficina do Micro{% endblock %}</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <title>Oficina do Micro</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+
   <style>
     /* ---------- Tema Escuro ---------- */
     [data-bs-theme="dark"] {
@@ -17,9 +19,7 @@
       --bs-link-color: #E3E3E3;
       --bs-link-hover-color: #fff;
       --bs-btn-primary-bg: #0d6efd;
-      --bs-btn-primary-border-color: #0d6efd;
       --bs-btn-secondary-bg: #444;
-      --bs-btn-secondary-border-color: #444;
     }
 
     /* ---------- Tema Claro ---------- */
@@ -32,9 +32,7 @@
       --bs-link-color: #212529;
       --bs-link-hover-color: #000;
       --bs-btn-primary-bg: #0d6efd;
-      --bs-btn-primary-border-color: #0d6efd;
       --bs-btn-secondary-bg: #6c757d;
-      --bs-btn-secondary-border-color: #6c757d;
     }
 
     .theme-toggle {
@@ -45,119 +43,77 @@
       color: inherit;
     }
 
-    .card {
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      padding: 2rem;
-      text-align: center;
-    }
-
-    .btn {
-      border-radius: 8px;
-      padding: 0.6rem 1.2rem;
-      font-weight: 500;
-    }
-
     footer {
       text-align: center;
       padding: 1rem;
       margin-top: 3rem;
-      opacity: 0.7;
+      opacity: 0.8;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg shadow-sm mb-4" data-bs-theme="dark">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg shadow-sm mb-4 border-bottom">
     <div class="container">
-      <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
-        <i class="bi bi-tools"></i> Oficina do Micro
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">Oficina do Micro</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPublica" aria-controls="navbarPublica" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+      <div class="collapse navbar-collapse" id="navbarPublica">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'dashboard_cliente' %}active{% endif %}" href="{{ url_for('dashboard_cliente') }}">
-              <i class="bi bi-people"></i> Minhas OS
-            </a>
+            <a class="nav-link" href="{{ url_for('index') }}">Início</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'contato' %}active{% endif %}" href="#">
-              <i class="bi bi-telephone"></i> Contato
-            </a>
-          </li>
-          
-          {% if not current_user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('login_cliente') }}">
-              <i class="bi bi-person-circle"></i> Área do Cliente
-            </a>
+            <a class="nav-link" href="{{ url_for('login') }}">Área Administrador</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('login') }}">
-              <i class="bi bi-shield-lock"></i> Área do Administrador
-            </a>
+            <a class="nav-link" href="{{ url_for('login_cliente') }}">Área do Cliente</a>
           </li>
-          {% endif %}
         </ul>
-  
-        <!-- Botão alternar tema -->
-        <span class="px-2">
-          <button id="themeToggle" class="theme-toggle" title="Alternar tema">🌙</button>
-        </span>
-  
-        <!-- Botão sair -->
-        {% if current_user.is_authenticated %}
-          <a class="nav-link px-3 d-inline-block text-danger fw-bold" href="{{ url_for('logout_cliente') }}">
-            <i class="bi bi-box-arrow-right"></i> Sair
-          </a>
-        {% endif %}
+        <button id="themeToggle" class="theme-toggle ms-3" title="Alternar tema">
+          <i id="themeIcon" class="bi bi-moon"></i>
+        </button>
+        
       </div>
     </div>
   </nav>
-  
-  
 
-<main class="">
-        <div class="container mt-4">
-          
-          {% block content %}
-          {% endblock %}
-        </div>
-        
-        <footer class="py-3 my-4">
-            <p class="text-center text-body-secondary">
-                <strong>Oficina do Micro</strong><br>
-                <strong>Loja Alvorada:</strong> (31) 3533-0010 (Telefone e WhatsApp)<br>
-                <strong>Loja Praça:</strong> (31) 3598-6616 (Telefone e WhatsApp)<br>
-                Rua Freitas de Oliveira, 350, Loja C - Alvorada, Ibirité/MG
-            </p>
-            <p class="text-center text-body-secondary">© 2025 Oficina do Micro</p>
-        </footer>
-      </main>
-    </div>
-  </div>
+  <!-- Conteúdo -->
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="border-top">
+    <small>© 2025 Oficina do Micro — Todos os direitos reservados.</small>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  {% block scripts %}{% endblock %}
   <script>
-    const toggleBtn = document.getElementById('themeToggle');
-    const html = document.documentElement;
+    
+        const toggleBtn = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const html = document.documentElement;
 
-    // Recupera tema salvo
-    if (localStorage.getItem('theme')) {
-      html.setAttribute('data-bs-theme', localStorage.getItem('theme'));
-      toggleBtn.textContent = localStorage.getItem('theme') === 'dark' ? '☀️' : '🌙';
-    }
+        // Recupera tema salvo
+        if (localStorage.getItem('theme')) {
+          const saved = localStorage.getItem('theme');
+          html.setAttribute('data-bs-theme', saved);
+          themeIcon.className = saved === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
+        }
 
-    toggleBtn.addEventListener('click', () => {
-      const current = html.getAttribute('data-bs-theme');
-      const next = current === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-bs-theme', next);
-      localStorage.setItem('theme', next);
-      toggleBtn.textContent = next === 'dark' ? '☀️' : '🌙';
-    });
+        toggleBtn.addEventListener('click', () => {
+          const current = html.getAttribute('data-bs-theme');
+          const next = current === 'dark' ? 'light' : 'dark';
+          html.setAttribute('data-bs-theme', next);
+          localStorage.setItem('theme', next);
+          themeIcon.className = next === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
+        });
+
+
   </script>
 </body>
 </html>

@@ -132,8 +132,22 @@
 
     <table class="total-table">
         <tr>
-            <td>TOTAL GERAL:</td>
+            <td>Total Geral:</td>
             <td class="text-right">R$ {{ "%.2f"|format(ordem_servico.valor_calculado|float) }}</td>
+        </tr>
+    </table>
+
+    <!-- Assinaturas -->
+    <table class="items-table" style="margin-top: 40px; border: none;">
+        <tr>
+            <td style="border: none; text-align: center; padding-top: 40px;">
+                ____________________________________________<br>
+                <strong>Oficina do Micro</strong>
+            </td>
+            <td style="border: none; text-align: center; padding-top: 40px;">
+                ____________________________________________<br>
+                <strong>Cliente</strong>
+            </td>
         </tr>
     </table>
 </body>
