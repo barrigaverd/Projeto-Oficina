@@ -291,7 +291,7 @@ def cadastrar_cliente():
         username_cliente = request.form["username_cliente"]
         password_cliente = request.form["password_cliente"]
 
-        password_hash = bcrypt.generate_password_hash(password_cliente)
+        password_hash = bcrypt.generate_password_hash(password_cliente).decode('utf-8')
 
         #dados do cliente
         nome_cliente = request.form["nome"]
