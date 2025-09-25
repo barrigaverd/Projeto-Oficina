@@ -13,6 +13,7 @@ import markdown2
 from functools import wraps
 from io import BytesIO
 from xhtml2pdf import pisa
+import os
 
 #função Fábrica de Decoradores de login
 def role_required(role):
@@ -35,7 +36,11 @@ def role_required(role):
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0625fa577ac24b41fd655e4935191fb6'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL or 'sqlite:///site.db'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
