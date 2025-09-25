@@ -58,7 +58,7 @@ def create_user(username, password):
         print("Erro: Usuário já existe!")
         return
     else:
-        password_hash = bcrypt.generate_password_hash(password)
+        password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
         novo_usuario = Usuario(username = username, password_hash = password_hash)
         db.session.add(novo_usuario)
         db.session.commit()
