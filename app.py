@@ -745,16 +745,19 @@ def adicionar_foto(os_id):
 
     if file.filename == '' or not allowed_file(file.filename):
         return redirect(request.referrer or url_for('detalhes_os', id=os_id))
-    
+
     if file:
-        # Make the filename unique to avoid overwriting files
         timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
         original_filename = secure_filename(file.filename)
         novo_nome_arquivo = f"{timestamp}_{original_filename}"
         
+        # --- ESTA É A LINHA IMPORTANTE PARA ADICIONAR ---
+        # Garante que a pasta de upload exista antes de tentar salvar
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        
+        # Agora a linha abaixo não dará mais erro
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], novo_nome_arquivo))
 
-        # 4. Save the reference in the database
         nova_foto = Foto(
             nome_arquivo=novo_nome_arquivo,
             legenda=legenda,
