@@ -1,70 +1,129 @@
 {% extends 'base.html' %}
+{% block content %}
 
-    {% block content %}
-    <h1>Editar Cliente</h1>
-    <form method="post">
-        <div class="mb-3">
-            <label class="form-label" for="nome">Nome:</label>
-            <input class="form-control" type="text" id="nome" name="nome" value="{{cliente_a_editar.nome}}" required>
-        </div>
-        <div class="card mb-3">
-            <label for="username_cliente" class="form-label card-title">Nome de usuário: {{cliente_a_editar.username_cliente}}</label>
-        </div>
-        
-        <div class="mb-3">
-            <label class="form-label" for="telefone_celular">Telefone Celular:</label>
-            <input class="form-control" type="tel" id="telefone_celular" name="telefone_celular" value="{{cliente_a_editar.telefone_celular}}">
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="telefone_auxiliar">Telefone Auxiliar:</label>
-            <input class="form-control" type="tel" id="telefone_auxiliar" name="telefone_auxiliar" required placeholder="Telefone com DDD" value="{{cliente_a_editar.telefone_auxiliar}}">
-        </div>
-        <div class="mb-3 d-none" id="campo_cpf">
-            <label for="cpf" class="form-label">CPF:</label>
-            <input type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF" value="{{cliente_a_editar.cpf}}">
-        </div>
+<div class="card mt-3 shadow-sm">
+  <h4 class="card-header text-center fw-bold">Editar Cliente</h4>
+  <form class="card-body row g-4" method="post">
+    
+    <!-- Coluna 1 -->
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="nome" class="form-label">Nome:</label>
+        <input class="form-control" type="text" id="nome" name="nome" 
+               value="{{ cliente_a_editar.nome }}" required>
+      </div>
 
-        <div class="mb-3 d-none" id="campo_cnpj">
-            <label for="cnpj" class="form-label">CNPJ:</label>
-            <input type="text" class="form-control" id="cnpj" name="cnpj" placeholder="CNPJ" value="{{cliente_a_editar.cnpj}}">
+      <div class="card mb-3">
+        <div class="card-body p-2">
+          <h6 class="card-title m-0">Nome de usuário:</h6>
+          <p class="mb-0 fw-semibold text-primary">
+            {{ cliente_a_editar.username_cliente }}
+          </p>
         </div>
+      </div>
 
-        <div class="mb-3 ">
-            <label for="endereco" class="form-label">Endereço:</label>
-        </div>
-        <div class="mb-3 ">
-            <label for="cep" class="form-label">CEP:</label>
-            <input type="text" class="form-control" id="cep" name="cep" placeholder="CEP" value="{{cliente_a_editar.cep}}">
-        </div>
-        <div class="mb-3 ">
-            <label for="logradouro" class="form-label">Logradouro:</label>
-            <input type="text" class="form-control" id="logradouro" name="logradouro" placeholder="Logradouro (rua, avenida etc.)" value="{{cliente_a_editar.logradouro}}">
-        </div>
-        <div class="mb-3 ">
-            <label for="numero" class="form-label">Numero:</label>
-            <input type="text" class="form-control" id="numero" name="numero" placeholder="Número" value="{{cliente_a_editar.numero}}">
-        </div>
-        <div class="mb-3 ">
-            <label for="complemento" class="form-label">Complemento:</label>
-            <input type="text" class="form-control" id="complemento" name="complemento" placeholder="Complemento (apto, casa etc.)" value="{{cliente_a_editar.complemento}}">
-        </div>
-        <div class="mb-3 ">
-            <label for="bairro" class="form-label">Bairro:</label>
-            <input type="text" class="form-control" id="bairro" name="bairro" placeholder="Bairro" value="{{cliente_a_editar.bairro}}">
-        </div>
-        <div class="mb-3 ">
-            <label for="cidade" class="form-label">Cidade:</label>
-            <input type="text" class="form-control" id="cidade" name="cidade" placeholder="Cidade" value="{{cliente_a_editar.cidade}}">
-        </div>
-        <div class="mb-3 ">
-            <label for="estado" class="form-label">Estado:</label>
-            <input type="text" class="form-control" id="estado" name="estado" placeholder="Estado" value="{{cliente_a_editar.estado}}">
-        </div>
-        <div class="mb-3">
-            <label for="anotacoes" class="form-label">Anotações:</label>
-            <textarea class="form-control" id="anotacoes" name="anotacoes" rows="3">{{cliente_a_editar.anotacoes}}</textarea>
-        </div>
-        
-        <button class="btn btn-primary" type="submit">Salvar Cliente</button>
-    </form>
-    {% endblock %}
+      <div class="mb-3">
+        <label for="telefone_celular" class="form-label">Telefone Celular:</label>
+        <input class="form-control" type="tel" id="telefone_celular" name="telefone_celular" 
+               value="{{ cliente_a_editar.telefone_celular }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="telefone_auxiliar" class="form-label">Telefone Auxiliar:</label>
+        <input class="form-control" type="tel" id="telefone_auxiliar" name="telefone_auxiliar" 
+               placeholder="Telefone com DDD" value="{{ cliente_a_editar.telefone_auxiliar }}">
+      </div>
+
+      <!-- CPF e CNPJ -->
+      <div class="mb-3 {% if cliente_a_editar.cpf %}{% else %}d-none{% endif %}" id="campo_cpf">
+        <label for="cpf" class="form-label">CPF:</label>
+        <input type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF"
+               value="{{ cliente_a_editar.cpf }}">
+      </div>
+
+      <div class="mb-3 {% if cliente_a_editar.cnpj %}{% else %}d-none{% endif %}" id="campo_cnpj">
+        <label for="cnpj" class="form-label">CNPJ:</label>
+        <input type="text" class="form-control" id="cnpj" name="cnpj" placeholder="CNPJ"
+               value="{{ cliente_a_editar.cnpj }}">
+      </div>
+    </div>
+
+    <!-- Coluna 2 -->
+    <div class="col-md-6">
+      <h6 class="fw-bold mb-3">Endereço</h6>
+
+      <div class="mb-3">
+        <label for="cep" class="form-label">CEP:</label>
+        <input type="text" class="form-control" id="cep" name="cep" placeholder="CEP"
+               value="{{ cliente_a_editar.cep }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="logradouro" class="form-label">Logradouro:</label>
+        <input type="text" class="form-control" id="logradouro" name="logradouro" 
+               placeholder="Rua, avenida..." value="{{ cliente_a_editar.logradouro }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="numero" class="form-label">Número:</label>
+        <input type="text" class="form-control" id="numero" name="numero" 
+               placeholder="Número" value="{{ cliente_a_editar.numero }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="complemento" class="form-label">Complemento:</label>
+        <input type="text" class="form-control" id="complemento" name="complemento" 
+               placeholder="Apto, casa..." value="{{ cliente_a_editar.complemento }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="bairro" class="form-label">Bairro:</label>
+        <input type="text" class="form-control" id="bairro" name="bairro" 
+               placeholder="Bairro" value="{{ cliente_a_editar.bairro }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="cidade" class="form-label">Cidade:</label>
+        <input type="text" class="form-control" id="cidade" name="cidade" 
+               placeholder="Cidade" value="{{ cliente_a_editar.cidade }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="estado" class="form-label">Estado:</label>
+        <input type="text" class="form-control" id="estado" name="estado" 
+               placeholder="Estado" value="{{ cliente_a_editar.estado }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="anotacoes" class="form-label">Anotações:</label>
+        <textarea class="form-control" id="anotacoes" name="anotacoes" rows="4">{{ cliente_a_editar.anotacoes }}</textarea>
+      </div>
+    </div>
+
+    <!-- Botão -->
+    <div class="col-12 text-center">
+      <button class="btn btn-primary px-4" type="submit">💾 Salvar Cliente</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const tipoClienteSelect = document.getElementById('tipo_cliente');
+    const campoCpf = document.getElementById('campo_cpf');
+    const campoCnpj = document.getElementById('campo_cnpj');
+
+    if (tipoClienteSelect) {
+      tipoClienteSelect.addEventListener('change', function () {
+        campoCpf.classList.add('d-none');
+        campoCnpj.classList.add('d-none');
+        if (this.value === 'fisica') campoCpf.classList.remove('d-none');
+        if (this.value === 'juridica') campoCnpj.classList.remove('d-none');
+      });
+    }
+  });
+</script>
+{% endblock %}

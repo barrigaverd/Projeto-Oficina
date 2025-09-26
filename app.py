@@ -92,6 +92,7 @@ def delete_user(username):
 #Classes
 class Cliente(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
+    ordens_servico = db.relationship('OrdemServico', back_populates='cliente', cascade="all, delete-orphan")
     nome = db.Column(db.String(100), nullable=False)
     #login usuario
     username_cliente = db.Column(db.String(20), unique=True, nullable=False)
@@ -120,7 +121,8 @@ class Cliente(db.Model, UserMixin):
 
 class OrdemServico(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    cliente = db.relationship('Cliente', backref='ordens_servico')
+    # In class OrdemServico:
+    cliente = db.relationship('Cliente', back_populates='ordens_servico')
 
     #criação do numero da os
     numero_sequencial = db.Column(db.Integer, nullable = True)
@@ -612,7 +614,7 @@ def adicionar_servico(os_id):
 
         db.session.add(novo_item)
         db.session.commit()
-        return redirect(url_for("detalhes_os", id=os_id))
+        return redirect(url_for("detalhes_os", id=os_id) + "#adicionar_servico")
     
     return render_template("detalhes_os.html")
 
@@ -640,7 +642,7 @@ def adicionar_peca(os_id):
 
         db.session.add(novo_item)
         db.session.commit()
-        return redirect(url_for("detalhes_os", id=os_id))
+        return redirect(url_for("detalhes_os", id=os_id) + "#adicionar_peca")
     
     return render_template("detalhes_os.html")
 
@@ -703,9 +705,10 @@ def gerar_pdf_os(os_id):
     # 1. Busca os dados (igual a antes)
     ordem_servico = OrdemServico.query.get_or_404(os_id)
     
+    base_dir = os.path.dirname(os.path.abspath(__file__))
     # 2. Renderiza um template HTML para uma string (igual a antes)
     # Lembre-se que tínhamos falado em criar um pdf_template.html limpo
-    html_renderizado = render_template("template_pdf.html", ordem_servico=ordem_servico)
+    html_renderizado = render_template("template_pdf.html", ordem_servico=ordem_servico, base_dir=base_dir)
     
     # 3. Prepara um "arquivo" em memória para receber o PDF
     result = BytesIO()
@@ -766,7 +769,7 @@ def adicionar_foto(os_id):
         db.session.add(nova_foto)
         db.session.commit()
 
-    return redirect(url_for('detalhes_os', id=os_id))
+    return redirect(url_for('detalhes_os', id=os_id) + "#adicionar-foto")
 
 @app.route("/os/<int:foto_id>/remover_foto", methods=["POST"])
 @login_required
@@ -790,7 +793,7 @@ def remover_foto(foto_id):
         print(f"Erro ao deletar foto: {e}")
         db.session.rollback()
 
-    return redirect(url_for('detalhes_os', id=os_id))
+    return redirect(url_for('detalhes_os', id=os_id) + "#fotos_equipamento")
 
 if __name__ == "__main__":
     app.run(debug=True)

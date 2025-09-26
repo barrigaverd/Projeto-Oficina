@@ -40,6 +40,47 @@
           </div>
       </div>
     </div>
+
+    <div class="card mt-4" id="fotos_equipamento">
+        <h4 class="card-header">Fotos do Equipamento</h4>
+        <div class="card-body">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+
+                {# Inicia o loop para cada foto associada a esta OS #}
+                {% for foto in ordem_servico.fotos %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        
+                        {# Cria o link para a imagem na pasta de uploads envolvendo a imagem #}
+                        <a href="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}" target="_blank">
+                            <img src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}" 
+                                class="card-img-top" 
+                                alt="{{ foto.legenda or 'Foto da OS' }}" 
+                                style="height: 200px; object-fit: cover;">
+                        </a>
+                        
+                        {# Mostra a legenda se ela existir #}
+                        {% if foto.legenda %}
+                        <div class="card-body">
+                            <p class="card-text">{{ foto.legenda }}</p>
+                        </div>
+                        {% endif %}
+
+                        {# Adiciona um rodapé com um botão de excluir #}
+                        <div class="card-footer text-end">
+                            <form action="{{ url_for('remover_foto', foto_id=foto.id) }}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+
     <div class="card shadow-sm mb-4">
         <h4 class="text-center card-header">Serviços na OS</h4>
             <table class="table table-striped">

@@ -54,7 +54,27 @@
             padding: 6px;
             font-weight: bold;
         }
-    </style>
+        .fotos-table {
+        width: 100%;
+        border: none;
+        border-collapse: collapse;
+        text-align: center;
+        }
+
+        .fotos-table td {
+            border: none;
+            padding: 10px;
+            
+            text-align: center;
+            width: 33%; /* divide em 3 colunas */
+        }
+
+        .fotos-table img {
+            width: 150px;   /* tamanho fixo que xhtml2pdf respeita */
+            height: 150px;  /* garante que não estique */
+            
+        }
+</style>
 </head>
 <body>
     <table class="header-table">
@@ -69,6 +89,10 @@
             <td class="text-right">
                 <h2>Ordem de Serviço #{{ ordem_servico.numero_formatado }}</h2>
                 <p>Data: {{ ordem_servico.data_de_criacao.strftime('%d/%m/%Y') }}</p>
+            </td>
+            <td class="text-right">
+                <strong>Usuário do Portal:</strong> {{ ordem_servico.cliente.username_cliente }}<br>
+                <strong>Senha do Portal:</strong> {{ ordem_servico.cliente.username_cliente.split('.')[0] }}@{{ ordem_servico.data_de_criacao.year }}
             </td>
         </tr>
     </table>
@@ -85,6 +109,24 @@
         <strong>Marca / Modelo:</strong> {{ ordem_servico.marca }} / {{ ordem_servico.modelo }}<br>
         <strong>Defeito Relatado:</strong> {{ ordem_servico.defeito }}
     </p>
+
+    <div class="section-header">Fotos</div>
+    <table class="fotos-table">
+        {# Usa o filtro 'batch(3)' para agrupar as fotos em linhas de 3 #}
+        {% for row in ordem_servico.fotos|batch(3) %}
+        <tr>
+            {# Loop para cada foto dentro da linha #}
+            {% for foto in row %}
+            <td>
+                <img src="{{ base_dir }}/static/uploads/{{ foto.nome_arquivo }}">
+                <p>{{ foto.legenda or '' }}</p>
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+
+
 
     <div class="section-header">Serviços</div>
     <table class="items-table">
