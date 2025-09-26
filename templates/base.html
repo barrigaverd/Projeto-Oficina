@@ -32,45 +32,68 @@
 <body>
   <!-- Navbar -->
    <nav class="navbar navbar-expand-lg shadow-sm mb-4 border-bottom">
-    <div class="container">
-      <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">
-        <i class="bi bi-gear-fill me-2"></i>Oficina do Micro
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPublica" aria-controls="navbarPublica" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">
+      <i class="bi bi-gear-fill me-2"></i>Oficina do Micro
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin" aria-controls="navbarAdmin" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-      <div class="collapse navbar-collapse" id="navbarPublica">
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('index') }}">Início</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('listar_clientes') }}">
-              <i class="bi bi-people me-1"></i>Clientes
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('relatorios') }}">
-              <i class="bi bi-folder2-open me-1"></i>Ordens de Serviço
-            </a>
-          </li>
-          {% if current_user.is_authenticated %}
-            <li class="nav-item">
-              <a class="nav-link text-danger" href="{{ url_for('logout') }}">
-                <i class="bi bi-box-arrow-right me-1"></i> Sair
-              </a>
-            </li>
-          {% endif %}
-
-        </ul>
-        <button id="themeToggle" class="theme-toggle ms-3" title="Alternar tema">
-          <i id="themeIcon" class="bi bi-moon"></i>
-        </button>
+    <div class="collapse navbar-collapse" id="navbarAdmin">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         
-      </div>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('home') }}">
+            <i class="bi bi-house-door me-1"></i>Dashboard
+          </a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-plus-circle me-1"></i>Cadastros
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ url_for('cadastrar_cliente') }}">Cadastrar Cliente</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{ url_for('cadastrar_servico') }}">Cadastrar Serviço</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('cadastrar_peca') }}">Cadastrar Peça</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-search me-1"></i>Consultas
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ url_for('listar_clientes') }}">Listar Clientes</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('listar_servicos') }}">Listar Serviços</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('listar_pecas') }}">Listar Peças</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('relatorios') }}">
+              <i class="bi bi-file-earmark-bar-graph me-1"></i>Relatórios
+            </a>
+        </li>
+
+        {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link text-danger" href="{{ url_for('logout') }}">
+              <i class="bi bi-box-arrow-right me-1"></i>Sair
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+      
+      <button id="themeToggle" class="theme-toggle ms-3" title="Alternar tema">
+        <i id="themeIcon" class="bi bi-moon"></i>
+      </button>
+      
     </div>
-  </nav>
+  </div>
+</nav>
   
 
   <!-- Conteúdo -->
