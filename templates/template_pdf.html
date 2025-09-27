@@ -89,10 +89,12 @@
             <td class="text-right">
                 <h2>Ordem de Serviço #{{ ordem_servico.numero_formatado }}</h2>
                 <p>Data: {{ ordem_servico.data_de_criacao.strftime('%d/%m/%Y') }}</p>
-            </td>
-            <td class="text-right">
-                <strong>Usuário do Portal:</strong> {{ ordem_servico.cliente.username_cliente }}<br>
-                <strong>Senha do Portal:</strong> {{ ordem_servico.cliente.username_cliente.split('.')[0] }}@{{ ordem_servico.data_de_criacao.year }}
+                <br><br>
+                <div class="dados-usuario">
+                    <strong>Usuário do Portal:</strong> {{ ordem_servico.cliente.username_cliente }}<br>
+                    <strong>Senha do Portal:</strong> {{ ordem_servico.cliente.username_cliente.split('.')[0] }}@{{ ordem_servico.data_de_criacao.year }}
+                </div>
+                
             </td>
         </tr>
     </table>

@@ -2,7 +2,7 @@ from enum import unique
 from http import client
 from os import replace
 from sqlite3.dbapi2 import Timestamp
-from flask import Flask, render_template, request, redirect, url_for, abort, Response
+from flask import Flask, render_template, request, redirect, url_for, abort, Response, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from flask_bcrypt import Bcrypt
@@ -328,6 +328,8 @@ def cadastrar_cliente():
             )
         db.session.add(novo_cliente)
         db.session.commit()
+
+        flash("Cliente cadastrado com sucesso!", "success")
         return redirect(url_for("listar_clientes"))
 
     return render_template("cadastrar_cliente.html")
@@ -338,6 +340,7 @@ def deletar_cliente(id):
     cliente_a_deletar = Cliente.query.get(id)
     db.session.delete(cliente_a_deletar)
     db.session.commit()
+    flash("Cliente apagado com sucesso!", "success")
     return redirect(url_for("listar_clientes"))
 
 @app.route("/clientes/editar/<int:id>", methods=["GET", "POST"])
@@ -373,6 +376,7 @@ def editar_cliente(id):
         cliente_a_editar.estado = estado
         cliente_a_editar.anotacoes = anotacoes
         db.session.commit()
+        flash("Cliente editado com sucesso!", "success")
 
         return redirect(url_for("listar_clientes"))
     
@@ -425,6 +429,7 @@ def cadastrar_os(cliente_id):
             )
         db.session.add(nova_os)
         db.session.commit()
+        flash(f"OS cadastrado com sucesso!", "success")
         return redirect(url_for("detalhes_cliente", id=cliente_id))
 
     return render_template("cadastrar_os.html", cliente = cliente)
@@ -462,6 +467,7 @@ def deletar_os(id):
     id_do_cliente = os_a_deletar.cliente.id
     db.session.delete(os_a_deletar)
     db.session.commit()
+    flash("Os apagada com sucesso!", "success")
     return redirect(url_for("detalhes_cliente", id=id_do_cliente))
 
 @app.route("/servicos")
@@ -492,6 +498,7 @@ def cadastrar_servico():
             )
         db.session.add(novo_servico)
         db.session.commit()
+        flash("Serviço cadastrado com sucesso!", "success")
         return redirect(url_for("listar_servicos"))
     
     return render_template("cadastrar_servico.html")
@@ -512,6 +519,7 @@ def editar_servico(id):
         servico_a_editar.preco_unitario = preco_unitario
 
         db.session.commit()
+        flash("Serviço editado com sucesso!", "success")
 
         return redirect(url_for("listar_servicos"))
     
@@ -523,6 +531,7 @@ def deletar_servico(id):
     servico_a_deletar = Servico.query.get(id)
     db.session.delete(servico_a_deletar)
     db.session.commit()
+    flash("Serviço apagado com sucesso!", "success")
     return redirect(url_for("listar_servicos"))
 
 @app.route("/peca")
@@ -555,6 +564,7 @@ def cadastrar_peca():
             )
         db.session.add(nova_peca)
         db.session.commit()
+        flash("Peça cadastrada com sucesso!", "success")
         return redirect(url_for("listar_pecas"))
     
     return render_template("cadastrar_peca.html")
@@ -577,6 +587,7 @@ def editar_peca(id):
         peca_a_editar.preco_unitario = preco_unitario
 
         db.session.commit()
+        flash("Peça editada com sucesso!", "success")
 
         return redirect(url_for("listar_pecas"))
     
@@ -588,6 +599,7 @@ def deletar_peca(id):
     peca_a_deletar = Peca.query.get(id)
     db.session.delete(peca_a_deletar)
     db.session.commit()
+    flash("Peça apagada com sucesso!", "success")
     return redirect(url_for("listar_pecas"))
 
 @app.route("/item/adicionar/<int:os_id>", methods=["GET", "POST"])
@@ -614,6 +626,7 @@ def adicionar_servico(os_id):
 
         db.session.add(novo_item)
         db.session.commit()
+        flash("Serviço adicionado com sucesso!", "success")
         return redirect(url_for("detalhes_os", id=os_id) + "#adicionar_servico")
     
     return render_template("detalhes_os.html")
@@ -642,6 +655,7 @@ def adicionar_peca(os_id):
 
         db.session.add(novo_item)
         db.session.commit()
+        flash("Peça adicionado com sucesso!", "success")
         return redirect(url_for("detalhes_os", id=os_id) + "#adicionar_peca")
     
     return render_template("detalhes_os.html")
@@ -653,7 +667,9 @@ def remover_servico(id):
     os_id = item_a_deletar.ordem_servico.id
     db.session.delete(item_a_deletar)
     db.session.commit()
-    return redirect(url_for("detalhes_os", id = os_id))
+    flash("Serviço apagado com sucesso!", "success")
+    
+    return redirect(url_for("detalhes_os", id = os_id) + "#adicionar_servico")
 
 @app.route("/item_peca/deletar/<int:id>")
 @role_required('funcionario')
@@ -662,7 +678,8 @@ def remover_peca(id):
     os_id = peca_a_deletar.ordem_servico.id
     db.session.delete(peca_a_deletar)
     db.session.commit()
-    return redirect(url_for("detalhes_os", id = os_id))
+    flash("Peça removida com sucesso!", "success")
+    return redirect(url_for("detalhes_os", id = os_id)+ "#adicionar_peca")
 
 @app.route("/relatorios", methods=["GET", "POST"])
 @role_required('funcionario')
@@ -721,14 +738,16 @@ def gerar_pdf_os(os_id):
         # Cria um nome de arquivo dinâmico
         nome_arquivo = f"OS-{ordem_servico.numero_formatado}.pdf"
         # Retorna o PDF para o navegador como um download
+        flash("PDF gerado com sucesso!", "success")
         return Response(
             result.getvalue(),
             mimetype="application/pdf",
             headers={"Content-disposition": f"attachment; filename={nome_arquivo}"}
         )
+        
     
     # Se houve algum erro, retorna uma mensagem simples
-    return "Ocorreu um erro ao gerar o PDF.", 500
+    return flash("Ocorreu um erro ao gerar o PDF."), 500
 
 @app.route("/os/exibir_pdf/<int:os_id>")
 @login_required
@@ -768,6 +787,7 @@ def adicionar_foto(os_id):
         )
         db.session.add(nova_foto)
         db.session.commit()
+        flash("Foto adicionada com sucesso!", "success")
 
     return redirect(url_for('detalhes_os', id=os_id) + "#adicionar-foto")
 
@@ -788,6 +808,7 @@ def remover_foto(foto_id):
         # 4. Deleta o registro do banco de dados
         db.session.delete(foto_a_remover)
         db.session.commit()
+        flash("Foto apagada com sucesso!", "success")
     except Exception as e:
         # (Opcional) Adicionar uma mensagem de erro se algo der errado
         print(f"Erro ao deletar foto: {e}")

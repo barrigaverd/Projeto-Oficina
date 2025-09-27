@@ -27,6 +27,13 @@
       cursor: pointer;
       font-size: 1.3rem;
     }
+    .flash-toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1050; /* Ensures it stays on top of other content */
+        min-width: 250px;
+    }
   </style>
 </head>
 <body>
@@ -98,6 +105,16 @@
 
   <!-- Conteúdo -->
   <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} flash-toast alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
     {% block content %}{% endblock %}
   </main>
 
@@ -122,6 +139,15 @@
       html.setAttribute('data-bs-theme', next);
       localStorage.setItem('theme', next);
       toggleBtn.textContent = next === 'dark' ? '🌙' : '☀️';
+    });
+
+    window.addEventListener('load', function() {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(function(alert) {
+        setTimeout(function() {
+          new bootstrap.Alert(alert).close();
+        }, 5000)
+      });
     });
   </script>
   {% block scripts %}{% endblock %}
