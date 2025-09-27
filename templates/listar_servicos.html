@@ -1,36 +1,47 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Lista de Serviços</h1>
-<table class="table table-hover table-striped" >
-    <thead>
-        <tr>
-            <th>Descrição</th>
-            <th>Preço</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for servico in servicos %}
-            <tr>
-                <td>
-                    {{servico.descricao_servico}}
-                </td>
-                <td>
-                    R$ {{ "%.2f"|format(servico.preco_unitario|float) }}
-                </td>
-                <td>
-                    <a class="btn btn-warning btn-sm" href="{{url_for('editar_servico', id=servico.id)}}">Editar</a>
-                    <a class="btn btn-danger btn-sm" href="{{url_for('deletar_servico', id=servico.id)}}">Excluir</a>
-                </td>
-            </tr>
-        {%endfor%}
-    </tbody>
-</table>
 <div class="d-flex justify-content-center">
-    <a class="btn btn-primary btn-sm" href="{{ url_for('cadastrar_servico') }}">
-        Cadastrar Serviço
-    </a>
+  <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 45rem">
+    <h4 class="card-header text-center fw-bold">Lista de Serviços</h4>
+
+    {% if servicos|length == 0 %}
+      <div class="alert-secondary m-3 text-center">
+        Nenhum serviço cadastrado ainda. Clique em <strong>“Cadastrar Serviço”</strong> para adicionar.
+      </div>
+    {% else %}
+      <table class="table table-hover table-striped align-middle m-0">
+        <thead>
+          <tr>
+            <th>Descrição</th>
+            <th style="width: 20%;">Preço</th>
+            <th style="width: 25%;" class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for servico in servicos %}
+          <tr>
+            <td>{{ servico.descricao_servico }}</td>
+            <td>R$ {{ "%.2f"|format(servico.preco_unitario|float) }}</td>
+            <td class="text-end">
+              <a class="btn btn-warning btn-sm" href="{{ url_for('editar_servico', id=servico.id) }}">Editar</a>
+              <a class="btn btn-danger btn-sm"
+                 href="{{ url_for('deletar_servico', id=servico.id) }}"
+                 onclick="return confirm('Tem certeza que deseja excluir {{ servico.descricao_servico }}?');">
+                 Excluir
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
 </div>
 
+<div class="d-flex justify-content-center">
+  <a class="btn btn-primary btn-sm my-2" href="{{ url_for('cadastrar_servico') }}">
+    ➕ Cadastrar Serviço
+  </a>
+</div>
 {% endblock %}

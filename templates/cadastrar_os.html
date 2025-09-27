@@ -1,47 +1,69 @@
 {% extends 'base.html' %}
-    {% block content %}
-    
-    <div class="card">
-        <h5 class="card-title">
-            <strong>Informações do cliente</strong>
-        </h5>
-        <div class="card-body">
-            <div class="card-title">Nome: {{cliente.nome}}</div>
-            <div class="card-text">Telefone Celular: {{cliente.telefone_celular}}<br>Telefone auxiliar: {{cliente.telefone_auxiliar}}</div>
-            <div class="card-text">Endereço: {{cliente.logradouro}}, Nº{{cliente.numero}}, Bairro: {{cliente.bairro}}<br>{{cliente.cidade}} - {{cliente.estado}}</div>
-        </div>
-    </div><br>
-    <h2>Cadastrar OS</h2>
-    <form method="post">        
-        <div class="mb-3">
-            <label class="form-label" for="equipamento">Equipamento:</label>
-            <input class="form-control" type="text" name="equipamento">
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="marca">Marca:</label>
-            <input class="form-control" type="text" name="marca">
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="modelo">Modelo:</label>
-            <input class="form-control" type="text" name="modelo">
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="defeito">Defeito:</label>
-            <textarea class="form-control" name="defeito" id="defeito" placeholder="Digite aqui o defeito..."></textarea>
-        </div>
-        <select class="form-select mb-3" name="status" aria-label="Selecione exemplo padrao">
-            <option selected>Status da OS:</option>
-            <option value="Pendente">Pendente</option>
-            <option value="Aguardando aprovação">Aguardando aprovação</option>
-            <option value="Aprovado">Aprovado</option>
-            <option value="Em andamento">Em andamento</option>
-            <option value="Aguardando pagamento">Aguardando pagamento</option>
-            <option value="Concluído">Concluído</option>
-            <option value="Garantia">Garantia</option>
-            <option value="Cancelado">Cancelado</option>
+{% block content %}
+
+<div class="d-flex justify-content-center">
+  <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 55rem">
+
+    <!-- Informações do Cliente -->
+    <h5 class="card-header fw-bold">Informações do Cliente</h5>
+    <div class="card-body">
+      <p class="mb-1"><strong>Nome:</strong> {{ cliente.nome }}</p>
+      <p class="mb-1"><strong>Telefone Celular:</strong> {{ cliente.telefone_celular }}</p>
+      <p class="mb-3"><strong>Telefone Auxiliar:</strong> {{ cliente.telefone_auxiliar }}</p>
+      <p class="mb-0"><strong>Endereço:</strong> 
+        {{ cliente.logradouro }}, Nº{{ cliente.numero }}, Bairro {{ cliente.bairro }},
+        {{ cliente.cidade }} - {{ cliente.estado }}
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Formulário de Cadastro da OS -->
+<div class="d-flex justify-content-center">
+  <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 55rem">
+    <h5 class="card-header fw-bold text-center">Cadastrar Ordem de Serviço</h5>
+    <form class="card-body row g-3" method="post">
+      
+      <div class="col-md-6">
+        <label class="form-label" for="equipamento">Equipamento:</label>
+        <input class="form-control" type="text" id="equipamento" name="equipamento" required>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label" for="marca">Marca:</label>
+        <input class="form-control" type="text" id="marca" name="marca">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label" for="modelo">Modelo:</label>
+        <input class="form-control" type="text" id="modelo" name="modelo">
+      </div>
+
+      <div class="col-12">
+        <label class="form-label" for="defeito">Defeito Relatado:</label>
+        <textarea class="form-control" id="defeito" name="defeito" rows="3" placeholder="Descreva o defeito..." required></textarea>
+      </div>
+
+      <div class="col-md-6">
+        <label for="status" class="form-label">Status da OS:</label>
+        <select class="form-select" name="status" id="status" required>
+          <option value="" selected disabled>Selecione o status</option>
+          <option value="Pendente">Pendente</option>
+          <option value="Aguardando aprovação">Aguardando aprovação</option>
+          <option value="Aprovado">Aprovado</option>
+          <option value="Em andamento">Em andamento</option>
+          <option value="Aguardando pagamento">Aguardando pagamento</option>
+          <option value="Concluído">Concluído</option>
+          <option value="Garantia">Garantia</option>
+          <option value="Cancelado">Cancelado</option>
         </select>
-       
-        
-        <button class="btn btn-primary" type="submit">Salvar OS</button>
+      </div>
+
+      <div class="col-12 text-center">
+        <button class="btn btn-primary px-4" type="submit">💾 Salvar OS</button>
+      </div>
     </form>
-    {% endblock %}
+  </div>
+</div>
+
+{% endblock %}

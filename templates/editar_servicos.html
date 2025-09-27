@@ -1,26 +1,64 @@
 {% extends 'base.html' %}
+{% block content %}
 
-    {% block content %}
-    <h1>Editar Cliente</h1>
-    <form method="post">
-        <div class="mb-3">
-            <label class="form-label" for="descricao_servico">Descricao Servico:</label>
-            <input class="form-control" type="text" id="descricao_servico" name="descricao_servico" value="{{servico_a_editar.descricao_servico}}" placeholder="Descrição do serviço" required>
-        </div>
-        
-        <div class="mb-3">
-            <label class="form-label" for="detalhes_opcional">Detalhes opcional:</label>
-            <input class="form-control" type="tel" id="detalhes_opcional" name="detalhes_opcional" value="{{servico_a_editar.detalhes_opcional}}" placeholder="Detalhes (opcional)">
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="unidade_medida">Unidade Medida:</label>
-            <input class="form-control" type="tel" id="unidade_medida" name="unidade_medida" placeholder="Unidade de medida" value="{{servico_a_editar.unidade_medida}}">
-        </div>
-        <div class="mb-3 ">
-            <label for="cep" class="form-label">Preço unitário:</label>
-            <input type="text" class="form-control" id="preco_unitario" name="preco_unitario" placeholder="Preço unitário" value="{{servico_a_editar.preco_unitario}}">
-        </div>
-        
-        <button class="btn btn-primary" type="submit">Salvar serviço</button>
+<div class="d-flex justify-content-center">
+  <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 45rem">
+    
+    <h5 class="card-header fw-bold text-center">Editar Serviço</h5>
+    
+    <form class="card-body row g-3" method="post">
+
+      <div class="col-12">
+        <label class="form-label" for="descricao_servico">Descrição do Serviço:</label>
+        <input 
+          class="form-control" 
+          type="text" 
+          id="descricao_servico" 
+          name="descricao_servico" 
+          value="{{servico_a_editar.descricao_servico}}" 
+          placeholder="Digite a descrição do serviço"
+          required>
+      </div>
+
+      <div class="col-12">
+        <label class="form-label" for="detalhes_opcional">Detalhes (opcional):</label>
+        <textarea 
+          class="form-control" 
+          id="detalhes_opcional" 
+          name="detalhes_opcional" 
+          rows="2"
+          placeholder="Ex: tipo de manutenção, condições, observações...">{{servico_a_editar.detalhes_opcional}}</textarea>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label" for="unidade_medida">Unidade de Medida:</label>
+        <input 
+          class="form-control" 
+          type="text" 
+          id="unidade_medida" 
+          name="unidade_medida" 
+          placeholder="Ex: hora, serviço, un" 
+          value="{{servico_a_editar.unidade_medida}}">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label" for="preco_unitario">Preço Unitário (R$):</label>
+        <input 
+          type="number" 
+          step="0.01" 
+          class="form-control" 
+          id="preco_unitario" 
+          name="preco_unitario" 
+          placeholder="0,00" 
+          value="{{servico_a_editar.preco_unitario}}">
+      </div>
+
+      <div class="col-12 text-center mt-3">
+        <button class="btn btn-primary px-4" type="submit">💾 Salvar Serviço</button>
+      </div>
+
     </form>
-    {% endblock %}
+  </div>
+</div>
+
+{% endblock %}

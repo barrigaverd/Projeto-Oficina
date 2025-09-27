@@ -1,36 +1,47 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Lista de Peças</h1>
-<table class="table table-hover table-striped" >
-    <thead>
-        <tr>
-            <th>Nome da peça</th>
-            <th>Preço</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for peca in pecas %}
-            <tr>
-                <td>
-                    {{peca.nome_peca}}
-                </td>
-                <td>
-                    R$ {{ "%.2f"|format(peca.preco_unitario|float) }}
-                </td>
-                <td>
-                    <a class="btn btn-warning btn-sm" href="{{url_for('editar_peca', id=peca.id)}}">Editar</a>
-                    <a class="btn btn-danger btn-sm" href="{{url_for('deletar_peca', id=peca.id)}}">Excluir</a>
-                </td>
-            </tr>
-        {%endfor%}
-    </tbody>
-</table>
 <div class="d-flex justify-content-center">
-    <a class="btn btn-primary btn-sm" href="{{ url_for('cadastrar_peca') }}">
-        Cadastrar Peça
-    </a>
+  <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 45rem">
+    <h4 class="card-header text-center fw-bold">Lista de Peças</h4>
+
+    {% if pecas|length == 0 %}
+      <div class="alert-secondary m-3 text-center">
+        Nenhuma peça cadastrada ainda. Clique em <strong>“Cadastrar Peça”</strong> para adicionar.
+      </div>
+    {% else %}
+      <table class="table table-hover table-striped align-middle m-0">
+        <thead>
+          <tr>
+            <th>Nome da peça</th>
+            <th style="width: 20%;">Preço</th>
+            <th style="width: 25%;" class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for peca in pecas %}
+          <tr>
+            <td>{{ peca.nome_peca }}</td>
+            <td>R$ {{ "%.2f"|format(peca.preco_unitario|float) }}</td>
+            <td class="text-end">
+              <a class="btn btn-warning btn-sm" href="{{ url_for('editar_peca', id=peca.id) }}">Editar</a>
+              <a class="btn btn-danger btn-sm"
+                 href="{{ url_for('deletar_peca', id=peca.id) }}"
+                 onclick="return confirm('Tem certeza que deseja excluir {{ peca.nome_peca }}?');">
+                 Excluir
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
 </div>
 
+<div class="d-flex justify-content-center">
+  <a class="btn btn-primary btn-sm my-2" href="{{ url_for('cadastrar_peca') }}">
+    ➕ Cadastrar Peça
+  </a>
+</div>
 {% endblock %}

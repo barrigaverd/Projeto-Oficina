@@ -65,12 +65,29 @@
 
       <div class="collapse navbar-collapse" id="navbarPublica">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          {% if current_user.is_authenticated %}
+            {% if current_user.role == "funcionario" %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('home') }}">
+                  <i class="bi bi-house-door me-1"></i>Dashboard
+                </a>
+              </li>
+            {% elif current_user.role == "cliente" %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('dashboard_cliente') }}">
+                  <i class="bi bi-house-door me-1"></i>Meu Painel
+                </a>
+              </li>
+            {% endif %}
+          {% else %}
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('login') }}">Área Administrador</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('login_cliente') }}">Área do Cliente</a>
           </li>
+          {% endif %}
+          
           {% if current_user.is_authenticated %}
             <li class="nav-item">
               <a class="nav-link text-danger" href="{{ url_for('logout') }}">

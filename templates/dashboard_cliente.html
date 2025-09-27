@@ -1,32 +1,56 @@
 {% extends 'base_publica.html' %}
 
 {% block content %}
-<div class="table-responsive">
-        <table class="table table-sm table-hover table-striped align-middle">
-          <thead class="table-title">
-            <tr class="text-center">
-              <th>Número OS</th>
-              <th>Nome Cliente</th>
-              <th>Equipamento</th>
-              <th>Valor total</th>
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody>
+
+<div class="card shadow-sm mt-4">
+  <h5 class="card-header text-center fw-bold">
+    Minhas Ordens de Serviço
+  </h5>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover table-striped align-middle mb-0">
+        <thead class="table-dark">
+          <tr class="text-center">
+            <th style="width: 15%;">Número OS</th>
+            <th style="width: 25%;">Cliente</th>
+            <th style="width: 25%;">Equipamento</th>
+            <th style="width: 15%;">Valor Total</th>
+            <th style="width: 20%;">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if current_user.ordens_servico %}
             {% for ordem in current_user.ordens_servico %}
             <tr class="text-center">
-              <td>{{ ordem.numero_formatado }}</td>
+              <td class="fw-semibold">{{ ordem.numero_formatado }}</td>
               <td>{{ ordem.cliente.nome }}</td>
               <td>{{ ordem.equipamento }}</td>
-              <td>R$ {{ "%.2f"|format(ordem.valor_calculado|float) }}</td>
+              <td class="fw-bold text-success">
+                R$ {{ "%.2f"|format(ordem.valor_calculado|float) }}
+              </td>
               <td>
-                <a href="{{url_for('ver_os_cliente', id=ordem.id)}}" class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></a>
-                <a href="{{url_for('exibir_pdf_os', os_id=ordem.id)}}" class="btn btn-sm btn-primary"><i class="bi bi-file-earmark-pdf-fill"></i></a>
+                <a href="{{url_for('ver_os_cliente', id=ordem.id)}}" 
+                   class="btn btn-outline-primary btn-sm" title="Ver detalhes">
+                  <i class="bi bi-eye"></i>
+                </a>
+                <a href="{{url_for('exibir_pdf_os', os_id=ordem.id)}}" target="_blank"
+                   class="btn btn-outline-danger btn-sm" title="Visualizar PDF">
+                  <i class="bi bi-file-earmark-pdf-fill"></i>
+                </a>
               </td>
             </tr>
             {% endfor %}
-          </tbody>
-        </table>
-      </div>
+          {% else %}
+            <tr>
+              <td colspan="5" class="text-center text-muted py-4">
+                Nenhuma ordem de serviço cadastrada até o momento.
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
