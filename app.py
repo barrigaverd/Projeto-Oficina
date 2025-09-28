@@ -816,5 +816,9 @@ def remover_foto(foto_id):
 
     return redirect(url_for('detalhes_os', id=os_id) + "#fotos_equipamento")
 
+@app.route("/contato")
+def pagina_contato():
+    return render_template("pagina_contato.html")
+
 if __name__ == "__main__":
     app.run(debug=True)
