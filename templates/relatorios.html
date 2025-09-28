@@ -38,7 +38,7 @@
             <tr>
               <th>Número OS</th>
               <th>Nome Cliente</th>
-              <th>Equipamento</th>
+              <th>Status</th>
               <th>Valor total</th>
               <th class="text-center">Ação</th>
             </tr>
@@ -48,7 +48,11 @@
             <tr>
               <td>{{ ordem.numero_formatado }}</td>
               <td>{{ ordem.cliente.nome }}</td>
-              <td>{{ ordem.equipamento }}</td>
+              <td>
+                  <span id="status" class="badge bg-secondary align-middle">
+                    {{ ordem.status }}
+                  </span>
+              </td>
               <td>R$ {{ "%.2f"|format(ordem.valor_calculado|float) }}</td>
               <td class="text-center">
                 <a class="btn btn-success btn-sm" href="{{url_for('detalhes_os', id=ordem.id)}}">
@@ -64,6 +68,16 @@
     </div>
   </div>
 </div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+  const status = document.querySelector("#status");
+  if (status && status.textContent.trim() === "Concluído") {
+    status.classList.replace("bg-secondary", "bg-success");
+    status.classList.add("text-white");
+  }
+</script>
 {% endblock %}
 
 
