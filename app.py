@@ -387,10 +387,16 @@ def editar_cliente(id):
     
     return render_template("editar_cliente.html", cliente_a_editar = cliente_a_editar)
     
-@app.route("/clientes")
+@app.route("/clientes", methods = ["GET"])
 @role_required('funcionario')
 def listar_clientes():
-    clientes = Cliente.query.all()
+    termo_busca = request.args.get("termo_busca")
+    query_clientes = Cliente.query
+    
+    if termo_busca:
+        query_clientes = query_clientes.filter(Cliente.nome.ilike(f"%{termo_busca}%"))
+        
+    clientes = query_clientes.all()
     return render_template("listar_clientes.html", clientes = clientes)
 
 @app.route("/cliente/<int:id>")
@@ -478,7 +484,13 @@ def deletar_os(id):
 @app.route("/servicos")
 @role_required('funcionario')
 def listar_servicos():
-    servicos = Servico.query.all()
+    termo_busca = request.args.get("termo_busca")
+    servico_query = Servico.query
+
+    if termo_busca:
+        servico_query = servico_query.filter(Servico.descricao_servico.ilike(f"%{termo_busca}%"))
+    
+    servicos = servico_query.all()
 
     return render_template("listar_servicos.html", servicos = servicos)
 
@@ -539,10 +551,16 @@ def deletar_servico(id):
     flash("Serviço apagado com sucesso!", "success")
     return redirect(url_for("listar_servicos"))
 
-@app.route("/peca")
+@app.route("/peca", methods = ["GET"])
 @role_required('funcionario')
 def listar_pecas():
-    pecas = Peca.query.all()
+    termo_busca = request.args.get("termo_busca")
+    pecas_query = Peca.query
+
+    if termo_busca:
+        pecas_query = pecas_query.filter(Peca.nome_peca.ilike(f"%{termo_busca}%"))
+    
+    pecas = pecas_query.all()
 
     return render_template("listar_pecas.html", pecas = pecas)
 
