@@ -90,7 +90,7 @@
           
           {% if current_user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link text-danger" href="{{ url_for('logout') }}">
+              <a class="nav-link text-danger" href="{{ url_for('logout_cliente') }}">
                 <i class="bi bi-box-arrow-right me-1"></i> Sair
               </a>
             </li>
@@ -156,6 +156,10 @@
         }, 5000)
       });
     });
+
+    function retornar() {
+      history.back();
+    }
   </script>
 </body>
 </html>

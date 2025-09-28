@@ -231,7 +231,7 @@ def logout():
 def logout_cliente():
     logout_user()
     flash("Logoff efetuado!", "danger")
-    return redirect(url_for("login_cliente"))
+    return redirect(url_for("index"))
 
 @app.route("/login", methods = ("GET", "POST"))
 def login():
