@@ -1,53 +1,80 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="d-flex text-center mt-3">
-    <div class="card shadow-sm w-100 rounded-3 mx-auto my-3">
-        <h5 class="card-header">
-            <strong>Informações do cliente</strong>
-        </h5>
-        <div class="card-body">
-            <div class="card-title">Nome: {{cliente_a_detalhar.nome}}</div>
-            <div class="card-text">Telefone Celular: {{cliente_a_detalhar.telefone_celular}}<br>Telefone auxiliar: {{cliente_a_detalhar.telefone_auxiliar}}</div>
-            <div class="card-text">Endereço: {{cliente_a_detalhar.logradouro}}, Nº{{cliente_a_detalhar.numero}}, Bairro: {{cliente_a_detalhar.bairro}}<br>{{cliente_a_detalhar.cidade}} - {{cliente_a_detalhar.estado}}</div>
-        </div>
+
+<!-- Informações do Cliente -->
+<div class="d-flex justify-content-center mt-3">
+  <div class="card shadow-sm w-100 rounded-3">
+    <h5 class="card-header fw-bold text-center">
+      Informações do Cliente
+    </h5>
+    <div class="card-body">
+      <p class="mb-1"><strong>Nome:</strong> {{ cliente_a_detalhar.nome }}</p>
+      <p class="mb-1">
+        <strong>Telefone Celular:</strong> {{ cliente_a_detalhar.telefone_celular }} <br>
+        <strong>Telefone Auxiliar:</strong> {{ cliente_a_detalhar.telefone_auxiliar }}
+      </p>
+      <p class="mb-0">
+        <strong>Endereço:</strong>
+        {{ cliente_a_detalhar.logradouro }}, Nº {{ cliente_a_detalhar.numero }},
+        Bairro: {{ cliente_a_detalhar.bairro }} <br>
+        {{ cliente_a_detalhar.cidade }} - {{ cliente_a_detalhar.estado }}
+      </p>
     </div>
+  </div>
 </div>
-<div class="card text-center mt-3">
-    <h3 class="card-header text-center">Pedidos</h3>
-    <table class="table table-hover table-striped" >
-        <thead>
-            <tr>
-                <th>Nº OS</th>
-                <th>Equipamento</th>
-                <th>Defeito</th>
-                <th>Status</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for ordens in ordens_servico %}
-            <tr class="card-body">
-                <td>
-                    {{ordens.numero_formatado}}
-                </td>
-                <td>
-                    {{ordens.equipamento}}
-                </td>
-                <td>
-                    {{ordens.defeito}}
-                </td>
-                <td>
-                    {{ordens.status}}
-                </td>
-                <td>
-                    <a class="btn btn-primary btn-sm" href="{{url_for('detalhes_os', id = ordens.id)}}">Abrir / Editar</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
+
+<!-- Pedidos (Ordens de Serviço) -->
+<div class="card shadow-sm text-center mt-4">
+  <h5 class="card-header fw-bold">Pedidos (Ordens de Serviço)</h5>
+  <div class="table-responsive">
+    <table class="table table-striped align-middle mb-0">
+      <thead class="table-dark text-center">
+        <tr>
+          <th>Nº OS</th>
+          <th>Equipamento</th>
+          <th>Defeito</th>
+          <th>Status</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ordens in ordens_servico %}
+        <tr class="text-center">
+          <td>{{ ordens.numero_formatado }}</td>
+          <td>{{ ordens.equipamento }}</td>
+          <td>{{ ordens.defeito }}</td>
+          <td>
+            <span class="badge 
+              {% if ordens.status == 'Concluído' %} bg-success 
+              {% elif ordens.status == 'Pendente' %} bg-warning text-dark
+              {% elif ordens.status == 'Cancelado' %} bg-danger
+              {% else %} bg-secondary {% endif %}">
+              {{ ordens.status }}
+            </span>
+          </td>
+          <td>
+            <a class="btn btn-primary btn-sm" href="{{ url_for('detalhes_os', id=ordens.id) }}">
+              Abrir / Editar
+            </a>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="text-muted">Nenhum pedido encontrado para este cliente.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
+  </div>
 </div>
-<a href="{{ url_for('cadastrar_os', cliente_id=cliente_a_detalhar.id) }}" class="btn btn-primary btn-sm mt-3">Novo Pedido</a>
+
+<!-- Botão Novo Pedido -->
+<div class="d-flex justify-content-center mt-3">
+  <a href="{{ url_for('cadastrar_os', cliente_id=cliente_a_detalhar.id) }}" 
+     class="btn btn-success btn-sm px-4">
+    + Novo Pedido
+  </a>
+</div>
 
 {% endblock %}

@@ -224,11 +224,13 @@ def load_user(user_id_string): # O nome agora reflete que é uma string
 @app.route("/logout")
 def logout():
     logout_user()
+    flash("Logoff efetuado!", "danger")
     return redirect(url_for("login"))
 
 @app.route("/logout_cliente")
 def logout_cliente():
     logout_user()
+    flash("Logoff efetuado!", "danger")
     return redirect(url_for("login_cliente"))
 
 @app.route("/login", methods = ("GET", "POST"))
@@ -242,6 +244,9 @@ def login():
         if user and bcrypt.check_password_hash(user.password_hash, password):
             login_user(user)
             return redirect(url_for('home'))
+        else:
+            flash("Usuário ou senha incorretos", "danger")
+            return redirect(url_for('login'))
 
     return render_template('login.html')
 
