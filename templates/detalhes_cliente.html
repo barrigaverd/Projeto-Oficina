@@ -76,5 +76,56 @@
     + Novo Pedido
   </a>
 </div>
+<!-- Pedidos (Orçamento) -->
+<div class="card shadow-sm text-center mt-4">
+  <h5 class="card-header fw-bold">Pedidos (Orçamento)</h5>
+  <div class="table-responsive">
+    <table class="table table-striped align-middle mb-0">
+      <thead class="table-dark text-center">
+        <tr>
+          <th>Nº Orçamento</th>
+          <th>Equipamento</th>
+          <th>Defeito</th>
+          <th>Status</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for orcamento in orcamentos %}
+        <tr class="text-center">
+          <td>{{ orcamento.numero_formatado }}</td>
+          <td>{{ orcamento.equipamento }}</td>
+          <td>{{ orcamento.defeito }}</td>
+          <td>
+            <span class="badge 
+              {% if orcamento.status == 'Aprovado' %} bg-success 
+              {% elif orcamento.status == 'Pendente' %} bg-warning text-dark
+              {% elif orcamento.status == 'Reprovado' %} bg-danger
+              {% else %} bg-secondary {% endif %}">
+              {{ orcamento.status }}
+            </span>
+          </td>
+          <td>
+            <a class="btn btn-primary btn-sm" href="{{ url_for('detalhes_orcamento', id=orcamento.id) }}">
+              Abrir / Editar
+            </a>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="text-muted">Nenhum orçamento encontrado para este cliente.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="d-flex justify-content-center mt-3">
+  <a href="{{ url_for('novo_orcamento', cliente_id=cliente_a_detalhar.id) }}" 
+     class="btn btn-success btn-sm px-4">
+    + Novo Orçamento
+  </a>
+</div>
 
 {% endblock %}

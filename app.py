@@ -16,6 +16,7 @@ from io import BytesIO
 from xhtml2pdf import pisa
 import os
 from werkzeug.utils import secure_filename
+from datetime import date
 
 
 
@@ -93,6 +94,7 @@ def delete_user(username):
 class Cliente(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
     ordens_servico = db.relationship('OrdemServico', back_populates='cliente', cascade="all, delete-orphan")
+    orcamento = db.relationship('Orcamento', back_populates='cliente', cascade="all, delete-orphan")
     nome = db.Column(db.String(100), nullable=False)
     #login usuario
     username_cliente = db.Column(db.String(20), unique=True, nullable=False)
@@ -154,7 +156,51 @@ class OrdemServico(db.Model):
     @property
     def numero_formatado(self):
         return f"{self.numero_sequencial:03d}-{self.ano}"
-    
+
+class Orcamento(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    cliente_id = db.Column(db.Integer, db.ForeignKey('cliente.id'), nullable = False)
+    cliente = db.relationship('Cliente', back_populates='orcamento')
+    numero_orcamento = db.Column(db.Integer, nullable = True)
+    ano = db.Column(db.Integer, nullable = True)
+    marca = db.Column(db.String(100))
+    modelo = db.Column(db.String(100))
+    equipamento = db.Column(db.String(150), nullable = False)
+    numero_de_serie = db.Column(db.String(100))
+    validade_do_orcamento = db.Column(db.Date)
+    problema_informado = db.Column(db.Text, nullable = False)
+    problema_constatado = db.Column(db.Text, nullable = False)
+    #servico_executado = db.Column(db.Text, nullable = False)
+    observacoes_cliente = db.Column(db.Text)
+    observacoes_internas = db.Column(db.Text)
+    status = db.Column(db.String(50), nullable = False)
+    tecnico_responsavel = db.Column(db.String(50))
+    data_de_criacao = db.Column(db.Date, nullable = False, default = date.today)
+    itens_servico = db.relationship('ItemOrcamentoServico', backref='orcamento', lazy=True, cascade="all, delete-orphan")
+    itens_peca = db.relationship('ItemOrcamentoPeca', backref='orcamento', lazy=True, cascade="all, delete-orphan")
+    fotos = db.relationship('Foto', backref='orcamento', lazy=True, cascade="all, delete-orphan")
+
+    @property
+    def numero_formatado(self):
+        if self.numero_orcamento and self.ano:
+            return f"{self.numero_orcamento:03d}-{self.ano}"
+        return "Sem número"
+
+
+class ItemOrcamentoServico(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    quantidade = db.Column(db.Integer, nullable = False)
+    preco_cobrado = db.Column(db.Float, nullable = False)
+    orcamento_id = db.Column(db.Integer, db.ForeignKey('orcamento.id'))
+    servico_id = db.Column(db.Integer, db.ForeignKey('servico.id'))
+
+class ItemOrcamentoPeca(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    quantidade = db.Column(db.Integer, nullable = False)
+    preco_cobrado = db.Column(db.Float, nullable = False)
+    orcamento_id = db.Column(db.Integer, db.ForeignKey('orcamento.id'))
+    peca_id = db.Column(db.Integer, db.ForeignKey('peca.id'))
+
 class Servico(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     descricao_servico = db.Column(db.String(150), nullable = False)
@@ -187,6 +233,7 @@ class ItemPeca(db.Model):
     preco_cobrado = db.Column(db.Float, nullable = False)
     ordem_servico_id = db.Column(db.Integer, db.ForeignKey('ordem_servico.id'))
     peca_id = db.Column(db.Integer, db.ForeignKey('peca.id'))
+
 class Usuario(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(80), nullable = False, unique = True)
@@ -404,7 +451,8 @@ def listar_clientes():
 def detalhes_cliente(id):
     cliente_a_detalhar = Cliente.query.get(id)
     ordens_servico = cliente_a_detalhar.ordens_servico
-    return render_template("detalhes_cliente.html", cliente_a_detalhar = cliente_a_detalhar, ordens_servico = ordens_servico)
+    orcamentos = cliente_a_detalhar.orcamento
+    return render_template("detalhes_cliente.html", cliente_a_detalhar = cliente_a_detalhar, ordens_servico = ordens_servico, orcamentos=orcamentos)
 
 @app.route("/cliente/<int:cliente_id>/os/cadastrar", methods = ["GET", "POST"])
 @role_required('funcionario')
@@ -842,6 +890,113 @@ def remover_foto(foto_id):
 @app.route("/contato")
 def pagina_contato():
     return render_template("pagina_contato.html")
+
+@app.route("/orcamento/<int:cliente_id>/novo", methods=["POST", "GET"])
+@login_required
+@role_required('funcionario')
+def novo_orcamento(cliente_id):
+    cliente = Cliente.query.get_or_404(cliente_id)
+    
+    if request.method == "POST":
+        # --- Lógica para gerar o número do Orçamento ---
+        ano_atual = datetime.utcnow().year
+        maior_numero_orc_do_ano = db.session.query(func.max(Orcamento.numero_orcamento))\
+                                    .filter_by(ano=ano_atual).scalar()        
+       
+        if maior_numero_orc_do_ano is None:
+            proximo_numero = 1
+        else:
+            proximo_numero = maior_numero_orc_do_ano + 1
+
+        validade_str = request.form.get("validade_do_orcamento")  # "2025-10-02"
+        validade_date = datetime.strptime(validade_str, "%Y-%m-%d").date()
+
+        # --- Lógica principal ---
+        novo_orcamento = Orcamento(
+            cliente_id = cliente_id,
+            numero_orcamento = proximo_numero, # Usando o número gerado
+            ano=ano_atual,
+            equipamento = request.form.get('equipamento'),
+            marca = request.form.get('marca'),
+            modelo = request.form.get('modelo'),
+            numero_de_serie = request.form.get('numero_de_serie'),
+            validade_do_orcamento = validade_date,
+            problema_informado = request.form.get('problema_informado'),
+            problema_constatado = request.form.get('problema_constatado'),
+            observacoes_cliente = request.form.get('observacoes_cliente'),
+            observacoes_internas = request.form.get('observacoes_internas'),
+            status = request.form.get('status'),
+            data_de_criacao = datetime.now().date(),
+            tecnico_responsavel = request.form.get('tecnico_responsavel')
+        )
+        db.session.add(novo_orcamento)
+        db.session.commit()
+        
+        flash(f"Orçamento {novo_orcamento.numero_orcamento} criado com sucesso! Agora adicione os itens.", "success")
+        
+        # Redireciona para uma futura página de detalhes do orçamento
+        # return redirect(url_for("detalhes_orcamento", id=novo_orcamento.id))
+        
+        # Por enquanto, redireciona para a página do cliente
+        return redirect(url_for("detalhes_cliente", id=cliente_id))
+
+    return render_template("novo_orcamento.html", cliente = cliente)
+
+@app.route("/orcamento/deletar/<int:id>")
+@role_required('funcionario')
+def deletar_orcamento(id):
+    orcamento_a_deletar = Orcamento.query.get(id)
+    id_do_cliente = orcamento_a_deletar.cliente.id
+    db.session.delete(orcamento_a_deletar)
+    db.session.commit()
+    flash("Orçamento apagado com sucesso!", "success")
+    return redirect(url_for("detalhes_cliente", id=id_do_cliente))
+
+@app.route("/orcamento/<int:id>", methods=["GET", "POST"])
+@role_required('funcionario')
+def detalhes_orcamento(id):
+    orcamento = Orcamento.query.get(id)
+    lista_servicos = Servico.query.all()
+    lista_pecas = Peca.query.all()
+
+    validade_str = request.form.get("validade_do_orcamento")  # "2025-10-02"
+    if validade_str:
+        validade_date = datetime.strptime(validade_str, "%Y-%m-%d").date()
+    else:
+        validade_date = None
+
+
+
+    if request.method == "POST":
+        equipamento = request.form.get('equipamento')
+        marca = request.form.get('marca')
+        modelo = request.form.get('modelo')
+        numero_de_serie = request.form.get('numero_de_serie')
+        validade_do_orcamento = validade_date
+        problema_informado = request.form.get('problema_informado')
+        problema_constatado = request.form.get('problema_constatado')
+        observacoes_cliente = request.form.get('observacoes_cliente')
+        observacoes_internas = request.form.get('observacoes_internas')
+        status = request.form.get('status')
+        tecnico_responsavel = request.form.get('tecnico_responsavel')
+
+        orcamento.equipamento = equipamento
+        orcamento.marca = marca
+        orcamento.modelo = modelo
+        orcamento.numero_de_serie = numero_de_serie
+        orcamento.validade_do_orcamento = validade_do_orcamento
+        orcamento.problema_informado = problema_informado
+        orcamento.problema_constatado = problema_constatado
+        orcamento.observacoes_cliente = observacoes_cliente
+        orcamento.observacoes_internas = observacoes_internas
+        orcamento.status = status
+        orcamento.tecnico_responsavel = tecnico_responsavel
+    
+        db.session.commit()
+
+        return redirect(url_for("detalhes_cliente", id=orcamento.cliente_id))
+    
+    return render_template("detalhes_orcamento.html", orcamento = orcamento, lista_servicos = lista_servicos, lista_pecas=lista_pecas)
 
 if __name__ == "__main__":
     app.run(debug=True)
