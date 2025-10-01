@@ -47,17 +47,16 @@
       </div>
 
       <div class="col-md-6">
-        <label for="status" class="form-label">Status da OS:</label>
-        <select class="form-select" name="status" id="status" required>
-          <option value="" selected disabled>Selecione o status</option>
-          <option value="Pendente">Pendente</option>
-          <option value="Aguardando aprovação">Aguardando aprovação</option>
-          <option value="Aprovado">Aprovado</option>
-          <option value="Em andamento">Em andamento</option>
-          <option value="Aguardando pagamento">Aguardando pagamento</option>
-          <option value="Concluído">Concluído</option>
-          <option value="Garantia">Garantia</option>
-          <option value="Cancelado">Cancelado</option>
+        <label for="status" class="form-label">Status da OS</label>
+        <select class="form-select" name="status" id="status">
+          {% set status_opcoes = ['Pendente','Em andamento','Aguardando pagamento','Concluído','Garantia','Cancelado'] %}
+          {% for status_opcao in status_opcoes %}
+          
+          <option value="{{ status_opcao }}" {% if status_opcao == 'Pendente' %}selected{% endif %}>
+            {{ status_opcao }}
+          </option>
+
+          {% endfor %}
         </select>
       </div>
 

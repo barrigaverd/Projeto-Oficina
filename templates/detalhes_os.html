@@ -19,7 +19,10 @@
 <div class="card mt-4 shadow-sm">
   <h5 class="card-header text-center fw-bold">Detalhes da OS #{{ordem_servico.numero_formatado}}</h5>
   <form class="card-body row g-3" method="post">
-    
+    <div class="col-md-6">
+        <label class="form-label" for="tecnico_responsavel">Técnico responsável:</label>
+        <input class="form-control" type="text" id="tecnico_responsavel" name="tecnico_responsavel" value="{{ordem_servico.tecnico_responsavel or ''}}">
+    </div>
     <div class="col-md-6">
       <label for="equipamento" class="form-label">Equipamento</label>
       <input class="form-control" type="text" name="equipamento" value="{{ordem_servico.equipamento}}">
@@ -32,9 +35,29 @@
       <label for="modelo" class="form-label">Modelo</label>
       <input class="form-control" type="text" name="modelo" value="{{ordem_servico.modelo}}">
     </div>
+    <div class="col-md-6">
+        <label class="form-label" for="numero_de_serie">Numero de série:</label>
+        <input class="form-control" type="text" id="numero_de_serie" name="numero_de_serie" value="{{ordem_servico.numero_de_serie or ''}}">
+    </div>
     <div class="col-12">
       <label for="defeito" class="form-label">Defeito Relatado</label>
       <textarea class="form-control" name="defeito" id="defeito" rows="3">{{ordem_servico.defeito}}</textarea>
+    </div>
+    <div class="col-12">
+        <label class="form-label" for="problema_constatado">Problema constatado:</label>
+        <textarea class="form-control" id="problema_constatado" name="problema_constatado" rows="3">{{ordem_servico.problema_constatado or ''}}</textarea>
+    </div>
+    <div class="col-12">
+        <label class="form-label" for="servico_executado">Serviço executado:</label>
+        <textarea class="form-control" id="servico_executado" name="servico_executado" rows="3">{{ordem_servico.servico_executado or ''}}</textarea>
+    </div>
+    <div class="col-12">
+        <label class="form-label" for="observacoes_cliente">Observações (Visível para o cliente):</label>
+        <textarea class="form-control" id="observacoes_cliente" name="observacoes_cliente" rows="3">{{ordem_servico.observacoes_cliente or ''}}</textarea>
+    </div>
+    <div class="col-12">
+        <label class="form-label" for="observacoes_internas">Observações (Não visível para o cliente):</label>
+        <textarea class="form-control" id="observacoes_internas" name="observacoes_internas" rows="3">{{ordem_servico.observacoes_internas or ''}}</textarea>
     </div>
     <div class="col-md-6">
       <label for="status" class="form-label">Status da OS</label>

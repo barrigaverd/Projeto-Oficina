@@ -85,7 +85,6 @@
         <tr>
           <th>Nº Orçamento</th>
           <th>Equipamento</th>
-          <th>Defeito</th>
           <th>Status</th>
           <th>Ação</th>
         </tr>
@@ -95,7 +94,6 @@
         <tr class="text-center">
           <td>{{ orcamento.numero_formatado }}</td>
           <td>{{ orcamento.equipamento }}</td>
-          <td>{{ orcamento.defeito }}</td>
           <td>
             <span class="badge 
               {% if orcamento.status == 'Aprovado' %} bg-success 

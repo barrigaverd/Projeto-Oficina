@@ -64,25 +64,38 @@
           <textarea class="form-control" id="observacoes_internas" name="observacoes_internas" rows="3">{{orcamento.observacoes_internas}}</textarea>
       </div>
 
+      <div class="card mt-4 shadow-sm">
+  <h5 class="card-header text-center fw-bold">Detalhes do Orçamento #{{orcamento.numero_formatado}}</h5>
+  
+    <form class="card-body row g-3" method="post" action="{{ url_for('detalhes_orcamento', id=orcamento.id) }}">
       <div class="col-md-6">
-        <label for="status" class="form-label">Status do Orçamento</label>
-        <select class="form-select" name="status" id="status">
-          {% set status_opcoes = ['Pendente','Aguardando aprovação','Aprovado', 'Reprovado'] %}
-          {% for status_opcao in status_opcoes %}
-          <option value="{{ status_opcao }}" {% if status_opcao == orcamento.status %}selected{% endif %}>
-            {{ status_opcao }}
-          </option>
-          {% endfor %}
-        </select>
+          <label for="status" class="form-label">Status do Orçamento</label>
+          <select class="form-select" name="status" id="status">
+            {% set status_opcoes = ['Pendente','Aguardando aprovação','Aprovado', 'Reprovado', 'Convertido em OS'] %}
+            {% for status_opcao in status_opcoes %}
+            <option value="{{ status_opcao }}" {% if status_opcao == orcamento.status %}selected{% endif %}>
+              {{ status_opcao }}
+            </option>
+            {% endfor %}
+          </select>
+      </div>
+      
+      <div class="col-12 text-center">
+          <button class="btn btn-success btn-sm" type="submit">💾 Salvar Alterações</button>
       </div>
 
-    <div class="col-12 text-center">
-      <button class="btn btn-success btn-sm" type="submit">💾 Salvar</button>
-      <a class="btn btn-danger btn-sm" href="{{url_for('deletar_orcamento', id=orcamento.id)}}">🗑 Excluir</a>
-      <a class="btn btn-secondary btn-sm" href="{{url_for('gerar_pdf_orcamento', orcamento_id=orcamento.id)}}">📄 Gerar PDF</a>
-      <a class="btn btn-info btn-sm" href="{{url_for('exibir_pdf_orcamento', orcamento_id=orcamento.id)}}" target="_blank">👁️ Exibir PDF</a>
+    </form> <div class="card-footer text-center">
+        <a class="btn btn-danger btn-sm" href="{{url_for('deletar_orcamento', id=orcamento.id)}}">🗑 Excluir</a>
+        <a class="btn btn-secondary btn-sm" href="{{url_for('gerar_pdf_orcamento', orcamento_id=orcamento.id)}}">📄 Gerar PDF</a>
+        <a class="btn btn-info btn-sm" href="{{url_for('exibir_pdf_orcamento', orcamento_id=orcamento.id)}}" target="_blank">👁️ Exibir PDF</a>
+        
+        {% if orcamento.status == 'Aprovado' %}
+        <form action="{{ url_for('converter_orcamento_para_os', orcamento_id=orcamento.id) }}" method="POST" class="d-inline">
+          <button type="submit" class="btn btn-primary btn-sm">✔️ Converter em Ordem de Serviço</button>
+        </form>
+        {% endif %}
     </div>
-  </form>
+  </div>
 </div>
 
 <div class="card mt-4" id="fotos_equipamento">

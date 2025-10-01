@@ -123,28 +123,39 @@ class Cliente(db.Model, UserMixin):
 
 class OrdemServico(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    # In class OrdemServico:
     cliente = db.relationship('Cliente', back_populates='ordens_servico')
+    cliente_id = db.Column(db.Integer, db.ForeignKey('cliente.id'), nullable = False)
 
-    #criação do numero da os
+    # --- Campos de Numeração ---
     numero_sequencial = db.Column(db.Integer, nullable = True)
     ano = db.Column(db.Integer, nullable = True)
-
-    cliente_id = db.Column(db.Integer, db.ForeignKey('cliente.id'), nullable = False)
-    #validade_do_orcamento = db.Column(db.String(100))
-    #prazo_de_execucao = db.Column(db.String(100))
+    
+    # --- Campos do Equipamento ---
+    equipamento = db.Column(db.String(150), nullable = False)
     marca = db.Column(db.String(100))
     modelo = db.Column(db.String(100))
-    equipamento = db.Column(db.String(150), nullable = False)
-    #numero_de_serie = db.Column(db.String(100))
+    
+    # --- NOVOS CAMPOS ADICIONADOS ---
+    numero_de_serie = db.Column(db.String(100)) # <--- NOVO
+    tecnico_responsavel = db.Column(db.String(50)) # <--- NOVO
+
+    # --- Campos de Descrição do Problema/Serviço ---
     defeito = db.Column(db.Text, nullable = False)
-    #observacoes = db.Column(db.Text)
+    problema_constatado = db.Column(db.Text) # <--- NOVO
+    servico_executado = db.Column(db.Text) # <--- NOVO
+
+    # --- NOVOS CAMPOS DE OBSERVAÇÕES ---
+    observacoes_cliente = db.Column(db.Text) # <--- NOVO
+    observacoes_internas = db.Column(db.Text) # <--- NOVO
+
+    # --- Campos de Controle ---
     status = db.Column(db.String(50), nullable = False)
-    #valor_total = db.Column(db.Float)
     data_de_criacao = db.Column(db.DateTime, nullable = False, default = datetime.now)
+    orcamento_id = db.Column(db.Integer, db.ForeignKey('orcamento.id'), nullable=True, unique=True)
+    
+    # --- Relacionamentos ---
     itens_servico = db.relationship('ItemServico', backref='ordem_servico', lazy=True, cascade="all, delete-orphan")
     itens_peca = db.relationship('ItemPeca', backref='ordem_servico', lazy=True, cascade="all, delete-orphan")
-
     fotos = db.relationship('Foto', backref='ordem_servico', lazy=True, cascade="all, delete-orphan")
 
     @property
@@ -1225,6 +1236,77 @@ def exibir_pdf_orcamento(orcamento_id):
     
     # 2. Renderiza o template do PDF diretamente
     return render_template("template_pdf_orcamento.html", orcamento=orcamento)
+
+
+# app.py
+
+@app.route("/orcamento/converter/<int:orcamento_id>", methods=["POST"])
+@login_required
+@role_required('funcionario')
+def converter_orcamento_para_os(orcamento_id):
+    orcamento = Orcamento.query.get_or_404(orcamento_id)
+
+    if orcamento.status != 'Aprovado':
+        flash("Apenas orçamentos aprovados podem ser convertidos em OS.", "warning")
+        return redirect(url_for('detalhes_orcamento', id=orcamento_id))
+
+    os_existente = OrdemServico.query.filter_by(orcamento_id=orcamento.id).first()
+    if os_existente:
+        flash(f"Este orçamento já foi convertido na OS #{os_existente.numero_formatado}.", "info")
+        return redirect(url_for('detalhes_os', id=os_existente.id))
+
+    ano_atual = datetime.utcnow().year
+    maior_numero_os_do_ano = db.session.query(func.max(OrdemServico.numero_sequencial)).filter_by(ano=ano_atual).scalar()
+    novo_numero_sequencial = 1 if maior_numero_os_do_ano is None else maior_numero_os_do_ano + 1
+
+    # --- LÓGICA DE CÓPIA ATUALIZADA ---
+    nova_os = OrdemServico(
+        cliente_id=orcamento.cliente_id,
+        numero_sequencial=novo_numero_sequencial,
+        ano=ano_atual,
+        equipamento=orcamento.equipamento,
+        marca=orcamento.marca,
+        modelo=orcamento.modelo,
+        status='Em andamento',
+        orcamento_id=orcamento.id,
+        
+        # Copiando os novos campos
+        numero_de_serie=orcamento.numero_de_serie,
+        tecnico_responsavel=orcamento.tecnico_responsavel,
+        defeito=orcamento.problema_informado, # 'defeito' na OS recebe 'problema_informado'
+        problema_constatado=orcamento.problema_constatado,
+        observacoes_cliente=orcamento.observacoes_cliente,
+        observacoes_internas=orcamento.observacoes_internas
+    )
+    db.session.add(nova_os)
+    
+    for item_orc in orcamento.itens_servico:
+        novo_item_servico = ItemServico(
+            quantidade=item_orc.quantidade,
+            preco_cobrado=item_orc.preco_cobrado,
+            servico_id=item_orc.servico_id,
+            ordem_servico=nova_os
+        )
+        db.session.add(novo_item_servico)
+
+    for item_orc in orcamento.itens_peca:
+        novo_item_peca = ItemPeca(
+            quantidade=item_orc.quantidade,
+            preco_cobrado=item_orc.preco_cobrado,
+            peca_id=item_orc.peca_id,
+            ordem_servico=nova_os
+        )
+        db.session.add(novo_item_peca)
+
+    for foto in orcamento.fotos:
+        foto.ordem_servico_id = nova_os.id
+    
+    orcamento.status = 'Convertido em OS'
+    
+    db.session.commit()
+
+    flash(f"Orçamento convertido com sucesso na OS #{nova_os.numero_formatado}!", "success")
+    return redirect(url_for('detalhes_os', id=nova_os.id))
 
 if __name__ == "__main__":
     app.run(debug=True)
