@@ -513,31 +513,36 @@ def cadastrar_os(cliente_id):
 
     return render_template("cadastrar_os.html", cliente = cliente)
 
+# app.py
+
 @app.route("/os/<int:id>", methods=["GET", "POST"])
 @role_required('funcionario')
 def detalhes_os(id):
-    ordem_servico = OrdemServico.query.get(id)
+    ordem_servico = OrdemServico.query.get_or_404(id) # Alterado para get_or_404
     lista_servicos = Servico.query.all()
     lista_pecas = Peca.query.all()
 
     if request.method == "POST":
-        equipamento = request.form["equipamento"]
-        marca = request.form["marca"]
-        modelo = request.form["modelo"]
-        defeito = request.form["defeito"]
-        status = request.form["status"]
-
-        ordem_servico.equipamento = equipamento
-        ordem_servico.marca = marca
-        ordem_servico.modelo = modelo
-        ordem_servico.defeito = defeito
-        ordem_servico.status = status
+        # Salva os campos existentes
+        ordem_servico.equipamento = request.form["equipamento"]
+        ordem_servico.marca = request.form["marca"]
+        ordem_servico.modelo = request.form["modelo"]
+        ordem_servico.defeito = request.form["defeito"]
+        ordem_servico.status = request.form["status"]
+        
+        # Salva os NOVOS campos
+        ordem_servico.tecnico_responsavel = request.form.get('tecnico_responsavel')
+        ordem_servico.numero_de_serie = request.form.get('numero_de_serie')
+        ordem_servico.problema_constatado = request.form.get('problema_constatado')
+        ordem_servico.servico_executado = request.form.get('servico_executado')
+        ordem_servico.observacoes_cliente = request.form.get('observacoes_cliente')
+        ordem_servico.observacoes_internas = request.form.get('observacoes_internas')
     
         db.session.commit()
-
-        return redirect(url_for("detalhes_cliente", id=ordem_servico.cliente_id))
+        flash("Ordem de Serviço salva com sucesso!", "success")
+        return redirect(url_for("detalhes_os", id=ordem_servico.id))
     
-    return render_template("detalhes_os.html", ordem_servico = ordem_servico, lista_servicos = lista_servicos, lista_pecas=lista_pecas)
+    return render_template("detalhes_os.html", ordem_servico=ordem_servico, lista_servicos=lista_servicos, lista_pecas=lista_pecas)
 
 @app.route("/os/deletar/<int:id>")
 @role_required('funcionario')
