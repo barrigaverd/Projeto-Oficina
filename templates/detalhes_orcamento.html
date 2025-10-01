@@ -79,8 +79,8 @@
     <div class="col-12 text-center">
       <button class="btn btn-success btn-sm" type="submit">💾 Salvar</button>
       <a class="btn btn-danger btn-sm" href="{{url_for('deletar_orcamento', id=orcamento.id)}}">🗑 Excluir</a>
-      <a class="btn btn-secondary btn-sm" href="{{url_for('gerar_pdf_os', os_id=orcamento.id)}}">📄 PDF</a>
-      <a class="btn btn-info btn-sm" href="{{url_for('exibir_pdf_os', os_id=orcamento.id)}}" target="_blank">👁 Exibir PDF</a>
+      <a class="btn btn-secondary btn-sm" href="{{url_for('gerar_pdf_orcamento', orcamento_id=orcamento.id)}}">📄 Gerar PDF</a>
+      <a class="btn btn-info btn-sm" href="{{url_for('exibir_pdf_orcamento', orcamento_id=orcamento.id)}}" target="_blank">👁️ Exibir PDF</a>
     </div>
   </form>
 </div>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Orçamento #{{ orcamento.numero_formatado }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: #333;
+            margin: 0;
+        }
+        .header-table, .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+        .header-table td {
+            vertical-align: top;
+        }
+        .items-table th, .items-table td {
+            border: 1px solid #ccc;
+            padding: 3px;
+            text-align: left;
+        }
+        .items-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .text-right {
+            text-align: right;
+        }
+        h1, h2 {
+            margin: 0;
+        }
+        .section-header {
+            background-color: #f2f2f2;
+            padding: 3px;
+            font-weight: bold;
+            margin: 3px 0 3px 0;
+        }
+        .total-table {
+            width: 40%;
+            margin-left: auto;
+            border-collapse: collapse;
+            margin-top: 6px;
+        }
+        .total-table td {
+            border: 1px solid #a8a8a8;
+            padding: 3px;
+            font-weight: bold;
+        }
+        .fotos-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+        .fotos-table td {
+            padding: 10px;
+            text-align: center;
+            vertical-align: top;
+            width: 33%; /* 3 colunas */
+        }
+        .fotos-table img {
+            max-width: 180px;
+            max-height: 160px;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <table class="header-table">
+        <tr>
+            <td>
+                <h1>Oficina do Micro</h1>
+                <p>
+                    Rua Freitas de Oliveira, 350, Loja C<br>
+                    Alvorada, Ibirité/MG
+                </p>
+            </td>
+            <td class="text-right">
+                <h2>Orçamento #{{ orcamento.numero_formatado }}</h2>
+                <p>Data de Emissão: {{ orcamento.data_de_criacao.strftime('%d/%m/%Y') if orcamento.data_de_criacao }}</p>
+                <p>Válido até: {% if orcamento.validade_do_orcamento %}{{ orcamento.validade_do_orcamento[8:10] }}/{{ orcamento.validade_do_orcamento[5:7] }}/{{ orcamento.validade_do_orcamento[0:4] }}{% else %}N/A{% endif %}</p>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-header">Informações do Cliente</div>
+    <p>
+        <strong>Nome:</strong> {{ orcamento.cliente.nome }}<br>
+        <strong>Telefone:</strong> {{ orcamento.cliente.telefone_celular }}
+    </p>
+
+    <div class="section-header">Detalhes do Equipamento</div>
+    <p>
+        <strong>Equipamento:</strong> {{ orcamento.equipamento }}<br>
+        <strong>Marca / Modelo:</strong> {{ orcamento.marca }} / {{ orcamento.modelo }}<br>
+        <strong>Problema Informado:</strong> {{ orcamento.problema_informado }}<br>
+        <strong>Problema Constatado:</strong> {{ orcamento.problema_constatado }}
+    </p>
+
+    {% if orcamento.fotos %}
+    <div class="section-header">Fotos</div>
+    <table class="fotos-table">
+        {% for row in orcamento.fotos|batch(3) %}
+        <tr>
+            {% for foto in row %}
+            <td>
+                <img src="{{ base_dir }}/static/uploads/{{ foto.nome_arquivo }}">
+                <p>{{ foto.legenda or '' }}</p>
+            </td>
+            {% endfor %}
+            {% for _ in range(3 - row|length) %}
+                <td></td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    {% if orcamento.itens_servico %}
+    <div class="section-header">Serviços Propostos</div>
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>Descrição</th>
+                <th class="text-right">Qtd</th>
+                <th class="text-right">Preço Unit. (R$)</th>
+                <th class="text-right">Subtotal (R$)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in orcamento.itens_servico %}
+            <tr>
+                <td>{{ item.servico.descricao_servico }}</td>
+                <td class="text-right">{{ item.quantidade }}</td>
+                <td class="text-right">{{ "%.2f"|format(item.preco_cobrado|float) }}</td>
+                <td class="text-right">{{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    {% if orcamento.itens_peca %}
+    <div class="section-header">Peças e Materiais</div>
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>Descrição</th>
+                <th class="text-right">Qtd</th>
+                <th class="text-right">Preço Unit. (R$)</th>
+                <th class="text-right">Subtotal (R$)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in orcamento.itens_peca %}
+            <tr>
+                <td>{{ item.peca.nome_peca }}</td>
+                <td class="text-right">{{ item.quantidade }}</td>
+                <td class="text-right">{{ "%.2f"|format(item.preco_cobrado|float) }}</td>
+                <td class="text-right">{{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    <table class="total-table">
+        <tr>
+            <td>Total Geral:</td>
+            <td class="text-right">R$ {{ "%.2f"|format(orcamento.valor_total|float) }}</td>
+        </tr>
+    </table>
+    
+    {% if orcamento.observacoes_cliente %}
+    <div class="section-header" style="margin-top: 15px;">Observações</div>
+    <p>{{ orcamento.observacoes_cliente }}</p>
+    {% endif %}
+
+    <table class="items-table" style="margin-top: 40px; border: none;">
+        <tr>
+            <td style="border: none; text-align: center; padding-top: 40px;">
+                ____________________________________________<br>
+                <strong>Oficina do Micro</strong>
+            </td>
+            <td style="border: none; text-align: center; padding-top: 40px;">
+                ____________________________________________<br>
+                <strong>Cliente (Aprovação)</strong>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

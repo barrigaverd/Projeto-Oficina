@@ -185,6 +185,12 @@ class Orcamento(db.Model):
         if self.numero_orcamento and self.ano:
             return f"{self.numero_orcamento:03d}-{self.ano}"
         return "Sem número"
+    
+    @property
+    def valor_total(self):
+        total_servicos = sum(item.quantidade * item.preco_cobrado for item in self.itens_servico)
+        total_pecas = sum(item.quantidade * item.preco_cobrado for item in self.itens_peca)
+        return total_servicos + total_pecas
 
 
 class ItemOrcamentoServico(db.Model):
@@ -1171,6 +1177,56 @@ def remover_foto_orcamento(foto_id):
         db.session.rollback()
 
     return redirect(url_for('detalhes_orcamento', id=orcamento_id) + "#fotos_equipamento")
+
+# app.py
+
+# ... (outras rotas)
+
+@app.route("/orcamento/pdf/<int:orcamento_id>")
+@login_required
+@role_required('funcionario')
+def gerar_pdf_orcamento(orcamento_id):
+    # 1. Busca os dados do orçamento
+    orcamento = Orcamento.query.get_or_404(orcamento_id)
+    
+    # 2. Renderiza o template HTML específico para o PDF
+    html_renderizado = render_template("template_pdf_orcamento.html", orcamento=orcamento)
+    
+    # 3. Prepara um "arquivo" em memória para receber o PDF
+    result = BytesIO()
+    
+    # 4. Converte o HTML para PDF e salva no "result"
+    pdf = pisa.pisaDocument(BytesIO(html_renderizado.encode("UTF-8")), result)
+    
+    # 5. Se não houver erro na conversão, retorna o PDF para download
+    if not pdf.err:
+        nome_arquivo = f"Orcamento-{orcamento.numero_formatado}.pdf"
+        flash("PDF gerado com sucesso!", "success")
+        return Response(
+            result.getvalue(),
+            mimetype="application/pdf",
+            headers={"Content-disposition": f"attachment; filename={nome_arquivo}"}
+        )
+        
+    # Se houver algum erro, retorna uma mensagem de erro
+    flash("Ocorreu um erro ao gerar o PDF.", "danger")
+    return redirect(url_for('detalhes_orcamento', id=orcamento_id))
+
+
+
+@app.route("/orcamento/exibir_pdf/<int:orcamento_id>")
+@login_required
+@role_required('funcionario')
+def exibir_pdf_orcamento(orcamento_id):
+    """
+    Busca os dados de um orçamento e renderiza o template HTML 
+    formatado para PDF, para ser exibido no navegador.
+    """
+    # 1. Busca os dados do orçamento
+    orcamento = Orcamento.query.get_or_404(orcamento_id)
+    
+    # 2. Renderiza o template do PDF diretamente
+    return render_template("template_pdf_orcamento.html", orcamento=orcamento)
 
 if __name__ == "__main__":
     app.run(debug=True)
