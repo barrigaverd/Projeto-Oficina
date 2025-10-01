@@ -1002,9 +1002,7 @@ def detalhes_orcamento(id):
     
     return render_template("detalhes_orcamento.html", orcamento = orcamento, lista_servicos = lista_servicos, lista_pecas=lista_pecas)
 
-# app.py
 
-# ... (código existente)
 
 @app.route("/orcamento/item_servico/adicionar/<int:orcamento_id>", methods=["POST"])
 @role_required('funcionario')
