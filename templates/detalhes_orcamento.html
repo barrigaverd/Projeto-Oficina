@@ -44,7 +44,7 @@
       </div>
       <div class="col-md-6">
           <label class="form-label" for="validade_do_orcamento">Validade do orçamento:</label>
-          <input class="form-control" type="date" id="validade_do_orcamento" name="validade_do_orcamento" value="{{orcamento.validade_do_orcamento}}">
+          <input class="form-control" type="date" id="validade_do_orcamento" name="validade_do_orcamento" value="{{orcamento.validade_do_orcamento or ''}}">
       </div>
 
       <div class="col-12">
@@ -85,7 +85,6 @@
   </form>
 </div>
 
-<!-- Fotos -->
 <div class="card mt-4" id="fotos_equipamento">
   <h4 class="card-header text-center fw-bold">📷 Fotos do Equipamento</h4>
   <div class="card-body">
@@ -96,7 +95,7 @@
           <a href="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}" target="_blank">
             <img src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}" 
                  class="card-img-top" 
-                 alt="{{ foto.legenda or 'Foto da OS' }}" 
+                 alt="{{ foto.legenda or 'Foto do Orçamento' }}" 
                  style="height: 200px; object-fit: cover;">
           </a>
           {% if foto.legenda %}
@@ -105,7 +104,7 @@
           </div>
           {% endif %}
           <div class="card-footer text-end">
-            <form action="{{ url_for('remover_foto', foto_id=foto.id) }}" method="post" class="d-inline">
+            <form action="{{ url_for('remover_foto_orcamento', foto_id=foto.id) }}" method="post" class="d-inline">
               <button type="submit" class="btn btn-outline-danger btn-sm">Remover</button>
             </form>
           </div>
@@ -116,10 +115,9 @@
   </div>
 </div>
 
-<!-- Adicionar Foto -->
 <div class="card mt-3" id="adicionar-foto">
   <h4 class="card-header text-center fw-bold">➕ Adicionar Foto</h4>
-  <form class="card-body row g-3" method="post" action="{{ url_for('adicionar_foto', os_id=orcamento.id) }}" enctype="multipart/form-data">
+  <form class="card-body row g-3" method="post" action="{{ url_for('adicionar_foto_orcamento', orcamento_id=orcamento.id) }}" enctype="multipart/form-data">
     <div class="col-md-5">
       <label for="foto" class="form-label">Selecionar Foto</label>
       <input type="file" class="form-control" name="foto" required>
@@ -134,7 +132,6 @@
   </form>
 </div>
 
-<!-- Serviços -->
 <div class="card mt-3">
   <h4 class="card-header text-center fw-bold">🛠 Serviços no Orçamento</h4>
   <table class="table table-striped table-sm text-center mb-0">
@@ -154,17 +151,20 @@
         <td>{{ item.quantidade }}</td>
         <td>R$ {{ "%.2f"|format(item.preco_cobrado|float) }}</td>
         <td>R$ {{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}</td>
-        <td><a class="btn btn-danger btn-sm" href="{{url_for('remover_servico', id=item.id)}}">Remover</a></td>
+        <td>
+          <form action="{{ url_for('remover_servico_orcamento', item_id=item.id) }}" method="post" class="d-inline">
+            <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+          </form>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
 
-<!-- Adicionar Serviço -->
 <div class="card mt-3" id="adicionar_servico">
   <h4 class="card-header text-center fw-bold">➕ Adicionar Serviço</h4>
-  <form class="card-body row g-3" method="post" action="{{ url_for('adicionar_servico', os_id=orcamento.id) }}">
+  <form class="card-body row g-3" method="post" action="{{ url_for('adicionar_servico_orcamento', orcamento_id=orcamento.id) }}">
     <div class="col-12">
       <label for="servico" class="form-label">Serviço:</label>
       <select name="servico_id" class="form-select" required>
@@ -189,9 +189,8 @@
   </form>
 </div>
 
-<!-- Peças -->
 <div class="card mt-3">
-  <h4 class="card-header text-center fw-bold">🔧 Peças na OS</h4>
+  <h4 class="card-header text-center fw-bold">🔧 Peças no Orçamento</h4>
   <table class="table table-striped table-sm text-center mb-0">
     <thead>
       <tr>
@@ -209,17 +208,20 @@
         <td>{{ item.quantidade }}</td>
         <td>R$ {{ "%.2f"|format(item.preco_cobrado|float) }}</td>
         <td>R$ {{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}</td>
-        <td><a class="btn btn-danger btn-sm" href="{{url_for('remover_peca', id=item.id)}}">Remover</a></td>
+        <td>
+          <form action="{{ url_for('remover_peca_orcamento', item_id=item.id) }}" method="post" class="d-inline">
+            <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+          </form>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
 
-<!-- Adicionar Peça -->
 <div class="card mt-3" id="adicionar_peca">
   <h4 class="card-header text-center fw-bold">➕ Adicionar Peça</h4>
-  <form class="card-body row g-3" method="post" action="{{ url_for('adicionar_peca', os_id=orcamento.id) }}">
+  <form class="card-body row g-3" method="post" action="{{ url_for('adicionar_peca_orcamento', orcamento_id=orcamento.id) }}">
     <div class="col-12">
       <label for="peca" class="form-label">Peça:</label>
       <select name="peca_id" class="form-select" required>

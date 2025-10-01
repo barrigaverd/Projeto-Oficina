@@ -167,7 +167,7 @@ class Orcamento(db.Model):
     modelo = db.Column(db.String(100))
     equipamento = db.Column(db.String(150), nullable = False)
     numero_de_serie = db.Column(db.String(100))
-    validade_do_orcamento = db.Column(db.Date)
+    validade_do_orcamento = db.Column(db.String(10))
     problema_informado = db.Column(db.Text, nullable = False)
     problema_constatado = db.Column(db.Text, nullable = False)
     #servico_executado = db.Column(db.Text, nullable = False)
@@ -193,6 +193,7 @@ class ItemOrcamentoServico(db.Model):
     preco_cobrado = db.Column(db.Float, nullable = False)
     orcamento_id = db.Column(db.Integer, db.ForeignKey('orcamento.id'))
     servico_id = db.Column(db.Integer, db.ForeignKey('servico.id'))
+    servico = db.relationship('Servico', backref='itens_orcamento_servico')
 
 class ItemOrcamentoPeca(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -200,6 +201,7 @@ class ItemOrcamentoPeca(db.Model):
     preco_cobrado = db.Column(db.Float, nullable = False)
     orcamento_id = db.Column(db.Integer, db.ForeignKey('orcamento.id'))
     peca_id = db.Column(db.Integer, db.ForeignKey('peca.id'))
+    peca = db.relationship('Peca', backref='itens_orcamento_peca')
 
 class Servico(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -247,7 +249,8 @@ class Foto(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     nome_arquivo = db.Column(db.String(20))
     legenda = db.Column(db.String(150))
-    ordem_servico_id = db.Column(db.Integer, db.ForeignKey('ordem_servico.id'))
+    ordem_servico_id = db.Column(db.Integer, db.ForeignKey('ordem_servico.id'), nullable=True) 
+    orcamento_id = db.Column(db.Integer, db.ForeignKey('orcamento.id'), nullable=True) 
 
 
 #Funções principais
@@ -908,8 +911,7 @@ def novo_orcamento(cliente_id):
         else:
             proximo_numero = maior_numero_orc_do_ano + 1
 
-        validade_str = request.form.get("validade_do_orcamento")  # "2025-10-02"
-        validade_date = datetime.strptime(validade_str, "%Y-%m-%d").date()
+        validade_str = request.form.get("validade_do_orcamento") or None
 
         # --- Lógica principal ---
         novo_orcamento = Orcamento(
@@ -920,7 +922,7 @@ def novo_orcamento(cliente_id):
             marca = request.form.get('marca'),
             modelo = request.form.get('modelo'),
             numero_de_serie = request.form.get('numero_de_serie'),
-            validade_do_orcamento = validade_date,
+            validade_do_orcamento = validade_str,
             problema_informado = request.form.get('problema_informado'),
             problema_constatado = request.form.get('problema_constatado'),
             observacoes_cliente = request.form.get('observacoes_cliente'),
@@ -959,11 +961,7 @@ def detalhes_orcamento(id):
     lista_servicos = Servico.query.all()
     lista_pecas = Peca.query.all()
 
-    validade_str = request.form.get("validade_do_orcamento")  # "2025-10-02"
-    if validade_str:
-        validade_date = datetime.strptime(validade_str, "%Y-%m-%d").date()
-    else:
-        validade_date = None
+    
 
 
 
@@ -972,7 +970,7 @@ def detalhes_orcamento(id):
         marca = request.form.get('marca')
         modelo = request.form.get('modelo')
         numero_de_serie = request.form.get('numero_de_serie')
-        validade_do_orcamento = validade_date
+        
         problema_informado = request.form.get('problema_informado')
         problema_constatado = request.form.get('problema_constatado')
         observacoes_cliente = request.form.get('observacoes_cliente')
@@ -984,7 +982,7 @@ def detalhes_orcamento(id):
         orcamento.marca = marca
         orcamento.modelo = modelo
         orcamento.numero_de_serie = numero_de_serie
-        orcamento.validade_do_orcamento = validade_do_orcamento
+        orcamento.validade_do_orcamento = request.form.get("validade_do_orcamento") or None
         orcamento.problema_informado = problema_informado
         orcamento.problema_constatado = problema_constatado
         orcamento.observacoes_cliente = observacoes_cliente
@@ -997,6 +995,182 @@ def detalhes_orcamento(id):
         return redirect(url_for("detalhes_cliente", id=orcamento.cliente_id))
     
     return render_template("detalhes_orcamento.html", orcamento = orcamento, lista_servicos = lista_servicos, lista_pecas=lista_pecas)
+
+# app.py
+
+# ... (código existente)
+
+@app.route("/orcamento/item_servico/adicionar/<int:orcamento_id>", methods=["POST"])
+@role_required('funcionario')
+def adicionar_servico_orcamento(orcamento_id):
+    """
+    Rota para adicionar um item de serviço a um orçamento específico.
+    """
+    orcamento = Orcamento.query.get_or_404(orcamento_id)
+    
+    # Pega os dados do formulário
+    servico_id = request.form.get("servico_id")
+    quantidade = request.form.get("quantidade", 1, type=int) # Padrão é 1
+    preco_cobrado_str = request.form.get("preco_cobrado")
+
+    # Busca o serviço no banco de dados para pegar o preço padrão
+    servico = Servico.query.get(servico_id)
+    if not servico:
+        flash("Serviço não encontrado!", "danger")
+        return redirect(url_for("detalhes_orcamento", id=orcamento_id))
+
+    # Define o preço a ser usado
+    if preco_cobrado_str:
+        preco_cobrado = float(preco_cobrado_str.replace(",", "."))
+    else:
+        preco_cobrado = servico.preco_unitario # Usa o preço padrão do serviço
+
+    # Cria o novo item de serviço para o orçamento
+    novo_item = ItemOrcamentoServico(
+        quantidade=quantidade,
+        preco_cobrado=preco_cobrado,
+        orcamento_id=orcamento.id,
+        servico_id=servico.id
+    )
+
+    db.session.add(novo_item)
+    db.session.commit()
+    
+    flash("Serviço adicionado ao orçamento com sucesso!", "success")
+    # Redireciona de volta para a página de detalhes, focando na seção de serviços
+    return redirect(url_for("detalhes_orcamento", id=orcamento_id) + "#adicionar_servico")
+
+
+@app.route("/orcamento/item_servico/remover/<int:item_id>", methods=["POST"])
+@role_required('funcionario')
+def remover_servico_orcamento(item_id):
+    """
+    Rota para remover um item de serviço de um orçamento.
+    """
+    item_a_remover = ItemOrcamentoServico.query.get_or_404(item_id)
+    orcamento_id = item_a_remover.orcamento_id
+    
+    db.session.delete(item_a_remover)
+    db.session.commit()
+    
+    flash("Serviço removido do orçamento com sucesso!", "success")
+    return redirect(url_for("detalhes_orcamento", id=orcamento_id) + "#adicionar_servico")
+
+
+@app.route("/orcamento/item_peca/adicionar/<int:orcamento_id>", methods=["POST"])
+@role_required('funcionario')
+def adicionar_peca_orcamento(orcamento_id):
+    """
+    Rota para adicionar um item de peça a um orçamento específico.
+    """
+    orcamento = Orcamento.query.get_or_404(orcamento_id)
+    
+    # Pega os dados do formulário
+    peca_id = request.form.get("peca_id")
+    quantidade = request.form.get("quantidade", 1, type=int)
+    preco_cobrado_str = request.form.get("preco_cobrado")
+
+    # Busca a peça para pegar o preço padrão
+    peca = Peca.query.get(peca_id)
+    if not peca:
+        flash("Peça não encontrada!", "danger")
+        return redirect(url_for("detalhes_orcamento", id=orcamento_id))
+
+    # Define o preço
+    if preco_cobrado_str:
+        preco_cobrado = float(preco_cobrado_str.replace(",", "."))
+    else:
+        preco_cobrado = peca.preco_unitario
+
+    # Cria o novo item de peça para o orçamento
+    novo_item = ItemOrcamentoPeca(
+        quantidade=quantidade,
+        preco_cobrado=preco_cobrado,
+        orcamento_id=orcamento.id,
+        peca_id=peca.id
+    )
+
+    db.session.add(novo_item)
+    db.session.commit()
+    
+    flash("Peça adicionada ao orçamento com sucesso!", "success")
+    return redirect(url_for("detalhes_orcamento", id=orcamento_id) + "#adicionar_peca")
+
+
+@app.route("/orcamento/item_peca/remover/<int:item_id>", methods=["POST"])
+@role_required('funcionario')
+def remover_peca_orcamento(item_id):
+    """
+    Rota para remover um item de peça de um orçamento.
+    """
+    item_a_remover = ItemOrcamentoPeca.query.get_or_404(item_id)
+    orcamento_id = item_a_remover.orcamento_id
+    
+    db.session.delete(item_a_remover)
+    db.session.commit()
+    
+    flash("Peça removida do orçamento com sucesso!", "success")
+    return redirect(url_for("detalhes_orcamento", id=orcamento_id) + "#adicionar_peca")
+
+# app.py
+
+@app.route("/orcamento/<int:orcamento_id>/adicionar_foto", methods=["POST"])
+@login_required
+@role_required('funcionario')
+def adicionar_foto_orcamento(orcamento_id):
+    if 'foto' not in request.files:
+        return redirect(request.referrer)
+    
+    file = request.files['foto']
+    legenda = request.form.get('legenda', '')
+
+    if file.filename == '' or not allowed_file(file.filename):
+        return redirect(request.referrer)
+
+    if file:
+        timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+        original_filename = secure_filename(file.filename)
+        novo_nome_arquivo = f"{timestamp}_{original_filename}"
+        
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], novo_nome_arquivo))
+
+        # AQUI, conectamos a foto ao ORÇAMENTO
+        nova_foto = Foto(
+            nome_arquivo=novo_nome_arquivo,
+            legenda=legenda,
+            orcamento_id=orcamento_id # Usamos orcamento_id
+        )
+        db.session.add(nova_foto)
+        db.session.commit()
+        flash("Foto adicionada com sucesso!", "success")
+
+    return redirect(url_for('detalhes_orcamento', id=orcamento_id) + "#adicionar-foto")
+
+
+@app.route("/orcamento/<int:foto_id>/remover_foto", methods=["POST"])
+@login_required
+@role_required('funcionario')
+def remover_foto_orcamento(foto_id):
+    foto_a_remover = Foto.query.get_or_404(foto_id)
+    
+    # Precisamos saber para qual orçamento voltar
+    orcamento_id = foto_a_remover.orcamento_id 
+
+    caminho_arquivo = os.path.join(app.config['UPLOAD_FOLDER'], foto_a_remover.nome_arquivo)
+
+    try:
+        if os.path.exists(caminho_arquivo):
+            os.remove(caminho_arquivo)
+        
+        db.session.delete(foto_a_remover)
+        db.session.commit()
+        flash("Foto apagada com sucesso!", "success")
+    except Exception as e:
+        print(f"Erro ao deletar foto: {e}")
+        db.session.rollback()
+
+    return redirect(url_for('detalhes_orcamento', id=orcamento_id) + "#fotos_equipamento")
 
 if __name__ == "__main__":
     app.run(debug=True)
