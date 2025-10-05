@@ -18,6 +18,9 @@ import os
 from werkzeug.utils import secure_filename
 from datetime import date
 
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField, IntegerField, SubmitField, FieldList, Form, FormField
+from wtforms.validators import DataRequired, Email, Optional
 
 
 #função Fábrica de Decoradores de login
@@ -269,6 +272,58 @@ class Foto(db.Model):
     ordem_servico_id = db.Column(db.Integer, db.ForeignKey('ordem_servico.id'), nullable=True) 
     orcamento_id = db.Column(db.Integer, db.ForeignKey('orcamento.id'), nullable=True) 
 
+class Curriculo(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    nome = db.Column(db.String(120))
+    estado_civil = db.Column(db.String(30))
+    idade = db.Column(db.Integer)
+    endereco = db.Column(db.Text)
+    telefone_principal = db.Column(db.String(20))
+    email = db.Column(db.String(40))
+    objetivo = db.Column(db.Text)
+    data_criacao = db.Column(db.Date)
+    formacoes = db.relationship('FormacaoAcademica', backref = 'curriculo')
+    experiencias = db.relationship('ExperienciaProfissional', backref = 'curriculo')
+
+class FormacaoAcademica(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    descricao = db.Column(db.Text)
+    curriculo_id = db.Column(db.Integer, db.ForeignKey("curriculo.id"))
+
+class ExperienciaProfissional(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    empresa = db.Column(db.String(120))
+    cargo = db.Column(db.String(120))
+    data_admissao = db.Column(db.Date)
+    data_demissao = db.Column(db.Date)
+    curriculo_id = db.Column(db.Integer, db.ForeignKey("curriculo.id"))
+
+class CurriculoPasso1Form(FlaskForm):
+    nome = StringField("Nome", validators=[DataRequired("Digite o nome")])
+    estado_civil = StringField("Estado civil", validators=[Optional()])
+    endereco = StringField("Endereço", validators=[Optional()])
+    idade = IntegerField("Idade", validators=[Optional()])
+    telefone_principal = StringField("Telefone principal", validators=[DataRequired("Precisa de telefone")])
+    email = StringField("Email", validators=[Optional(), Email("Formato de email inválido")])
+    submit = SubmitField("Avançar")
+
+class CurriculoPasso2Form(FlaskForm):
+    formacoes = FieldList(StringField("Formação", validators=[Optional()]), min_entries=1)
+    submit = SubmitField("Avançar")
+
+class ExperienciaForm(Form):
+    empresa = StringField("Empresa", validators=[DataRequired("Digite o nome da empresa")])
+    cargo = StringField("Cargo", validators=[DataRequired("Digite o cargo")])
+    data_admissao = StringField("Data de admissão", validators=[Optional()])
+    data_demissao = StringField("Data de demissão", validators=[Optional()])
+
+class CurriculoPasso3Form(FlaskForm):
+    experiencias = FieldList(FormField(ExperienciaForm), min_entries=1)
+    submit = SubmitField("Avançar")
+
+class CurriculoPasso4Form(FlaskForm):
+    objetivo = TextAreaField("Objetivo", validators=[Optional()])
+    submit = SubmitField("Finalizar")
 
 #Funções principais
 @login_manager.user_loader
@@ -1312,6 +1367,116 @@ def converter_orcamento_para_os(orcamento_id):
 
     flash(f"Orçamento convertido com sucesso na OS #{nova_os.numero_formatado}!", "success")
     return redirect(url_for('detalhes_os', id=nova_os.id))
+
+
+@app.route("/curriculo/novo")
+@login_required
+@role_required('funcionario')
+def novo_curriculo():
+    novo_curriculo = Curriculo(data_criacao = datetime.now())
+    db.session.add(novo_curriculo)
+    db.session.commit()
+
+    return redirect(url_for('curriculo_passo1', curriculo_id=novo_curriculo.id))
+
+@app.route("/curriculo/passo1/<int:curriculo_id>", methods=["GET", "POST"])
+@login_required
+@role_required('funcionario')
+def curriculo_passo1(curriculo_id):
+    curriculo = Curriculo.query.get_or_404(curriculo_id)
+    form = CurriculoPasso1Form()
+
+    if form.validate_on_submit():
+        curriculo.nome = form.nome.data
+        curriculo.estado_civil = form.estado_civil.data
+        curriculo.idade = form.idade.data
+        curriculo.endereco = form.endereco.data
+        curriculo.telefone_principal = form.telefone_principal.data
+        curriculo.email = form.email.data
+
+        db.session.commit()
+        flash("Passo um concluido com sucesso!", "success")
+
+        return redirect(url_for('curriculo_passo2', curriculo_id=curriculo.id))
+    if request.method == "GET":
+        form.nome.data = curriculo.nome
+        form.estado_civil.data = curriculo.estado_civil
+        form.idade.data = curriculo.idade
+        form.endereco.data = curriculo.endereco
+        form.telefone_principal.data = curriculo.telefone_principal
+        form.email.data = curriculo.email
+    
+    return render_template("curriculo_passo1.html", form=form)
+
+@app.route("/curriculo/passo2/<int:curriculo_id>", methods=["GET", "POST"])
+@login_required
+@role_required('funcionario')
+def curriculo_passo2(curriculo_id):
+    curriculo = Curriculo.query.get_or_404(curriculo_id)
+    form = CurriculoPasso2Form()
+
+    if form.validate_on_submit():
+        lista_de_descricoes = form.formacoes.data
+        for formacoes in curriculo.formacoes:
+            db.session.delete(formacoes)
+
+        for descricao in lista_de_descricoes:
+            if descricao:
+                nova_formacao = FormacaoAcademica(descricao=descricao, curriculo_id=curriculo.id)
+                db.session.add(nova_formacao)
+
+        db.session.commit()
+        flash("Formações cadastradas com sucesso!", "success")
+
+        return redirect(url_for('curriculo_passo3', curriculo_id=curriculo.id))
+    if request.method == "GET":
+        formacoes_atuais = curriculo.formacoes
+        lista_de_descricoes = [formacao.descricao for formacao in formacoes_atuais]
+        form = CurriculoPasso2Form(formacoes=lista_de_descricoes)
+
+    return render_template("curriculo_passo2.html", form=form)
+
+@app.route("/curriculo/passo3/<int:curriculo_id>", methods=["GET", "POST"])
+@login_required
+@role_required('funcionario')
+def curriculo_passo3(curriculo_id):
+    curriculo = Curriculo.query.get_or_404(curriculo_id)
+    form = CurriculoPasso3Form()
+
+    if form.validate_on_submit():
+        lista_de_experiencias  = form.experiencias.data
+        for experiencias in curriculo.experiencias:
+            db.session.delete(experiencias)
+        
+        for dados_experiencia in lista_de_experiencias:
+            if dados_experiencia['empresa'] and dados_experiencia['cargo']:
+                nova_experiencia = ExperienciaProfissional(
+                    empresa = dados_experiencia['empresa'],
+                    cargo = dados_experiencia['cargo'],
+                    data_admissao = dados_experiencia['data_admissao'],
+                    data_demissao = dados_experiencia['data_demissao'],
+                    curriculo_id = curriculo.id
+                )
+                db.session.add(nova_experiencia)
+
+        db.session.commit()
+        flash("Experiências cadastradas com sucesso!", "success")
+
+        return redirect(url_for('curriculo_passo4', curriculo_id=curriculo.id))
+    if request.method == "GET":
+        experiencias_atuais = curriculo.experiencias
+        dados_para_o_form = []
+        for experiencia in experiencias_atuais:
+            dados_para_o_form.append({
+                'empresa': experiencia.empresa,
+                'cargo': experiencia.cargo,
+                'data_admissao': experiencia.data_admissao,
+                'data_demissao': experiencia.data_demissao
+            })
+        form = CurriculoPasso3Form(experiencias=dados_para_o_form)
+
+    return render_template("curriculo_passo3.html", form=form)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

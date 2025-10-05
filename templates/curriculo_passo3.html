@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <div id="experiencia-container">
+         {% for experiencia_form in form.experiencias %}
+         <div class="card card-body mb-3">
+            {{ experiencia_form.empresa.label }}
+            {{ experiencia_form.empresa(class='form-control') }}
+            {% for error in experiencia_form.empresa.errors %}
+                <p class="text-danger">{{ error }}</p>
+            {% endfor %}
+            {{ experiencia_form.cargo.label }}
+            {{ experiencia_form.cargo(class='form-control mb-2') }}
+            {% for error in experiencia_form.cargo.errors %}
+                <p class="text-danger">{{ error }}</p>
+            {% endfor %}
+            {{ experiencia_form.data_admissao.label }}
+            {{ experiencia_form.data_admissao(class='form-control mb-2') }}
+            {% for error in experiencia_form.data_admissao.errors %}
+                <p class="text-danger">{{ error }}</p>
+            {% endfor %}
+            {{ experiencia_form.data_demissao.label }}
+            {{ experiencia_form.data_demissao(class='form-control mb-2') }}
+            {% for error in experiencia_form.data_demissao.errors %}
+                <p class="text-danger">{{ error }}</p>
+            {% endfor %}
+         </div>
+        {% endfor %}
+    </div>
+    <button type="button" id="add-experiencia">Adicionar Experiência +</button>
+    {{ form.submit(class='btn btn-primary mt-3') }}
+{% endblock %}
+
+{% block script %}
+    <script>
+        ad_experiencia = document.getElementById("add-experiencia");
+        let contador = document.querySelectorAll('#experiencia-container .card').length;
+
+        ad_experiencia.addEventListener("click", function() {
+            let novo_bloco = document.createElement("div");
+            novo_bloco.className = "card card-body mb-3";
+            novo_bloco.innerHTML = `
+                <label>Empresa</label>
+                <input type="text" name="experiencias-${contador}-empresa" class="form-control">
+
+                <label>Cargo</label>
+                <input type="text" name="experiencias-${contador}-cargo" class="form-control mb-2">
+
+                <label>Data de Admissão</label>
+                <input type="text" name="experiencias-${contador}-data_admissao" class="form-control mb-2">
+                
+                <label>Data de Demissão</label>
+                <input type="text" name="experiencias-${contador}-data_demissao" class="form-control mb-2">
+            `
+            document.getElementById("experiencia-container").appendChild(novo_bloco);
+            contador++;
+        });
+    </script>
+{% endblock %}

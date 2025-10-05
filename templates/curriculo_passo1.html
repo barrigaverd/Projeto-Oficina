@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<div>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        {{ form.nome.label(class='form-label') }}
+        {{ form.nome(class='form-control') }}
+        {% for error in form.nome.errors %}
+            <span style="color: red;">{{ error }}</span>
+        {% endfor %}
+    
+        {{ form.estado_civil.label(class='form-label') }}
+        {{ form.estado_civil(class='form-control') }}
+        {% for error in form.estado_civil.errors %}
+            <span style="color: red;">{{ error }}</span>
+        {% endfor %}
+    
+        {{ form.idade.label(class='form-label') }}
+        {{ form.idade(class='form-control') }}
+        {% for error in form.idade.errors %}
+            <span style="color: red;">{{ error }}</span>
+        {% endfor %}
+
+        {{ form.endereco.label(class='form-label') }}
+        {{ form.endereco(class='form-control') }}
+        {% for error in form.endereco.errors %}
+            <span style="color: red;">{{ error }}</span>
+        {% endfor %}
+
+        {{ form.telefone_principal.label(class='form-label') }}
+        {{ form.telefone_principal(class='form-control') }}
+        {% for error in form.telefone_principal.errors %}
+            <span style="color: red;">{{ error }}</span>
+        {% endfor %}
+
+        {{ form.email.label(class='form-label') }}
+        {{ form.email(class='form-control') }}
+        {% for error in form.email.errors %}
+            <span style="color: red;">{{ error }}</span>
+        {% endfor %}
+
+
+        {{ form.submit(class='btn btn-primary') }}
+
+    </form>
+</div>
+{% endblock %}

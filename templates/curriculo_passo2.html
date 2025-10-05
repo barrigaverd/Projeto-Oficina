@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <div id="formacao-container">
+        {% for subfield in form.formacoes %}
+            {{ subfield(class='form-control mb-2') }}
+        {% endfor %}
+    </div>
+    <button type="button" id="add-formacao">Adicionar Formação +</button>
+{% endblock %}
+
+{% block script %}
+    <script>
+        ad_formacao = document.getElementById("add-formacao");
+        let contador = document.querySelectorAll('#formacao-container input').length;
+
+        ad_formacao.addEventListener("click", function() {
+            campo_input = document.createElement("input");
+            campo_input.name = "formacoes-" + contador;
+            campo_input.className = 'form-control mb-2';
+
+            div_container = document.getElementById("formacao-container");
+            div_container.appendChild(campo_input);
+            contador++;
+        });
+    </script>
+{% endblock %}
