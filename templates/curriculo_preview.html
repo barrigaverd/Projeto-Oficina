@@ -119,6 +119,7 @@
         <a href="{{ url_for('download_curriculo_pdf', curriculo_id=curriculo.id) }}" class="btn">
             Baixar como PDF
         </a>
+        <a href="{{ url_for('download_curriculo_word', curriculo_id=curriculo.id) }}" class="btn btn-primary ms-2">Baixar como Word</a>
         <a class="btn btn-close" href="{{ url_for('listar_curriculos') }}">Voltar para Lista</a>
     </div>
     {% endif %}

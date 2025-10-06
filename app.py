@@ -2,7 +2,7 @@ from enum import unique
 from http import client
 from os import replace
 from sqlite3.dbapi2 import Timestamp
-from flask import Flask, render_template, request, redirect, url_for, abort, Response, flash
+from flask import Flask, render_template, request, redirect, url_for, abort, Response, flash, send_file
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from flask_bcrypt import Bcrypt
@@ -17,7 +17,7 @@ from xhtml2pdf import pisa
 import os
 from werkzeug.utils import secure_filename
 from datetime import date
-
+from htmldocx import HtmlToDocx
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, IntegerField, SubmitField, FieldList, Form, FormField, DateField
 from wtforms.validators import DataRequired, Email, Optional
@@ -1572,6 +1572,28 @@ def deletar_curriculo(curriculo_id):
     flash("Curriculo apagado com sucesso!", "success")
     return redirect(url_for('listar_curriculos'))
 
+@app.route("/curriculo/<int:curriculo_id>/download_word")
+@login_required
+@role_required('funcionario')
+def download_curriculo_word(curriculo_id):
+    curriculo = Curriculo.query.get_or_404(curriculo_id)
+    html_renderizado = render_template("curriculo_preview.html", curriculo=curriculo, para_pdf = True)
+    
+    parser = HtmlToDocx()
+
+    docx = parser.parse_html_string(html_renderizado)
+
+    buffer = BytesIO()
+    docx.save(buffer)
+    buffer.seek(0)
+    
+    return send_file(
+        buffer, 
+        as_attachment=True, 
+        download_name=f'Curriculo-{curriculo.nome}.docx', 
+        mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        
+    
 
 if __name__ == "__main__":
     app.run(debug=True)
