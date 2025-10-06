@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
+<div class="text-md-start">
+    <button class="btn btn-secondary btn-sm px-4" onclick="retornar()">Voltar</button>
+</div>
 <div class="container mt-4">
     <div class="card shadow-sm rounded-3 mx-auto" style="max-width: 700px;">
         <div class="card-header bg-primary text-white text-center">
@@ -10,7 +13,8 @@
                 {{ form.hidden_tag() }}
                 <div class="mb-3">
                     {{ form.objetivo.label(class="form-label fw-bold") }}
-                    {{ form.objetivo(class="form-control", rows="5", placeholder="Descreva brevemente seu objetivo profissional...") }}
+                    {{ form.objetivo(class="form-control", rows="5", placeholder="Descreva brevemente seu objetivo
+                    profissional...") }}
                 </div>
 
                 <div class="text-center mt-3">

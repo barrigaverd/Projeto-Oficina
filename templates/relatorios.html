@@ -3,7 +3,7 @@
 {% block content %}
 <div class="d-flex justify-content-center">
   <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 80rem;">
-    
+
     <!-- Cabeçalho -->
     <h4 class="card-header text-center fw-bold">Relatórios</h4>
 
@@ -21,15 +21,16 @@
         <div class="col-md-4 d-flex align-items-end">
           <button type="submit" class="btn btn-primary w-100">Gerar Relatório</button>
         </div>
-     </form>
-    <form method="post">
+      </form>
+      <form method="post">
         <div class="d-flex gap-2 mb-3">
-            <input class="form-control" name="busca_nome" type="search" placeholder="Pesquisar por nome..." aria-label="Pesquisar" required>
-            <button type="submit" class="btn btn-primary">Pesquisar</button>
+          <input class="form-control" name="busca_nome" type="search" placeholder="Pesquisar por nome..."
+            aria-label="Pesquisar" required>
+          <button type="submit" class="btn btn-primary">Pesquisar</button>
         </div>
-    </form>
-        
-     
+      </form>
+
+
 
       <!-- Tabela -->
       <div class="table-responsive">
@@ -49,9 +50,9 @@
               <td>{{ ordem.numero_formatado }}</td>
               <td>{{ ordem.cliente.nome }}</td>
               <td>
-                  <span id="status" class="badge bg-secondary align-middle">
-                    {{ ordem.status }}
-                  </span>
+                <span id="status" class="badge bg-secondary align-middle">
+                  {{ ordem.status }}
+                </span>
               </td>
               <td>R$ {{ "%.2f"|format(ordem.valor_calculado|float) }}</td>
               <td class="text-center">
@@ -79,5 +80,3 @@
   }
 </script>
 {% endblock %}
-
-

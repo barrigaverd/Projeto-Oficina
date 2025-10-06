@@ -4,52 +4,52 @@
 <div class="d-flex justify-content-center">
   <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 45rem">
     <!-- Header com título e busca -->
-      <div class="card-header">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-          <h4 class="fw-bold mb-2 mb-md-0">Lista de Peças</h4>
+    <div class="card-header">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+        <h4 class="fw-bold mb-2 mb-md-0">Lista de Peças</h4>
 
-          <!-- Campo de busca -->
-          <form action="{{ url_for('listar_pecas')}}" method="GET" class="w-auto w-md-auto align-content-end">
-            <div class="input-group">
-              <input type="text" name="termo_busca" class="form-control" placeholder="Buscar peças..." value="{{ request.args.get('termo_busca', '') }}">
-              <button type="submit" class="btn btn-primary btn-sm">
-                <i class="bi bi-search"></i> Buscar
-              </button>
-            </div>
-          </form>
-        </div>
+        <!-- Campo de busca -->
+        <form action="{{ url_for('listar_pecas')}}" method="GET" class="w-auto w-md-auto align-content-end">
+          <div class="input-group">
+            <input type="text" name="termo_busca" class="form-control" placeholder="Buscar peças..."
+              value="{{ request.args.get('termo_busca', '') }}">
+            <button type="submit" class="btn btn-primary btn-sm">
+              <i class="bi bi-search"></i> Buscar
+            </button>
+          </div>
+        </form>
       </div>
+    </div>
 
     {% if pecas|length == 0 %}
-      <div class="alert-secondary m-3 text-center">
-        Nenhuma peça cadastrada ainda. Clique em <strong>“Cadastrar Peça”</strong> para adicionar.
-      </div>
+    <div class="alert-secondary m-3 text-center">
+      Nenhuma peça cadastrada ainda. Clique em <strong>“Cadastrar Peça”</strong> para adicionar.
+    </div>
     {% else %}
-      <table class="table table-hover table-striped align-middle m-0">
-        <thead>
-          <tr>
-            <th>Nome da peça</th>
-            <th style="width: 20%;">Preço</th>
-            <th style="width: 25%;" class="text-end">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for peca in pecas %}
-          <tr>
-            <td>{{ peca.nome_peca }}</td>
-            <td>R$ {{ "%.2f"|format(peca.preco_unitario|float) }}</td>
-            <td class="text-end">
-              <a class="btn btn-warning btn-sm" href="{{ url_for('editar_peca', id=peca.id) }}">Editar</a>
-              <a class="btn btn-danger btn-sm"
-                 href="{{ url_for('deletar_peca', id=peca.id) }}"
-                 onclick="return confirm('Tem certeza que deseja excluir {{ peca.nome_peca }}?');">
-                 Excluir
-              </a>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <table class="table table-hover table-striped align-middle m-0">
+      <thead>
+        <tr>
+          <th>Nome da peça</th>
+          <th style="width: 20%;">Preço</th>
+          <th style="width: 25%;" class="text-end">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for peca in pecas %}
+        <tr>
+          <td>{{ peca.nome_peca }}</td>
+          <td>R$ {{ "%.2f"|format(peca.preco_unitario|float) }}</td>
+          <td class="text-end">
+            <a class="btn btn-warning btn-sm" href="{{ url_for('editar_peca', id=peca.id) }}">Editar</a>
+            <a class="btn btn-danger btn-sm" href="{{ url_for('deletar_peca', id=peca.id) }}"
+              onclick="return confirm('Tem certeza que deseja excluir {{ peca.nome_peca }}?');">
+              Excluir
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
     {% endif %}
   </div>
 </div>

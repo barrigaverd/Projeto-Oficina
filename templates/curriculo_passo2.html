@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-
+<div class="text-md-start">
+  <button class="btn btn-secondary btn-sm px-4" onclick="retornar()">Voltar</button>
+</div>
 <div class="d-flex justify-content-center">
   <div class="card shadow-sm w-100 mx-auto my-4" style="max-width: 600px;">
     <div class="card-header text-center bg-primary text-white fw-bold">
@@ -11,7 +13,7 @@
         {{ form.hidden_tag() }}
         <div id="formacao-container">
           {% for subfield in form.formacoes %}
-            <input class="form-control mb-2" value="{{ subfield.data or '' }}" name="{{ subfield.name }}">
+          <input class="form-control mb-2" value="{{ subfield.data or '' }}" name="{{ subfield.name }}">
           {% endfor %}
         </div>
 
@@ -30,7 +32,7 @@
 
 {% block scripts %}
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("DOMContentLoaded", function () {
     const addFormacao = document.getElementById("add-formacao");
     const container = document.getElementById("formacao-container");
     let contador = container.querySelectorAll("input").length;

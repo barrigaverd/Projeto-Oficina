@@ -5,12 +5,13 @@
   <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 45rem">
     <h4 class="card-header text-center fw-bold">Cadastro de Cliente</h4>
     <form class="card-body row g-4" method="post">
-      
+
       <!-- Coluna 1 -->
       <div class="col-md-6">
         <div class="mb-3">
           <label for="nome_cliente" class="form-label">Nome:</label>
-          <input class="form-control" type="text" id="nome_cliente" name="nome" required placeholder="Qual o nome do cliente?">
+          <input class="form-control" type="text" id="nome_cliente" name="nome" required
+            placeholder="Qual o nome do cliente?">
         </div>
 
         <div class="card mb-3">
@@ -18,23 +19,27 @@
             <h6 class="card-title mb-2">Acesso do Cliente</h6>
             <div class="mb-3">
               <label for="username_cliente" class="form-label">Nome de usuário:</label>
-              <input class="form-control" type="text" id="username_cliente" name="username_cliente" required placeholder="Nome de usuário...">
+              <input class="form-control" type="text" id="username_cliente" name="username_cliente" required
+                placeholder="Nome de usuário...">
             </div>
             <div class="mb-3">
               <label for="password_cliente" class="form-label">Senha:</label>
-              <input class="form-control" type="password" id="password_cliente" name="password_cliente" required placeholder="Digite a senha...">
+              <input class="form-control" type="password" id="password_cliente" name="password_cliente" required
+                placeholder="Digite a senha...">
             </div>
           </div>
         </div>
 
         <div class="mb-3">
           <label for="telefone_celular" class="form-label">Telefone Celular:</label>
-          <input class="form-control" type="tel" id="telefone_celular" name="telefone_celular" required placeholder="Telefone com DDD">
+          <input class="form-control" type="tel" id="telefone_celular" name="telefone_celular" required
+            placeholder="Telefone com DDD">
         </div>
 
         <div class="mb-3">
           <label for="telefone_auxiliar" class="form-label">Telefone Auxiliar:</label>
-          <input class="form-control" type="tel" id="telefone_auxiliar" name="telefone_auxiliar" placeholder="Telefone com DDD">
+          <input class="form-control" type="tel" id="telefone_auxiliar" name="telefone_auxiliar"
+            placeholder="Telefone com DDD">
         </div>
 
         <div class="mb-3">
@@ -98,7 +103,8 @@
 
         <div class="mb-3">
           <label for="anotacoes" class="form-label">Anotações:</label>
-          <textarea class="form-control" id="anotacoes" name="anotacoes" rows="4" placeholder="Observações adicionais..."></textarea>
+          <textarea class="form-control" id="anotacoes" name="anotacoes" rows="4"
+            placeholder="Observações adicionais..."></textarea>
         </div>
       </div>
 
@@ -115,28 +121,28 @@
 
 {% block scripts %}
 <script>
-     document.addEventListener("DOMContentLoaded", () => {
-        const tipoClienteSelect = document.getElementById('tipo_cliente');
-        const campoCpf = document.getElementById('campo_cpf');
-        const campoCnpj = document.getElementById('campo_cnpj');
+  document.addEventListener("DOMContentLoaded", () => {
+    const tipoClienteSelect = document.getElementById('tipo_cliente');
+    const campoCpf = document.getElementById('campo_cpf');
+    const campoCnpj = document.getElementById('campo_cnpj');
 
-        tipoClienteSelect.addEventListener('change', function() {
-        campoCpf.classList.add('d-none');
-        campoCnpj.classList.add('d-none');
+    tipoClienteSelect.addEventListener('change', function () {
+      campoCpf.classList.add('d-none');
+      campoCnpj.classList.add('d-none');
 
-        if (this.value === 'fisica') {
-            campoCpf.classList.remove('d-none');
-        } else if (this.value === 'juridica') {
-            campoCnpj.classList.remove('d-none');
-        }
-        });
+      if (this.value === 'fisica') {
+        campoCpf.classList.remove('d-none');
+      } else if (this.value === 'juridica') {
+        campoCnpj.classList.remove('d-none');
+      }
     });
+  });
 
   const nomeClienteInput = document.getElementById('nome_cliente');
   const usernameInput = document.getElementById('username_cliente');
   const passwordInput = document.getElementById('password_cliente');
 
-  nomeClienteInput.addEventListener('blur', function() {
+  nomeClienteInput.addEventListener('blur', function () {
     if (usernameInput.value === '' && passwordInput.value === '') {
       const nomeCompleto = nomeClienteInput.value.trim().toLowerCase();
       if (nomeCompleto) {

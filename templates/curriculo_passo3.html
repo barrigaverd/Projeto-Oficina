@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
+<div class="text-md-start">
+    <button class="btn btn-secondary btn-sm px-4" onclick="retornar()">Voltar</button>
+</div>
 <div class="container mt-4">
     <div class="card shadow-sm rounded-3 mx-auto" style="max-width: 700px;">
         <div class="card-header bg-primary text-white text-center">
@@ -50,7 +53,7 @@
     const ad_experiencia = document.getElementById("add-experiencia");
     let contador = document.querySelectorAll('#experiencia-container .card').length;
 
-    ad_experiencia.addEventListener("click", function() {
+    ad_experiencia.addEventListener("click", function () {
         let novo_bloco = document.createElement("div");
         novo_bloco.className = "card card-body mb-3 border-0 shadow-sm";
         novo_bloco.innerHTML = `

@@ -12,7 +12,7 @@
       <p class="mb-1"><strong>Nome:</strong> {{ cliente.nome }}</p>
       <p class="mb-1"><strong>Telefone Celular:</strong> {{ cliente.telefone_celular }}</p>
       <p class="mb-3"><strong>Telefone Auxiliar:</strong> {{ cliente.telefone_auxiliar }}</p>
-      <p class="mb-0"><strong>Endereço:</strong> 
+      <p class="mb-0"><strong>Endereço:</strong>
         {{ cliente.logradouro }}, Nº{{ cliente.numero }}, Bairro {{ cliente.bairro }},
         {{ cliente.cidade }} - {{ cliente.estado }}
       </p>
@@ -25,7 +25,7 @@
   <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 45rem">
     <h5 class="card-header fw-bold text-center">Cadastrar Ordem de Serviço</h5>
     <form class="card-body row g-3" method="post">
-      
+
       <div class="col-md-6">
         <label class="form-label" for="equipamento">Equipamento:</label>
         <input class="form-control" type="text" id="equipamento" name="equipamento" required>
@@ -43,16 +43,18 @@
 
       <div class="col-12">
         <label class="form-label" for="defeito">Defeito Relatado:</label>
-        <textarea class="form-control" id="defeito" name="defeito" rows="3" placeholder="Descreva o defeito..." required></textarea>
+        <textarea class="form-control" id="defeito" name="defeito" rows="3" placeholder="Descreva o defeito..."
+          required></textarea>
       </div>
 
       <div class="col-md-6">
         <label for="status" class="form-label">Status da OS</label>
         <select class="form-select" name="status" id="status">
-          {% set status_opcoes = ['Pendente','Em andamento','Aguardando pagamento','Concluído','Garantia','Cancelado'] %}
+          {% set status_opcoes = ['Pendente','Em andamento','Aguardando pagamento','Concluído','Garantia','Cancelado']
+          %}
           {% for status_opcao in status_opcoes %}
-          
-          <option value="{{ status_opcao }}" {% if status_opcao == 'Pendente' %}selected{% endif %}>
+
+          <option value="{{ status_opcao }}" {% if status_opcao=='Pendente' %}selected{% endif %}>
             {{ status_opcao }}
           </option>
 

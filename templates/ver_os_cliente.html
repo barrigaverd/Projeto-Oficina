@@ -48,10 +48,8 @@
       <div class="col">
         <div class="card h-100 shadow-sm">
           <a href="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}" target="_blank">
-            <img src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}"
-                 class="card-img-top"
-                 alt="{{ foto.legenda or 'Foto da OS' }}"
-                 style="height: 200px; object-fit: cover;">
+            <img src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}" class="card-img-top"
+              alt="{{ foto.legenda or 'Foto da OS' }}" style="height: 200px; object-fit: cover;">
           </a>
           {% if foto.legenda %}
           <div class="card-body">

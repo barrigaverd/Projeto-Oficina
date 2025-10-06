@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br" data-bs-theme="light">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,6 +53,7 @@
     }
   </style>
 </head>
+
 <body>
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg shadow-sm mb-4 border-bottom">
@@ -59,26 +61,27 @@
       <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
         <i class="bi bi-gear-fill me-2"></i>Oficina do Micro
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPublica" aria-controls="navbarPublica" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPublica"
+        aria-controls="navbarPublica" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="navbarPublica">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           {% if current_user.is_authenticated %}
-            {% if current_user.role == "funcionario" %}
-              <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('home') }}">
-                  <i class="bi bi-house-door me-1"></i>Dashboard
-                </a>
-              </li>
-            {% elif current_user.role == "cliente" %}
-              <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('dashboard_cliente') }}">
-                  <i class="bi bi-house-door me-1"></i>Meu Painel
-                </a>
-              </li>
-            {% endif %}
+          {% if current_user.role == "funcionario" %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('home') }}">
+              <i class="bi bi-house-door me-1"></i>Dashboard
+            </a>
+          </li>
+          {% elif current_user.role == "cliente" %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard_cliente') }}">
+              <i class="bi bi-house-door me-1"></i>Meu Painel
+            </a>
+          </li>
+          {% endif %}
           {% else %}
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('login') }}">Área Administrador</a>
@@ -87,20 +90,20 @@
             <a class="nav-link" href="{{ url_for('login_cliente') }}">Área do Cliente</a>
           </li>
           {% endif %}
-          
+
           {% if current_user.is_authenticated %}
-            <li class="nav-item">
-              <a class="nav-link text-danger" href="{{ url_for('logout_cliente') }}">
-                <i class="bi bi-box-arrow-right me-1"></i> Sair
-              </a>
-            </li>
+          <li class="nav-item">
+            <a class="nav-link text-danger" href="{{ url_for('logout_cliente') }}">
+              <i class="bi bi-box-arrow-right me-1"></i> Sair
+            </a>
+          </li>
           {% endif %}
 
         </ul>
         <button id="themeToggle" class="theme-toggle ms-3" title="Alternar tema">
           <i id="themeIcon" class="bi bi-moon"></i>
         </button>
-        
+
       </div>
     </div>
   </nav>
@@ -108,17 +111,17 @@
   <!-- Conteúdo -->
   <main class="container">
     {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-          <div class="">
-            <div class="alert alert-{{ category }} flash-toast alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          </div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="">
+      <div class="alert alert-{{ category }} flash-toast alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
     {% block content %}{% endblock %}
   </main>
 
@@ -148,10 +151,10 @@
       themeIcon.className = next === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
     });
 
-    window.addEventListener('load', function() {
+    window.addEventListener('load', function () {
       const alerts = document.querySelectorAll('.alert');
-      alerts.forEach(function(alert) {
-        setTimeout(function() {
+      alerts.forEach(function (alert) {
+        setTimeout(function () {
           new bootstrap.Alert(alert).close();
         }, 5000)
       });
@@ -162,4 +165,5 @@
     }
   </script>
 </body>
+
 </html>

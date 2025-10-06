@@ -20,32 +20,32 @@
         </thead>
         <tbody>
           {% if current_user.ordens_servico %}
-            {% for ordem in current_user.ordens_servico %}
-            <tr class="text-center">
-              <td class="fw-semibold">{{ ordem.numero_formatado }}</td>
-              <td>{{ ordem.cliente.nome }}</td>
-              <td>{{ ordem.equipamento }}</td>
-              <td class="fw-bold text-success">
-                R$ {{ "%.2f"|format(ordem.valor_calculado|float) }}
-              </td>
-              <td>
-                <a href="{{url_for('ver_os_cliente', id=ordem.id)}}" 
-                   class="btn btn-outline-primary btn-sm" title="Ver detalhes">
-                  <i class="bi bi-eye"></i>
-                </a>
-                <a href="{{url_for('exibir_pdf_os', os_id=ordem.id)}}" target="_blank"
-                   class="btn btn-outline-danger btn-sm" title="Visualizar PDF">
-                  <i class="bi bi-file-earmark-pdf-fill"></i>
-                </a>
-              </td>
-            </tr>
-            {% endfor %}
+          {% for ordem in current_user.ordens_servico %}
+          <tr class="text-center">
+            <td class="fw-semibold">{{ ordem.numero_formatado }}</td>
+            <td>{{ ordem.cliente.nome }}</td>
+            <td>{{ ordem.equipamento }}</td>
+            <td class="fw-bold text-success">
+              R$ {{ "%.2f"|format(ordem.valor_calculado|float) }}
+            </td>
+            <td>
+              <a href="{{url_for('ver_os_cliente', id=ordem.id)}}" class="btn btn-outline-primary btn-sm"
+                title="Ver detalhes">
+                <i class="bi bi-eye"></i>
+              </a>
+              <a href="{{url_for('exibir_pdf_os', os_id=ordem.id)}}" target="_blank"
+                class="btn btn-outline-danger btn-sm" title="Visualizar PDF">
+                <i class="bi bi-file-earmark-pdf-fill"></i>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
           {% else %}
-            <tr>
-              <td colspan="5" class="text-center text-muted py-4">
-                Nenhuma ordem de serviço cadastrada até o momento.
-              </td>
-            </tr>
+          <tr>
+            <td colspan="5" class="text-center text-muted py-4">
+              Nenhuma ordem de serviço cadastrada até o momento.
+            </td>
+          </tr>
           {% endif %}
         </tbody>
       </table>

@@ -1,91 +1,93 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="text-md-start w-100 rounded-3 mx-auto" style="max-width: 45rem">
-    <button class="btn btn-secondary btn-sm px-4" onclick="retornar()">Voltar</button>
-  </div>
-  <div class="d-flex justify-content-center">
-    <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 45rem">
-  
-      <!-- Informações do Cliente -->
-      <h5 class="card-header fw-bold">Informações do Cliente</h5>
-      <div class="card-body">
-        <p class="mb-1"><strong>Nome:</strong> {{ cliente.nome }}</p>
-        <p class="mb-1"><strong>Telefone Celular:</strong> {{ cliente.telefone_celular }}</p>
-        <p class="mb-3"><strong>Telefone Auxiliar:</strong> {{ cliente.telefone_auxiliar }}</p>
-        <p class="mb-0"><strong>Endereço:</strong> 
-          {{ cliente.logradouro }}, Nº{{ cliente.numero }}, Bairro {{ cliente.bairro }},
-          {{ cliente.cidade }} - {{ cliente.estado }}
-        </p>
-      </div>
+  <button class="btn btn-secondary btn-sm px-4" onclick="retornar()">Voltar</button>
+</div>
+<div class="d-flex justify-content-center">
+  <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 45rem">
+
+    <!-- Informações do Cliente -->
+    <h5 class="card-header fw-bold">Informações do Cliente</h5>
+    <div class="card-body">
+      <p class="mb-1"><strong>Nome:</strong> {{ cliente.nome }}</p>
+      <p class="mb-1"><strong>Telefone Celular:</strong> {{ cliente.telefone_celular }}</p>
+      <p class="mb-3"><strong>Telefone Auxiliar:</strong> {{ cliente.telefone_auxiliar }}</p>
+      <p class="mb-0"><strong>Endereço:</strong>
+        {{ cliente.logradouro }}, Nº{{ cliente.numero }}, Bairro {{ cliente.bairro }},
+        {{ cliente.cidade }} - {{ cliente.estado }}
+      </p>
     </div>
   </div>
+</div>
 <div>
-    <!-- Formulário de Cadastro da OS -->
-<div class="d-flex justify-content-center">
+  <!-- Formulário de Cadastro da OS -->
+  <div class="d-flex justify-content-center">
     <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 45rem">
       <h5 class="card-header fw-bold text-center">Cadastrar Orçamento</h5>
       <form class="card-body row g-3" method="post">
         <div class="col-md-6">
-            <label class="form-label" for="tecnico_responsavel">Técnico responsável:</label>
-            <input class="form-control" type="text" id="tecnico_responsavel" name="tecnico_responsavel">
+          <label class="form-label" for="tecnico_responsavel">Técnico responsável:</label>
+          <input class="form-control" type="text" id="tecnico_responsavel" name="tecnico_responsavel">
         </div>
         <div class="col-md-6">
           <label class="form-label" for="equipamento">Equipamento:</label>
           <input class="form-control" type="text" id="equipamento" name="equipamento" required>
         </div>
-  
+
         <div class="col-md-6">
           <label class="form-label" for="marca">Marca:</label>
           <input class="form-control" type="text" id="marca" name="marca">
         </div>
-  
+
         <div class="col-md-6">
           <label class="form-label" for="modelo">Modelo:</label>
           <input class="form-control" type="text" id="modelo" name="modelo">
         </div>
 
         <div class="col-md-6">
-            <label class="form-label" for="numero_de_serie">Numero de série:</label>
-            <input class="form-control" type="text" id="numero_de_serie" name="numero_de_serie">
+          <label class="form-label" for="numero_de_serie">Numero de série:</label>
+          <input class="form-control" type="text" id="numero_de_serie" name="numero_de_serie">
         </div>
         <div class="col-md-6">
-            <label class="form-label" for="validade_do_orcamento">Validade do orçamento:</label>
-            <input class="form-control" type="date" id="validade_do_orcamento" name="validade_do_orcamento">
+          <label class="form-label" for="validade_do_orcamento">Validade do orçamento:</label>
+          <input class="form-control" type="date" id="validade_do_orcamento" name="validade_do_orcamento">
         </div>
-  
+
         <div class="col-12">
           <label class="form-label" for="problema_informado">Problema informado:</label>
-          <textarea class="form-control" id="problema_informado" name="problema_informado" rows="3" placeholder="Descreva o defeito..." required></textarea>
+          <textarea class="form-control" id="problema_informado" name="problema_informado" rows="3"
+            placeholder="Descreva o defeito..." required></textarea>
         </div>
         <div class="col-12">
-            <label class="form-label" for="problema_constatado">Problema constatado:</label>
-            <textarea class="form-control" id="problema_constatado" name="problema_constatado" rows="3" placeholder="Descreva o que constatou..." required></textarea>
+          <label class="form-label" for="problema_constatado">Problema constatado:</label>
+          <textarea class="form-control" id="problema_constatado" name="problema_constatado" rows="3"
+            placeholder="Descreva o que constatou..." required></textarea>
         </div>
         <div class="col-12">
-            <label class="form-label" for="observacoes_cliente">Observações (Visível para o cliente):</label>
-            <textarea class="form-control" id="observacoes_cliente" name="observacoes_cliente" rows="3" ></textarea>
+          <label class="form-label" for="observacoes_cliente">Observações (Visível para o cliente):</label>
+          <textarea class="form-control" id="observacoes_cliente" name="observacoes_cliente" rows="3"></textarea>
         </div>
         <div class="col-12">
-            <label class="form-label" for="observacoes_internas">Observações (Não visível para o cliente):</label>
-            <textarea class="form-control" id="observacoes_internas" name="observacoes_internas" rows="3" ></textarea>
+          <label class="form-label" for="observacoes_internas">Observações (Não visível para o cliente):</label>
+          <textarea class="form-control" id="observacoes_internas" name="observacoes_internas" rows="3"></textarea>
         </div>
-  
+
         <div class="col-md-6">
-            <label for="status" class="form-label">Status do Orçamento:</label>
-            <select class="form-select" name="status" id="status" required>
-              <option value="" selected disabled>Selecione o status</option>
-              <option value="Pendente">Pendente</option>
-              <option value="Aguardando aprovação">Aguardando aprovação</option>
-              <option value="Aprovado">Aprovado</option>
-              <option value="Concluído">Reprovado</option>
-            </select>
-          </div>
-  
+          <label for="status" class="form-label">Status do Orçamento:</label>
+          <select class="form-select" name="status" id="status" required>
+            <option value="" selected disabled>Selecione o status</option>
+            <option value="Pendente">Pendente</option>
+            <option value="Aguardando aprovação">Aguardando aprovação</option>
+            <option value="Aprovado">Aprovado</option>
+            <option value="Concluído">Reprovado</option>
+          </select>
+        </div>
+
         <div class="col-12 text-center">
           <button class="btn btn-primary px-4" type="submit">💾 Salvar Orçamento</button>
         </div>
       </form>
     </div>
-  
 
-{% endblock %}
+
+    {% endblock %}

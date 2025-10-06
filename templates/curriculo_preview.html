@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +15,8 @@
             line-height: 1.6;
         }
 
-        h1, h2 {
+        h1,
+        h2 {
             color: #333;
             text-transform: uppercase;
         }
@@ -22,7 +24,7 @@
         h1 {
             font-size: 28px;
             text-align: center;
-            
+
             padding-bottom: 5px;
             margin-bottom: 15px;
         }
@@ -46,7 +48,8 @@
             margin-top: 15px;
         }
 
-        .experiencia, .formacao {
+        .experiencia,
+        .formacao {
             margin-bottom: 10px;
         }
 
@@ -72,6 +75,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <h1>{{ curriculo.nome }}</h1>
@@ -83,27 +87,27 @@
         <p>E-mail: {{ curriculo.email }}</p>
     </div>
 
-    
+
 
     <div class="secao">
         <h2>Formação Acadêmica</h2>
         {% for formacao in curriculo.formacoes %}
-            <div class="formacao">
-                <p>{{ formacao.descricao }}</p>
-            </div>
+        <div class="formacao">
+            <p>{{ formacao.descricao }}</p>
+        </div>
         {% endfor %}
     </div>
 
     <div class="secao">
         <h2>Experiências Profissionais</h2>
         {% for exp in curriculo.experiencias %}
-            <div class="experiencia">
-                <p><strong>Empresa:</strong> {{ exp.empresa }}</p>
-                <p><strong>Cargo:</strong> {{ exp.cargo }}</p>
-                <p><strong>Admissão:</strong> {{ exp.data_admissao }}</p>
-                <p><strong>Demissão:</strong> {{ exp.data_demissao }}</p>
-                <hr>
-            </div>
+        <div class="experiencia">
+            <p><strong>Empresa:</strong> {{ exp.empresa }}</p>
+            <p><strong>Cargo:</strong> {{ exp.cargo }}</p>
+            <p><strong>Admissão:</strong> {{ exp.data_admissao }}</p>
+            <p><strong>Demissão:</strong> {{ exp.data_demissao }}</p>
+            <hr>
+        </div>
         {% endfor %}
     </div>
     <div class="secao">
@@ -111,11 +115,13 @@
         <p>{{ curriculo.objetivo }}</p>
     </div>
     {% if not para_pdf %}
-        <div style="text-align: center;">
-            <a href="{{ url_for('download_curriculo_pdf', curriculo_id=curriculo.id) }}" class="btn">
-                Baixar como PDF
-            </a>
-        </div>
+    <div style="text-align: center;">
+        <a href="{{ url_for('download_curriculo_pdf', curriculo_id=curriculo.id) }}" class="btn">
+            Baixar como PDF
+        </a>
+        <a class="btn btn-close" href="{{ url_for('listar_curriculos') }}">Voltar para Lista</a>
+    </div>
     {% endif %}
 </body>
+
 </html>

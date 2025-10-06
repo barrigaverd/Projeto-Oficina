@@ -5,65 +5,39 @@
 </div>
 <div class="d-flex justify-content-center">
   <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 45rem">
-    
+
     <h5 class="card-header fw-bold text-center">Editar Peça</h5>
-    
+
     <form class="card-body row g-3" method="post">
 
       <div class="col-12">
         <label class="form-label" for="nome_peca">Nome da Peça:</label>
-        <input 
-          class="form-control" 
-          type="text" 
-          id="nome_peca" 
-          name="nome_peca" 
-          value="{{peca_a_editar.nome_peca}}" 
-          placeholder="Digite o nome da peça"
-          required>
+        <input class="form-control" type="text" id="nome_peca" name="nome_peca" value="{{peca_a_editar.nome_peca}}"
+          placeholder="Digite o nome da peça" required>
       </div>
 
       <div class="col-12">
         <label class="form-label" for="detalhes_opcional">Detalhes (opcional):</label>
-        <textarea 
-          class="form-control" 
-          id="detalhes_opcional" 
-          name="detalhes_opcional" 
-          rows="2"
+        <textarea class="form-control" id="detalhes_opcional" name="detalhes_opcional" rows="2"
           placeholder="Ex: cor, tamanho, observações...">{{peca_a_editar.detalhes_opcional}}</textarea>
       </div>
 
       <div class="col-md-6">
         <label class="form-label" for="codigo_interno">Código Interno:</label>
-        <input 
-          class="form-control" 
-          type="text" 
-          id="codigo_interno" 
-          name="codigo_interno" 
-          value="{{peca_a_editar.codigo_interno}}" 
-          placeholder="Ex: REF-12345">
+        <input class="form-control" type="text" id="codigo_interno" name="codigo_interno"
+          value="{{peca_a_editar.codigo_interno}}" placeholder="Ex: REF-12345">
       </div>
 
       <div class="col-md-6">
         <label class="form-label" for="unidade_medida">Unidade de Medida:</label>
-        <input 
-          class="form-control" 
-          type="text" 
-          id="unidade_medida" 
-          name="unidade_medida" 
-          placeholder="Ex: un, caixa, kg" 
-          value="{{peca_a_editar.unidade_medida}}">
+        <input class="form-control" type="text" id="unidade_medida" name="unidade_medida"
+          placeholder="Ex: un, caixa, kg" value="{{peca_a_editar.unidade_medida}}">
       </div>
 
       <div class="col-md-6">
         <label class="form-label" for="preco_unitario">Preço Unitário (R$):</label>
-        <input 
-          type="number" 
-          step="0.01" 
-          class="form-control" 
-          id="preco_unitario" 
-          name="preco_unitario" 
-          placeholder="0,00" 
-          value="{{peca_a_editar.preco_unitario}}">
+        <input type="number" step="0.01" class="form-control" id="preco_unitario" name="preco_unitario"
+          placeholder="0,00" value="{{peca_a_editar.preco_unitario}}">
       </div>
 
       <div class="col-12 text-center mt-3">

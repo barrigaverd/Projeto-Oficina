@@ -1545,5 +1545,33 @@ def download_curriculo_pdf(curriculo_id):
     # Se houve algum erro, retorna uma mensagem simples
     return flash("Ocorreu um erro ao gerar o PDF."), 500
 
+
+@app.route("/curriculos")
+@login_required
+@role_required('funcionario')
+def listar_curriculos():
+    termos_busca = request.args.get('busca', '')
+    query = Curriculo.query
+
+    if termos_busca:
+        query = query.filter(Curriculo.nome.ilike(f'%{termos_busca}%'))
+    
+    curriculos = query.order_by(Curriculo.nome).all()
+        
+                               
+    return render_template('listar_curriculos.html', curriculos=curriculos, termos_busca=termos_busca)
+
+
+@app.route("/curriculos/deletar/<int:curriculo_id>")
+@login_required
+@role_required('funcionario')
+def deletar_curriculo(curriculo_id): 
+    curriculo_a_deletar = Curriculo.query.get(curriculo_id)
+    db.session.delete(curriculo_a_deletar)
+    db.session.commit()
+    flash("Curriculo apagado com sucesso!", "success")
+    return redirect(url_for('listar_curriculos'))
+
+
 if __name__ == "__main__":
     app.run(debug=True)

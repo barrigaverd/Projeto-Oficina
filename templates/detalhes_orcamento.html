@@ -9,7 +9,7 @@
       <p class="mb-1"><strong>Nome:</strong> {{orcamento.cliente.nome}}</p>
       <p class="mb-1"><strong>Telefone Celular:</strong> {{orcamento.cliente.telefone_celular}}</p>
       <p class="mb-1"><strong>Telefone Auxiliar:</strong> {{orcamento.cliente.telefone_auxiliar}}</p>
-      <p class="mb-0"><strong>Endereço:</strong> {{orcamento.cliente.logradouro}}, Nº{{orcamento.cliente.numero}}, 
+      <p class="mb-0"><strong>Endereço:</strong> {{orcamento.cliente.logradouro}}, Nº{{orcamento.cliente.numero}},
         Bairro: {{orcamento.cliente.bairro}}, {{orcamento.cliente.cidade}} - {{orcamento.cliente.estado}}</p>
     </div>
   </div>
@@ -20,82 +20,94 @@
   <h5 class="card-header text-center fw-bold">Detalhes do Orçamento #{{orcamento.numero_formatado}}</h5>
   <form class="card-body row g-3" method="post">
     <div class="col-md-6">
-        <label class="form-label" for="tecnico_responsavel">Técnico responsável:</label>
-        <input class="form-control" type="text" id="tecnico_responsavel" name="tecnico_responsavel" value="{{orcamento.tecnico_responsavel}}">
+      <label class="form-label" for="tecnico_responsavel">Técnico responsável:</label>
+      <input class="form-control" type="text" id="tecnico_responsavel" name="tecnico_responsavel"
+        value="{{orcamento.tecnico_responsavel}}">
     </div>
     <div class="col-md-6">
-        <label class="form-label" for="equipamento">Equipamento:</label>
-        <input class="form-control" type="text" id="equipamento" name="equipamento" value="{{orcamento.equipamento}}" required>
-      </div>
+      <label class="form-label" for="equipamento">Equipamento:</label>
+      <input class="form-control" type="text" id="equipamento" name="equipamento" value="{{orcamento.equipamento}}"
+        required>
+    </div>
 
-      <div class="col-md-6">
-        <label class="form-label" for="marca">Marca:</label>
-        <input class="form-control" type="text" id="marca" name="marca" value="{{orcamento.marca}}">
-      </div>
+    <div class="col-md-6">
+      <label class="form-label" for="marca">Marca:</label>
+      <input class="form-control" type="text" id="marca" name="marca" value="{{orcamento.marca}}">
+    </div>
 
-      <div class="col-md-6">
-        <label class="form-label" for="modelo">Modelo:</label>
-        <input class="form-control" type="text" id="modelo" name="modelo" value="{{orcamento.modelo}}">
-      </div>
+    <div class="col-md-6">
+      <label class="form-label" for="modelo">Modelo:</label>
+      <input class="form-control" type="text" id="modelo" name="modelo" value="{{orcamento.modelo}}">
+    </div>
 
-      <div class="col-md-6">
-          <label class="form-label" for="numero_de_serie">Numero de série:</label>
-          <input class="form-control" type="text" id="numero_de_serie" name="numero_de_serie" value="{{orcamento.numero_de_serie}}">
-      </div>
-      <div class="col-md-6">
-          <label class="form-label" for="validade_do_orcamento">Validade do orçamento:</label>
-          <input class="form-control" type="date" id="validade_do_orcamento" name="validade_do_orcamento" value="{{orcamento.validade_do_orcamento or ''}}">
-      </div>
+    <div class="col-md-6">
+      <label class="form-label" for="numero_de_serie">Numero de série:</label>
+      <input class="form-control" type="text" id="numero_de_serie" name="numero_de_serie"
+        value="{{orcamento.numero_de_serie}}">
+    </div>
+    <div class="col-md-6">
+      <label class="form-label" for="validade_do_orcamento">Validade do orçamento:</label>
+      <input class="form-control" type="date" id="validade_do_orcamento" name="validade_do_orcamento"
+        value="{{orcamento.validade_do_orcamento or ''}}">
+    </div>
 
-      <div class="col-12">
-        <label class="form-label" for="problema_informado">Problema informado:</label>
-        <textarea class="form-control" id="problema_informado" name="problema_informado" rows="3" placeholder="Descreva o defeito...">{{orcamento.problema_informado}}</textarea>
-      </div>
-      <div class="col-12">
-          <label class="form-label" for="problema_constatado">Problema constatado:</label>
-          <textarea class="form-control" id="problema_constatado" name="problema_constatado" rows="3" placeholder="Descreva o que constatou...">{{orcamento.problema_constatado}}</textarea>
-      </div>
-      <div class="col-12">
-          <label class="form-label" for="observacoes_cliente">Observações (Visível para o cliente):</label>
-          <textarea class="form-control" id="observacoes_cliente" name="observacoes_cliente" rows="3">{{orcamento.observacoes_cliente}}</textarea>
-      </div>
-      <div class="col-12">
-          <label class="form-label" for="observacoes_internas">Observações (Não visível para o cliente):</label>
-          <textarea class="form-control" id="observacoes_internas" name="observacoes_internas" rows="3">{{orcamento.observacoes_internas}}</textarea>
-      </div>
+    <div class="col-12">
+      <label class="form-label" for="problema_informado">Problema informado:</label>
+      <textarea class="form-control" id="problema_informado" name="problema_informado" rows="3"
+        placeholder="Descreva o defeito...">{{orcamento.problema_informado}}</textarea>
+    </div>
+    <div class="col-12">
+      <label class="form-label" for="problema_constatado">Problema constatado:</label>
+      <textarea class="form-control" id="problema_constatado" name="problema_constatado" rows="3"
+        placeholder="Descreva o que constatou...">{{orcamento.problema_constatado}}</textarea>
+    </div>
+    <div class="col-12">
+      <label class="form-label" for="observacoes_cliente">Observações (Visível para o cliente):</label>
+      <textarea class="form-control" id="observacoes_cliente" name="observacoes_cliente"
+        rows="3">{{orcamento.observacoes_cliente}}</textarea>
+    </div>
+    <div class="col-12">
+      <label class="form-label" for="observacoes_internas">Observações (Não visível para o cliente):</label>
+      <textarea class="form-control" id="observacoes_internas" name="observacoes_internas"
+        rows="3">{{orcamento.observacoes_internas}}</textarea>
+    </div>
 
-      <div class="card mt-4 shadow-sm">
-  <h5 class="card-header text-center fw-bold">Detalhes do Orçamento #{{orcamento.numero_formatado}}</h5>
-  
-    <form class="card-body row g-3" method="post" action="{{ url_for('detalhes_orcamento', id=orcamento.id) }}">
-      <div class="col-md-6">
+    <div class="card mt-4 shadow-sm">
+      <h5 class="card-header text-center fw-bold">Detalhes do Orçamento #{{orcamento.numero_formatado}}</h5>
+
+      <form class="card-body row g-3" method="post" action="{{ url_for('detalhes_orcamento', id=orcamento.id) }}">
+        <div class="col-md-6">
           <label for="status" class="form-label">Status do Orçamento</label>
           <select class="form-select" name="status" id="status">
             {% set status_opcoes = ['Pendente','Aguardando aprovação','Aprovado', 'Reprovado', 'Convertido em OS'] %}
             {% for status_opcao in status_opcoes %}
-            <option value="{{ status_opcao }}" {% if status_opcao == orcamento.status %}selected{% endif %}>
+            <option value="{{ status_opcao }}" {% if status_opcao==orcamento.status %}selected{% endif %}>
               {{ status_opcao }}
             </option>
             {% endfor %}
           </select>
-      </div>
-      
-      <div class="col-12 text-center">
-          <button class="btn btn-success btn-sm" type="submit">💾 Salvar Alterações</button>
-      </div>
+        </div>
 
-    </form> <div class="card-footer text-center">
+        <div class="col-12 text-center">
+          <button class="btn btn-success btn-sm" type="submit">💾 Salvar Alterações</button>
+        </div>
+
+      </form>
+      <div class="card-footer text-center">
         <a class="btn btn-danger btn-sm" href="{{url_for('deletar_orcamento', id=orcamento.id)}}">🗑 Excluir</a>
-        <a class="btn btn-secondary btn-sm" href="{{url_for('gerar_pdf_orcamento', orcamento_id=orcamento.id)}}">📄 Gerar PDF</a>
-        <a class="btn btn-info btn-sm" href="{{url_for('exibir_pdf_orcamento', orcamento_id=orcamento.id)}}" target="_blank">👁️ Exibir PDF</a>
-        
+        <a class="btn btn-secondary btn-sm" href="{{url_for('gerar_pdf_orcamento', orcamento_id=orcamento.id)}}">📄
+          Gerar PDF</a>
+        <a class="btn btn-info btn-sm" href="{{url_for('exibir_pdf_orcamento', orcamento_id=orcamento.id)}}"
+          target="_blank">👁️ Exibir PDF</a>
+
         {% if orcamento.status == 'Aprovado' %}
-        <form action="{{ url_for('converter_orcamento_para_os', orcamento_id=orcamento.id) }}" method="POST" class="d-inline">
+        <form action="{{ url_for('converter_orcamento_para_os', orcamento_id=orcamento.id) }}" method="POST"
+          class="d-inline">
           <button type="submit" class="btn btn-primary btn-sm">✔️ Converter em Ordem de Serviço</button>
         </form>
         {% endif %}
+      </div>
     </div>
-  </div>
 </div>
 
 <div class="card mt-4" id="fotos_equipamento">
@@ -106,10 +118,8 @@
       <div class="col">
         <div class="card h-100 shadow-sm">
           <a href="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}" target="_blank">
-            <img src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}" 
-                 class="card-img-top" 
-                 alt="{{ foto.legenda or 'Foto do Orçamento' }}" 
-                 style="height: 200px; object-fit: cover;">
+            <img src="{{ url_for('static', filename='uploads/' + foto.nome_arquivo) }}" class="card-img-top"
+              alt="{{ foto.legenda or 'Foto do Orçamento' }}" style="height: 200px; object-fit: cover;">
           </a>
           {% if foto.legenda %}
           <div class="card-body p-2">
@@ -130,7 +140,8 @@
 
 <div class="card mt-3" id="adicionar-foto">
   <h4 class="card-header text-center fw-bold">➕ Adicionar Foto</h4>
-  <form class="card-body row g-3" method="post" action="{{ url_for('adicionar_foto_orcamento', orcamento_id=orcamento.id) }}" enctype="multipart/form-data">
+  <form class="card-body row g-3" method="post"
+    action="{{ url_for('adicionar_foto_orcamento', orcamento_id=orcamento.id) }}" enctype="multipart/form-data">
     <div class="col-md-5">
       <label for="foto" class="form-label">Selecionar Foto</label>
       <input type="file" class="form-control" name="foto" required>
@@ -177,13 +188,15 @@
 
 <div class="card mt-3" id="adicionar_servico">
   <h4 class="card-header text-center fw-bold">➕ Adicionar Serviço</h4>
-  <form class="card-body row g-3" method="post" action="{{ url_for('adicionar_servico_orcamento', orcamento_id=orcamento.id) }}">
+  <form class="card-body row g-3" method="post"
+    action="{{ url_for('adicionar_servico_orcamento', orcamento_id=orcamento.id) }}">
     <div class="col-12">
       <label for="servico" class="form-label">Serviço:</label>
       <select name="servico_id" class="form-select" required>
         <option value="">Selecione um serviço...</option>
         {% for servico in lista_servicos %}
-        <option value="{{ servico.id }}">{{ servico.descricao_servico }} - R$ {{ "%.2f"|format(servico.preco_unitario|float) }}</option>
+        <option value="{{ servico.id }}">{{ servico.descricao_servico }} - R$ {{
+          "%.2f"|format(servico.preco_unitario|float) }}</option>
         {% endfor %}
       </select>
     </div>
@@ -193,7 +206,8 @@
     </div>
     <div class="col-md-6">
       <label for="preco_cobrado" class="form-label">Preço Cobrado (R$)</label>
-      <input type="text" class="form-control" name="preco_cobrado" placeholder="Deixe em branco para usar o preço padrão">
+      <input type="text" class="form-control" name="preco_cobrado"
+        placeholder="Deixe em branco para usar o preço padrão">
     </div>
     <div class="col-12 text-center">
       <button type="submit" class="btn btn-success btn-sm">Adicionar</button>
@@ -234,7 +248,8 @@
 
 <div class="card mt-3" id="adicionar_peca">
   <h4 class="card-header text-center fw-bold">➕ Adicionar Peça</h4>
-  <form class="card-body row g-3" method="post" action="{{ url_for('adicionar_peca_orcamento', orcamento_id=orcamento.id) }}">
+  <form class="card-body row g-3" method="post"
+    action="{{ url_for('adicionar_peca_orcamento', orcamento_id=orcamento.id) }}">
     <div class="col-12">
       <label for="peca" class="form-label">Peça:</label>
       <select name="peca_id" class="form-select" required>
@@ -250,7 +265,8 @@
     </div>
     <div class="col-md-6">
       <label for="preco_cobrado" class="form-label">Preço Cobrado (R$)</label>
-      <input type="text" class="form-control" name="preco_cobrado" placeholder="Deixe em branco para usar o preço padrão">
+      <input type="text" class="form-control" name="preco_cobrado"
+        placeholder="Deixe em branco para usar o preço padrão">
     </div>
     <div class="col-12 text-center">
       <button type="submit" class="btn btn-success btn-sm">Adicionar</button>

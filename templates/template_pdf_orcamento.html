@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Orçamento #{{ orcamento.numero_formatado }}</title>
@@ -8,63 +9,80 @@
             size: A4;
             margin: 10mm;
         }
+
         body {
             font-family: Arial, sans-serif;
             font-size: 12px;
             color: #333;
             margin: 0;
         }
-        .header-table, .items-table {
+
+        .header-table,
+        .items-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 16px;
         }
+
         .header-table td {
             vertical-align: top;
         }
-        .items-table th, .items-table td {
+
+        .items-table th,
+        .items-table td {
             border: 1px solid #ccc;
             padding: 3px;
             text-align: left;
         }
+
         .items-table th {
             background-color: #f2f2f2;
             font-weight: bold;
         }
+
         .text-right {
             text-align: right;
         }
-        h1, h2 {
+
+        h1,
+        h2 {
             margin: 0;
         }
+
         .section-header {
             background-color: #f2f2f2;
             padding: 3px;
             font-weight: bold;
             margin: 3px 0 3px 0;
         }
+
         .total-table {
             width: 40%;
             margin-left: auto;
             border-collapse: collapse;
             margin-top: 6px;
         }
+
         .total-table td {
             border: 1px solid #a8a8a8;
             padding: 3px;
             font-weight: bold;
         }
+
         .fotos-table {
             width: 100%;
             border-collapse: collapse;
             text-align: center;
         }
+
         .fotos-table td {
             padding: 10px;
             text-align: center;
             vertical-align: top;
-            width: 33%; /* 3 colunas */
+            width: 33%;
+            /* 3 colunas */
         }
+
         .fotos-table img {
             max-width: 180px;
             max-height: 160px;
@@ -72,6 +90,7 @@
         }
     </style>
 </head>
+
 <body>
     <table class="header-table">
         <tr>
@@ -84,8 +103,11 @@
             </td>
             <td class="text-right">
                 <h2>Orçamento #{{ orcamento.numero_formatado }}</h2>
-                <p>Data de Emissão: {{ orcamento.data_de_criacao.strftime('%d/%m/%Y') if orcamento.data_de_criacao }}</p>
-                <p>Válido até: {% if orcamento.validade_do_orcamento %}{{ orcamento.validade_do_orcamento[8:10] }}/{{ orcamento.validade_do_orcamento[5:7] }}/{{ orcamento.validade_do_orcamento[0:4] }}{% else %}N/A{% endif %}</p>
+                <p>Data de Emissão: {{ orcamento.data_de_criacao.strftime('%d/%m/%Y') if orcamento.data_de_criacao }}
+                </p>
+                <p>Válido até: {% if orcamento.validade_do_orcamento %}{{ orcamento.validade_do_orcamento[8:10] }}/{{
+                    orcamento.validade_do_orcamento[5:7] }}/{{ orcamento.validade_do_orcamento[0:4] }}{% else %}N/A{%
+                    endif %}</p>
             </td>
         </tr>
     </table>
@@ -116,7 +138,7 @@
             </td>
             {% endfor %}
             {% for _ in range(3 - row|length) %}
-                <td></td>
+            <td></td>
             {% endfor %}
         </tr>
         {% endfor %}
@@ -177,7 +199,7 @@
             <td class="text-right">R$ {{ "%.2f"|format(orcamento.valor_total|float) }}</td>
         </tr>
     </table>
-    
+
     {% if orcamento.observacoes_cliente %}
     <div class="section-header" style="margin-top: 15px;">Observações</div>
     <p>{{ orcamento.observacoes_cliente }}</p>
@@ -196,4 +218,5 @@
         </tr>
     </table>
 </body>
+
 </html>

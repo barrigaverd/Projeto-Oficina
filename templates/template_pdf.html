@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Ordem de Serviço #{{ ordem_servico.numero_formatado }}</title>
@@ -8,74 +9,92 @@
             size: A4;
             margin: 10mm;
         }
+
         body {
             font-family: Arial, sans-serif;
             font-size: 12px;
             color: #333;
             margin: 0;
         }
-        .header-table, .items-table {
+
+        .header-table,
+        .items-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 16px;
         }
+
         .header-table td {
             vertical-align: top;
         }
-        .items-table th, .items-table td {
+
+        .items-table th,
+        .items-table td {
             border: 1px solid #ccc;
             padding: 3px;
             text-align: left;
         }
+
         .items-table th {
             background-color: #f2f2f2;
             font-weight: bold;
         }
+
         .text-right {
             text-align: right;
         }
-        h1, h2 {
+
+        h1,
+        h2 {
             margin: 0;
         }
+
         .section-header {
             background-color: #f2f2f2;
             padding: 3px;
             font-weight: bold;
             margin: 3px 0 3px 0;
         }
+
         .total-table {
             width: 40%;
             margin-left: auto;
             border-collapse: collapse;
             margin-top: 6px;
         }
+
         .total-table td {
             border: 1px solid #a8a8a8;
             padding: 3px;
             font-weight: bold;
         }
+
         .fotos-table {
-        width: 100%;
-        border: none;
-        border-collapse: collapse;
-        text-align: center;
+            width: 100%;
+            border: none;
+            border-collapse: collapse;
+            text-align: center;
         }
 
         .fotos-table td {
             border: none;
             padding: 10px;
-            
+
             text-align: center;
-            width: 33%; /* divide em 3 colunas */
+            width: 33%;
+            /* divide em 3 colunas */
         }
 
         .fotos-table img {
-            width: 150px;   /* tamanho fixo que xhtml2pdf respeita */
-            height: 150px;  /* garante que não estique */
-            
+            width: 150px;
+            /* tamanho fixo que xhtml2pdf respeita */
+            height: 150px;
+            /* garante que não estique */
+
         }
-</style>
+    </style>
 </head>
+
 <body>
     <table class="header-table">
         <tr>
@@ -92,9 +111,10 @@
                 <br><br>
                 <div class="dados-usuario">
                     <strong>Usuário do Portal:</strong> {{ ordem_servico.cliente.username_cliente }}<br>
-                    <strong>Senha do Portal:</strong> {{ ordem_servico.cliente.username_cliente.split('.')[0] }}@{{ ordem_servico.data_de_criacao.year }}
+                    <strong>Senha do Portal:</strong> {{ ordem_servico.cliente.username_cliente.split('.')[0] }}@{{
+                    ordem_servico.data_de_criacao.year }}
                 </div>
-                
+
             </td>
         </tr>
     </table>
@@ -195,4 +215,5 @@
         </tr>
     </table>
 </body>
+
 </html>

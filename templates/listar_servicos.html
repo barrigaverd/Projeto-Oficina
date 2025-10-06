@@ -3,53 +3,53 @@
 {% block content %}
 <div class="d-flex justify-content-center">
   <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 45rem">
-        <!-- Header com título e busca -->
-        <div class="card-header">
-          <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-            <h4 class="fw-bold mb-2 mb-md-0">Lista de Serviços</h4>
+    <!-- Header com título e busca -->
+    <div class="card-header">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+        <h4 class="fw-bold mb-2 mb-md-0">Lista de Serviços</h4>
 
-            <!-- Campo de busca -->
-            <form action="{{ url_for('listar_servicos')}}" method="GET" class="w-auto w-md-auto align-content-end">
-              <div class="input-group">
-                <input type="text" name="termo_busca" class="form-control" placeholder="Buscar serviços..." value="{{ request.args.get('termo_busca', '') }}">
-                <button type="submit" class="btn btn-primary btn-sm">
-                  <i class="bi bi-search"></i> Buscar
-                </button>
-              </div>
-            </form>
+        <!-- Campo de busca -->
+        <form action="{{ url_for('listar_servicos')}}" method="GET" class="w-auto w-md-auto align-content-end">
+          <div class="input-group">
+            <input type="text" name="termo_busca" class="form-control" placeholder="Buscar serviços..."
+              value="{{ request.args.get('termo_busca', '') }}">
+            <button type="submit" class="btn btn-primary btn-sm">
+              <i class="bi bi-search"></i> Buscar
+            </button>
           </div>
-        </div>
+        </form>
+      </div>
+    </div>
 
     {% if servicos|length == 0 %}
-      <div class="alert-secondary m-3 text-center">
-        Nenhum serviço cadastrado ainda. Clique em <strong>“Cadastrar Serviço”</strong> para adicionar.
-      </div>
+    <div class="alert-secondary m-3 text-center">
+      Nenhum serviço cadastrado ainda. Clique em <strong>“Cadastrar Serviço”</strong> para adicionar.
+    </div>
     {% else %}
-      <table class="table table-hover table-striped align-middle m-0">
-        <thead>
-          <tr>
-            <th>Descrição</th>
-            <th style="width: 20%;">Preço</th>
-            <th style="width: 25%;" class="text-end">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for servico in servicos %}
-          <tr>
-            <td>{{ servico.descricao_servico }}</td>
-            <td>R$ {{ "%.2f"|format(servico.preco_unitario|float) }}</td>
-            <td class="text-end">
-              <a class="btn btn-warning btn-sm" href="{{ url_for('editar_servico', id=servico.id) }}">Editar</a>
-              <a class="btn btn-danger btn-sm"
-                 href="{{ url_for('deletar_servico', id=servico.id) }}"
-                 onclick="return confirm('Tem certeza que deseja excluir {{ servico.descricao_servico }}?');">
-                 Excluir
-              </a>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <table class="table table-hover table-striped align-middle m-0">
+      <thead>
+        <tr>
+          <th>Descrição</th>
+          <th style="width: 20%;">Preço</th>
+          <th style="width: 25%;" class="text-end">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for servico in servicos %}
+        <tr>
+          <td>{{ servico.descricao_servico }}</td>
+          <td>R$ {{ "%.2f"|format(servico.preco_unitario|float) }}</td>
+          <td class="text-end">
+            <a class="btn btn-warning btn-sm" href="{{ url_for('editar_servico', id=servico.id) }}">Editar</a>
+            <a class="btn btn-danger btn-sm" href="{{ url_for('deletar_servico', id=servico.id) }}"
+              onclick="return confirm('Tem certeza que deseja excluir {{ servico.descricao_servico }}?');">
+              Excluir
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
     {% endif %}
   </div>
 </div>

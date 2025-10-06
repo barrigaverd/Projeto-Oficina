@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-sm rounded-3 mx-auto" style="max-width: 800px;">
+    <div class="card-header bg-primary text-white text-center">
+      <h4 class="mb-0">Currículos Cadastrados</h4>
+    </div>
+
+    <div class="card-body">
+      <!-- Campo de busca -->
+      <form method="GET" action="{{ url_for('listar_curriculos') }}" class="row g-2 mb-4">
+        <div class="col-md-9 col-sm-8">
+          <input type="text" name="busca" class="form-control shadow-sm" placeholder="Buscar por nome..."
+            value="{{ termos_busca }}">
+        </div>
+        <div class="col-md-3 col-sm-4 d-grid">
+          <button type="submit" class="btn btn-primary shadow-sm">
+            <i class="bi bi-search"></i> Pesquisar
+          </button>
+        </div>
+      </form>
+
+      {% if curriculos|length == 0 %}
+      <div class="alert alert-info text-center m-0">
+        Nenhum currículo encontrado. Cadastre um novo para começar!
+      </div>
+      {% else %}
+      <!-- Tabela de resultados -->
+      <div class="table-responsive">
+        <table class="table align-middle table-hover table-striped">
+          <thead class="table-light">
+            <tr class="text-center">
+              <th style="width: 60%;">Nome</th>
+              <th style="width: 40%;">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for curriculo in curriculos %}
+            <tr class="text-center">
+              <td class="fw-semibold text-start ps-3">{{ curriculo.nome }}</td>
+              <td>
+                <a href="{{ url_for('curriculo_passo1', curriculo_id=curriculo.id) }}"
+                  class="btn btn-sm btn-outline-secondary me-1">
+                  <i class="bi bi-pencil-square"></i>Editar
+                </a>
+                <a href="{{ url_for('curriculo_passo_final', curriculo_id=curriculo.id) }}"
+                  class="btn btn-sm btn-outline-info me-1">
+                  <i class="bi bi-file-earmark-pdf-fill"></i>Ver PDF
+                </a>
+                <a href="{{ url_for('deletar_curriculo', curriculo_id=curriculo.id) }}"
+                  class="btn btn-sm btn-outline-danger"
+                  onclick="return confirm('Tem certeza que deseja excluir {{ curriculo.nome }}?');">
+                  <i class="bi bi-trash3"></i> Excluir
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
