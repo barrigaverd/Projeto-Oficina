@@ -1,18 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
-
-<div>
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <div class="card card-body mb-3">
-            {{ form.objetivo.label }}
-            {{ form.objetivo(class='form-control', rows='10') }}
-            {% for error in form.objetivo.errors %}
-                <p class="text-danger">{{ error }}</p>
-            {% endfor %}
-            {{ form.submit(class='btn btn-primary mt-3') }}
+<div class="container mt-4">
+    <div class="card shadow-sm rounded-3 mx-auto" style="max-width: 700px;">
+        <div class="card-header bg-primary text-white text-center">
+            <h4 class="mb-0">Objetivo Profissional</h4>
         </div>
-    </form>
-</div>
+        <div class="card-body">
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.objetivo.label(class="form-label fw-bold") }}
+                    {{ form.objetivo(class="form-control", rows="5", placeholder="Descreva brevemente seu objetivo profissional...") }}
+                </div>
 
+                <div class="text-center mt-3">
+                    {{ form.submit(class="btn btn-success px-4") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
