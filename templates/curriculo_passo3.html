@@ -32,7 +32,7 @@
     {{ form.submit(class='btn btn-primary mt-3') }}
 {% endblock %}
 
-{% block script %}
+{% block scripts %}
     <script>
         ad_experiencia = document.getElementById("add-experiencia");
         let contador = document.querySelectorAll('#experiencia-container .card').length;
@@ -48,13 +48,13 @@
                 <input type="text" name="experiencias-${contador}-cargo" class="form-control mb-2">
 
                 <label>Data de Admissão</label>
-                <input type="text" name="experiencias-${contador}-data_admissao" class="form-control mb-2">
+                <input type="date" name="experiencias-${contador}-data_admissao" class="form-control mb-2">
                 
                 <label>Data de Demissão</label>
-                <input type="text" name="experiencias-${contador}-data_demissao" class="form-control mb-2">
+                <input type="date" name="experiencias-${contador}-data_demissao" class="form-control mb-2">
             `
             document.getElementById("experiencia-container").appendChild(novo_bloco);
             contador++;
         });
     </script>
-{% endblock %}
+{% endblock scripts %}

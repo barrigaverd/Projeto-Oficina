@@ -1,8 +1,8 @@
 """migrate init
 
-Revision ID: ebcaee64fe51
+Revision ID: 307986f1f8ac
 Revises: 
-Create Date: 2025-10-01 13:41:47.315596
+Create Date: 2025-10-06 09:23:51.267291
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'ebcaee64fe51'
+revision = '307986f1f8ac'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -40,6 +40,18 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('username_cliente')
     )
+    op.create_table('curriculo',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('nome', sa.String(length=120), nullable=True),
+    sa.Column('estado_civil', sa.String(length=30), nullable=True),
+    sa.Column('idade', sa.Integer(), nullable=True),
+    sa.Column('endereco', sa.Text(), nullable=True),
+    sa.Column('telefone_principal', sa.String(length=20), nullable=True),
+    sa.Column('email', sa.String(length=40), nullable=True),
+    sa.Column('objetivo', sa.Text(), nullable=True),
+    sa.Column('data_criacao', sa.Date(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('peca',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nome_peca', sa.String(length=100), nullable=False),
@@ -66,6 +78,23 @@ def upgrade():
     sa.Column('role', sa.String(length=20), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('username')
+    )
+    op.create_table('experiencia_profissional',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('empresa', sa.String(length=120), nullable=True),
+    sa.Column('cargo', sa.String(length=120), nullable=True),
+    sa.Column('data_admissao', sa.Date(), nullable=True),
+    sa.Column('data_demissao', sa.Date(), nullable=True),
+    sa.Column('curriculo_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['curriculo_id'], ['curriculo.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('formacao_academica',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('descricao', sa.Text(), nullable=True),
+    sa.Column('curriculo_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['curriculo_id'], ['curriculo.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('orcamento',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -109,13 +138,19 @@ def upgrade():
     )
     op.create_table('ordem_servico',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('cliente_id', sa.Integer(), nullable=False),
     sa.Column('numero_sequencial', sa.Integer(), nullable=True),
     sa.Column('ano', sa.Integer(), nullable=True),
-    sa.Column('cliente_id', sa.Integer(), nullable=False),
+    sa.Column('equipamento', sa.String(length=150), nullable=False),
     sa.Column('marca', sa.String(length=100), nullable=True),
     sa.Column('modelo', sa.String(length=100), nullable=True),
-    sa.Column('equipamento', sa.String(length=150), nullable=False),
+    sa.Column('numero_de_serie', sa.String(length=100), nullable=True),
+    sa.Column('tecnico_responsavel', sa.String(length=50), nullable=True),
     sa.Column('defeito', sa.Text(), nullable=False),
+    sa.Column('problema_constatado', sa.Text(), nullable=True),
+    sa.Column('servico_executado', sa.Text(), nullable=True),
+    sa.Column('observacoes_cliente', sa.Text(), nullable=True),
+    sa.Column('observacoes_internas', sa.Text(), nullable=True),
     sa.Column('status', sa.String(length=50), nullable=False),
     sa.Column('data_de_criacao', sa.DateTime(), nullable=False),
     sa.Column('orcamento_id', sa.Integer(), nullable=True),
@@ -166,8 +201,11 @@ def downgrade():
     op.drop_table('item_orcamento_servico')
     op.drop_table('item_orcamento_peca')
     op.drop_table('orcamento')
+    op.drop_table('formacao_academica')
+    op.drop_table('experiencia_profissional')
     op.drop_table('usuario')
     op.drop_table('servico')
     op.drop_table('peca')
+    op.drop_table('curriculo')
     op.drop_table('cliente')
     # ### end Alembic commands ###

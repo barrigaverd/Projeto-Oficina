@@ -83,10 +83,7 @@
         <p>E-mail: {{ curriculo.email }}</p>
     </div>
 
-    <div class="secao">
-        <h2>Objetivo</h2>
-        <p>{{ curriculo.objetivo }}</p>
-    </div>
+    
 
     <div class="secao">
         <h2>Formação Acadêmica</h2>
@@ -109,12 +106,16 @@
             </div>
         {% endfor %}
     </div>
-
-    <div style="text-align: center;">
-        <a href="{{ url_for('download_curriculo_pdf', curriculo_id=curriculo.id) }}" class="btn">
-            Baixar como PDF
-        </a>
+    <div class="secao">
+        <h2>Objetivo</h2>
+        <p>{{ curriculo.objetivo }}</p>
     </div>
-
+    {% if not para_pdf %}
+        <div style="text-align: center;">
+            <a href="{{ url_for('download_curriculo_pdf', curriculo_id=curriculo.id) }}" class="btn">
+                Baixar como PDF
+            </a>
+        </div>
+    {% endif %}
 </body>
 </html>

@@ -19,7 +19,7 @@ from werkzeug.utils import secure_filename
 from datetime import date
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, IntegerField, SubmitField, FieldList, Form, FormField
+from wtforms import StringField, TextAreaField, IntegerField, SubmitField, FieldList, Form, FormField, DateField
 from wtforms.validators import DataRequired, Email, Optional
 
 
@@ -314,8 +314,8 @@ class CurriculoPasso2Form(FlaskForm):
 class ExperienciaForm(Form):
     empresa = StringField("Empresa", validators=[DataRequired("Digite o nome da empresa")])
     cargo = StringField("Cargo", validators=[DataRequired("Digite o cargo")])
-    data_admissao = StringField("Data de admissão", validators=[Optional()])
-    data_demissao = StringField("Data de demissão", validators=[Optional()])
+    data_admissao = DateField("Data de admissão", format='%Y-%m-%d', validators=[Optional()])
+    data_demissao = DateField("Data de demissão", format='%Y-%m-%d', validators=[Optional()])
 
 class CurriculoPasso3Form(FlaskForm):
     experiencias = FieldList(FormField(ExperienciaForm), min_entries=1)
@@ -1497,9 +1497,9 @@ def curriculo_passo4(curriculo_id):
             form.objetivo.data = curriculo.objetivo
         else:
             form.objetivo.data = """Busco uma vaga no mercado de trabalho, numa empresa onde eu possa
-                me desenvolver profissionalmente, demonstrar minhas competências e habilidades
-                técnicas e emocionais e, em conjunto com os meus colegas e gestores, eu possa
-                colaborar para o crescimento da organização e do grupo"""
+me desenvolver profissionalmente, demonstrar minhas competências e habilidades
+técnicas e emocionais e, em conjunto com os meus colegas e gestores, eu possa
+colaborar para o crescimento da organização e do grupo"""
         
     return render_template("curriculo_passo4.html", form=form)
 
@@ -1511,6 +1511,39 @@ def curriculo_passo_final(curriculo_id):
     
     return render_template("curriculo_preview.html", curriculo=curriculo)
 
+@app.route("/curriculo/<int:curriculo_id>/download_pdf")
+@login_required
+@role_required('funcionario')
+def download_curriculo_pdf(curriculo_id):
+    # 1. Busca os dados (igual a antes)
+    curriculo = Curriculo.query.get_or_404(curriculo_id)
+    
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    # 2. Renderiza um template HTML para uma string (igual a antes)
+    # Lembre-se que tínhamos falado em criar um pdf_template.html limpo
+    html_renderizado = render_template("curriculo_preview.html", curriculo=curriculo, para_pdf = True)
+    
+    # 3. Prepara um "arquivo" em memória para receber o PDF
+    result = BytesIO()
+    
+    # 4. Mágica do xhtml2pdf: converte o HTML para PDF e salva no "result"
+    pdf = pisa.pisaDocument(BytesIO(html_renderizado.encode("UTF-8")), result)
+    
+    # 5. Se não houve erro na conversão...
+    if not pdf.err:
+        # Cria um nome de arquivo dinâmico
+        nome_arquivo = f"Curriculo-{curriculo.nome}.pdf"
+        # Retorna o PDF para o navegador como um download
+        flash("PDF gerado com sucesso!", "success")
+        return Response(
+            result.getvalue(),
+            mimetype="application/pdf",
+            headers={"Content-disposition": f"attachment; filename={nome_arquivo}"}
+        )
+        
+    
+    # Se houve algum erro, retorna uma mensagem simples
+    return flash("Ocorreu um erro ao gerar o PDF."), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
