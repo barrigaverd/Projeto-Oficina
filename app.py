@@ -1477,6 +1477,40 @@ def curriculo_passo3(curriculo_id):
 
     return render_template("curriculo_passo3.html", form=form)
 
+@app.route("/curriculo/passo4/<int:curriculo_id>", methods=["GET", "POST"])
+@login_required
+@role_required('funcionario')
+def curriculo_passo4(curriculo_id):
+    curriculo = Curriculo.query.get_or_404(curriculo_id)
+    form = CurriculoPasso4Form()
+
+    if form.validate_on_submit():
+        curriculo.objetivo = form.objetivo.data
+
+        db.session.commit()
+        flash("Passo 4 concluido com sucesso!", "success")
+
+        return redirect(url_for('curriculo_passo_final', curriculo_id=curriculo.id))
+    
+    if request.method == "GET":
+        if curriculo.objetivo != None:
+            form.objetivo.data = curriculo.objetivo
+        else:
+            form.objetivo.data = """Busco uma vaga no mercado de trabalho, numa empresa onde eu possa
+                me desenvolver profissionalmente, demonstrar minhas competências e habilidades
+                técnicas e emocionais e, em conjunto com os meus colegas e gestores, eu possa
+                colaborar para o crescimento da organização e do grupo"""
+        
+    return render_template("curriculo_passo4.html", form=form)
+
+@app.route("/curriculo/passo_final/<int:curriculo_id>")
+@login_required
+@role_required('funcionario')
+def curriculo_passo_final(curriculo_id):
+    curriculo = Curriculo.query.get_or_404(curriculo_id)
+    
+    return render_template("curriculo_preview.html", curriculo=curriculo)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

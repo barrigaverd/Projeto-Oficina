@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <div class="card card-body mb-3">
+            {{ form.objetivo.label }}
+            {{ form.objetivo(class='form-control', rows='10') }}
+            {% for error in form.objetivo.errors %}
+                <p class="text-danger">{{ error }}</p>
+            {% endfor %}
+            {{ form.submit(class='btn btn-primary mt-3') }}
+        </div>
+    </form>
+</div>
+
+{% endblock %}

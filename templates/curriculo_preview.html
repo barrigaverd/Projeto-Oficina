@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currículo - {{ curriculo.nome }}</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 40px auto;
+            max-width: 750px;
+            background-color: #fdfdfd;
+            color: #222;
+            line-height: 1.6;
+        }
+
+        h1, h2 {
+            color: #333;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: 28px;
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            margin-top: 30px;
+            font-size: 18px;
+            border-bottom: 1px solid #999;
+            padding-bottom: 4px;
+        }
+
+        p {
+            margin: 4px 0;
+        }
+
+        .dados {
+            font-size: 15px;
+        }
+
+        .secao {
+            margin-top: 15px;
+        }
+
+        .experiencia, .formacao {
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #198754;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #157347;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #ccc;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>{{ curriculo.nome }}</h1>
+
+    <div class="dados">
+        <p>{{ curriculo.idade }} anos | {{ curriculo.estado_civil }}</p>
+        <p>Endereço: {{ curriculo.endereco }}</p>
+        <p>Telefone: {{ curriculo.telefone_principal }}</p>
+        <p>E-mail: {{ curriculo.email }}</p>
+    </div>
+
+    <div class="secao">
+        <h2>Objetivo</h2>
+        <p>{{ curriculo.objetivo }}</p>
+    </div>
+
+    <div class="secao">
+        <h2>Formação Acadêmica</h2>
+        {% for formacao in curriculo.formacoes %}
+            <div class="formacao">
+                <p>{{ formacao.descricao }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="secao">
+        <h2>Experiências Profissionais</h2>
+        {% for exp in curriculo.experiencias %}
+            <div class="experiencia">
+                <p><strong>Empresa:</strong> {{ exp.empresa }}</p>
+                <p><strong>Cargo:</strong> {{ exp.cargo }}</p>
+                <p><strong>Admissão:</strong> {{ exp.data_admissao }}</p>
+                <p><strong>Demissão:</strong> {{ exp.data_demissao }}</p>
+                <hr>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div style="text-align: center;">
+        <a href="{{ url_for('download_curriculo_pdf', curriculo_id=curriculo.id) }}" class="btn">
+            Baixar como PDF
+        </a>
+    </div>
+
+</body>
+</html>
