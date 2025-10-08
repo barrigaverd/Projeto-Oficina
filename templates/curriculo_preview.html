@@ -32,7 +32,6 @@
         h2 {
             margin-top: 30px;
             font-size: 18px;
-            border-bottom: 1px solid #999;
             padding-bottom: 4px;
         }
 
@@ -51,6 +50,7 @@
         .experiencia,
         .formacao {
             margin-bottom: 10px;
+            font-size: 15px;
         }
 
         .btn {
@@ -81,10 +81,10 @@
     <h1>{{ curriculo.nome }}</h1>
 
     <div class="dados">
-        <p>{{ curriculo.idade }} anos | {{ curriculo.estado_civil }}</p>
-        <p>Endereço: {{ curriculo.endereco }}</p>
-        <p>Telefone: {{ curriculo.telefone_principal }}</p>
-        <p>E-mail: {{ curriculo.email }}</p>
+        <p> {{ curriculo.estado_civil }} | {{ curriculo.idade }} anos </p>
+        <p><strong>Endereço:</strong> {{ curriculo.endereco }}</p>
+        <p><strong>Telefone:</strong> {{ curriculo.telefone_principal }}</p>
+        <p><strong>E-mail:</strong> {{ curriculo.email }}</p>
     </div>
 
 
@@ -104,22 +104,27 @@
         <div class="experiencia">
             <p><strong>Empresa:</strong> {{ exp.empresa }}</p>
             <p><strong>Cargo:</strong> {{ exp.cargo }}</p>
-            <p><strong>Admissão:</strong> {{ exp.data_admissao }}</p>
-            <p><strong>Demissão:</strong> {{ exp.data_demissao }}</p>
+            {% if exp.desabilitar_datas %}
+            <p><strong>Período:</strong> {{ exp.periodo }}</p>
+            {% else %}
+            <p><strong>Admissão:</strong> {{ exp.data_admissao.strftime('%d/%m/%Y') }}</p>
+            <p><strong>Demissão:</strong> {{ exp.data_demissao.strftime('%d/%m/%Y') }}</p>
+            {% endif %}
             <hr>
         </div>
         {% endfor %}
     </div>
     <div class="secao">
         <h2>Objetivo</h2>
-        <p>{{ curriculo.objetivo }}</p>
+        <p class="dados">{{ curriculo.objetivo }}</p>
     </div>
     {% if not para_pdf %}
     <div style="text-align: center;">
         <a href="{{ url_for('download_curriculo_pdf', curriculo_id=curriculo.id) }}" class="btn">
             Baixar como PDF
         </a>
-        <a href="{{ url_for('download_curriculo_word', curriculo_id=curriculo.id) }}" class="btn btn-primary ms-2">Baixar como Word</a>
+        <a href="{{ url_for('download_curriculo_word', curriculo_id=curriculo.id) }}"
+            class="btn btn-primary ms-2">Baixar como Word</a>
         <a class="btn btn-close" href="{{ url_for('listar_curriculos') }}">Voltar para Lista</a>
     </div>
     {% endif %}

@@ -38,12 +38,35 @@
     let contador = container.querySelectorAll("input").length;
 
     addFormacao.addEventListener("click", () => {
-      const input = document.createElement("input");
-      input.name = "formacoes-" + contador;
-      input.className = "form-control mb-2";
-      input.placeholder = "Nova formação...";
-      container.appendChild(input);
+      // Dentro do seu addEventListener para "Adicionar"
+      // Crie um 'div' para ser o pacote
+      const wrapperDiv = document.createElement('div');
+      // Dê a ele uma classe para podermos encontrá-lo depois e para estilização
+      wrapperDiv.className = 'form-item-wrapper d-flex mb-2'; 
+
+      // Use innerHTML com uma string-molde para criar o conteúdo. É rápido e fácil.
+      wrapperDiv.innerHTML = `
+          <input name="formacoes-${contador}" class="form-control me-2" placeholder="Nova formação...">
+          <button type="button" class="btn btn-danger btn-sm remove-item">&times;</button>
+      `;
+
+      // Adicione o pacote inteiro ao container
+      container.appendChild(wrapperDiv);
       contador++;
+    });
+    // Este código fica fora do listener do botão "Adicionar"
+    container.addEventListener('click', function(event) {
+        // 1. Verifica se o que foi clicado foi um botão de remover
+        if (event.target.classList.contains('remove-item')) {
+            
+            // 2. Encontra o "pacote" pai mais próximo do botão
+            const wrapperParaRemover = event.target.closest('.form-item-wrapper');
+            
+            // 3. Remove o pacote inteiro da tela
+            if (wrapperParaRemover) {
+                wrapperParaRemover.remove();
+            }
+        }
     });
   });
 </script>

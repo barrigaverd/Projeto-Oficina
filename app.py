@@ -19,7 +19,7 @@ from werkzeug.utils import secure_filename
 from datetime import date
 from htmldocx import HtmlToDocx
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, IntegerField, SubmitField, FieldList, Form, FormField, DateField
+from wtforms import StringField, TextAreaField, IntegerField, SubmitField, FieldList, Form, FormField, DateField, BooleanField
 from wtforms.validators import DataRequired, Email, Optional
 
 
@@ -296,6 +296,8 @@ class ExperienciaProfissional(db.Model):
     cargo = db.Column(db.String(120))
     data_admissao = db.Column(db.Date)
     data_demissao = db.Column(db.Date)
+    desabilitar_datas = db.Column(db.Boolean)
+    periodo = db.Column(db.Text)
     curriculo_id = db.Column(db.Integer, db.ForeignKey("curriculo.id"))
 
 class CurriculoPasso1Form(FlaskForm):
@@ -315,7 +317,10 @@ class ExperienciaForm(Form):
     empresa = StringField("Empresa", validators=[DataRequired("Digite o nome da empresa")])
     cargo = StringField("Cargo", validators=[DataRequired("Digite o cargo")])
     data_admissao = DateField("Data de admissão", format='%Y-%m-%d', validators=[Optional()])
-    data_demissao = DateField("Data de demissão", format='%Y-%m-%d', validators=[Optional()])
+    data_demissao = DateField("Data de demissão", format='%Y-%m-%d', validators=[Optional()],)
+    desabilitar_datas = BooleanField("Desabilitar datas", validators=[Optional()])
+    periodo = StringField("Período", validators=[Optional()])
+
 
 class CurriculoPasso3Form(FlaskForm):
     experiencias = FieldList(FormField(ExperienciaForm), min_entries=1)
@@ -1455,6 +1460,8 @@ def curriculo_passo3(curriculo_id):
                     cargo = dados_experiencia['cargo'],
                     data_admissao = dados_experiencia['data_admissao'],
                     data_demissao = dados_experiencia['data_demissao'],
+                    desabilitar_datas = dados_experiencia['desabilitar_datas'],
+                    periodo = dados_experiencia['periodo'],
                     curriculo_id = curriculo.id
                 )
                 db.session.add(nova_experiencia)
@@ -1471,7 +1478,9 @@ def curriculo_passo3(curriculo_id):
                 'empresa': experiencia.empresa,
                 'cargo': experiencia.cargo,
                 'data_admissao': experiencia.data_admissao,
-                'data_demissao': experiencia.data_demissao
+                'data_demissao': experiencia.data_demissao,
+                'desabilitar_datas': experiencia.desabilitar_datas,
+                'periodo': experiencia.periodo
             })
         form = CurriculoPasso3Form(experiencias=dados_para_o_form)
 

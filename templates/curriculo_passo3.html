@@ -32,6 +32,18 @@
                                 {{ experiencia_form.data_demissao(class='form-control') }}
                             </div>
                         </div>
+                        <div class="form-check mb-2">
+                            {{ experiencia_form.desabilitar_datas(class='form-check-input') }}
+                            {{ experiencia_form.desabilitar_datas.label(class='form-check-label') }}
+                        </div>
+                        
+                        <div class="mb-2">
+                            {{ experiencia_form.periodo.label }}
+                            {{ experiencia_form.periodo(class='form-control') }}
+                            {% for error in experiencia_form.periodo.errors %}
+                                <p class="text-danger">{{ error }}</p>
+                            {% endfor %}
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
@@ -39,8 +51,13 @@
                     <button type="button" id="add-experiencia" class="btn btn-outline-primary btn-sm">
                         <i class="bi bi-plus-circle"></i> Adicionar Experiência
                     </button>
+                    
                     {{ form.submit(class='btn btn-success btn-sm') }}
+
                 </div>
+                
+                
+               
             </form>
         </div>
     </div>
@@ -73,9 +90,57 @@
                     <input type="date" name="experiencias-${contador}-data_demissao" class="form-control">
                 </div>
             </div>
+            <div class="form-check mb-2">
+                <input type="checkbox" name="experiencias-${contador}-desabilitar_datas" class="form-check-input">
+                <label class="form-check-label">Desabilitar datas</label>
+            </div>
+            <div class="mb-2">
+                <label class="form-label fw-bold">Período</label>
+                <input type="text" name="experiencias-${contador}-periodo" class="form-control">
+            </div>
+            <button type="button" class="btn btn-danger btn-sm remove-item" style="position: absolute; top: 10px; right: 10px;">&times;</button>
         `;
         document.getElementById("experiencia-container").appendChild(novo_bloco);
         contador++;
+        
+    });
+
+    const container = document.getElementById('experiencia-container');
+
+    container.addEventListener('change', function(event) {
+        // Verifica se o que mudou foi um checkbox de desabilitar
+        if (event.target.name && event.target.name.includes('desabilitar_datas')) {
+            const checkbox = event.target;
+            const cardPai = checkbox.closest('.card'); // Encontra o card pai
+
+            // Encontra os inputs e labels de data dentro APENAS deste card
+            const labelAdmissao = cardPai.querySelector('label[for*="data_admissao"]');
+            const inputAdmissao = cardPai.querySelector('input[name*="data_admissao"]');
+            const labelDemissao = cardPai.querySelector('label[for*="data_demissao"]');
+            const inputDemissao = cardPai.querySelector('input[name*="data_demissao"]');
+            const periodo = cardPai.querySelector('input[name*="periodo"]');
+
+
+            // Decide se esconde ou mostra os campos
+            const deveEsconder = checkbox.checked;
+            let deveMostrar = !deveEsconder;
+
+
+            // Aplica a lógica de esconder/mostrar (ex: usando a classe d-none do Bootstrap)
+            
+            inputAdmissao.classList.toggle('d-none', deveEsconder);
+            
+            inputDemissao.classList.toggle('d-none', deveEsconder);
+            
+            periodo.classList.toggle('d-none', deveMostrar);
+
+        }
+    });
+
+    container.addEventListener('click', function(event) {
+        if (event.target.classList.contains('remove-item')) {
+            event.target.closest('.card').remove();
+        }
     });
 </script>
 {% endblock %}
