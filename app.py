@@ -1,6 +1,7 @@
 from enum import unique
 from http import client
 from os import replace
+import re
 from sqlite3.dbapi2 import Timestamp
 from flask import Flask, render_template, request, redirect, url_for, abort, Response, flash, send_file
 from flask_sqlalchemy import SQLAlchemy
@@ -19,7 +20,7 @@ from werkzeug.utils import secure_filename
 from datetime import date
 from htmldocx import HtmlToDocx
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, IntegerField, SubmitField, FieldList, Form, FormField, DateField, BooleanField
+from wtforms import StringField, TextAreaField, IntegerField, SubmitField, FieldList, Form, FormField, DateField, BooleanField, FloatField
 from wtforms.validators import DataRequired, Email, Optional
 
 
@@ -284,6 +285,79 @@ class Curriculo(db.Model):
     data_criacao = db.Column(db.Date)
     formacoes = db.relationship('FormacaoAcademica', backref = 'curriculo')
     experiencias = db.relationship('ExperienciaProfissional', backref = 'curriculo')
+
+texto_clausulas = """  """
+class Contrato(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # Dados do locador
+    locador_nome = db.Column(db.String(120), nullable=False)
+    locador_rg = db.Column(db.String(20))
+    locador_cpf = db.Column(db.String(20))
+    locador_endereco = db.Column(db.String(200))
+
+    # Dados do locatário
+    locatario_nome = db.Column(db.String(120), nullable=False)
+    locatario_rg = db.Column(db.String(20))
+    locatario_cpf = db.Column(db.String(20))
+    locatario_endereco = db.Column(db.String(200))
+
+    # Dados do imóvel e contrato
+    endereco_imovel = db.Column(db.String(200), nullable=False)
+    finalidade = db.Column(db.String(100), default="residenciais")
+    prazo_meses = db.Column(db.Integer, default=12)
+    data_inicio = db.Column(db.Date)
+    data_fim = db.Column(db.Date)
+    valor_aluguel = db.Column(db.Float)
+    dia_pagamento = db.Column(db.Integer, default=10)
+    indice_reajuste = db.Column(db.String(50), default="IGP-M")
+    multa_percentual = db.Column(db.Integer, default=5)
+    juros_percentual = db.Column(db.Integer, default=1)
+
+    cidade_foro = db.Column(db.String(100), default="Ibirité")
+    cidade = db.Column(db.String(100), default="Ibirité - MG")
+    data_assinatura = db.Column(db.Date)
+    data_criacao = db.Column(db.DateTime, default=datetime.utcnow)
+
+    clausulas = db.Column(db.Text) 
+
+
+    def __repr__(self):
+        return f"<Contrato {self.id} - {self.locatario_nome}>"
+    
+class ContratoForm(FlaskForm):
+    # Locador
+    locador_nome = StringField("Nome do Locador", validators=[DataRequired()])
+    locador_rg = StringField("RG do Locador")
+    locador_cpf = StringField("CPF do Locador")
+    locador_endereco = StringField("Endereço do Locador")
+
+    # Locatário
+    locatario_nome = StringField("Nome do Locatário", validators=[DataRequired()])
+    locatario_rg = StringField("RG do Locatário")
+    locatario_cpf = StringField("CPF do Locatário")
+    locatario_endereco = StringField("Endereço do Locatário")
+
+    # Imóvel e contrato
+    endereco_imovel = StringField("Endereço do Imóvel", validators=[DataRequired()])
+    finalidade = StringField("Finalidade", default="residenciais")
+    prazo_meses = IntegerField("Prazo (meses)", default=12)
+    data_inicio = DateField("Data de Início")
+    data_fim = DateField("Data de Término")
+    valor_aluguel = FloatField("Valor do Aluguel (R$)")
+    dia_pagamento = IntegerField("Dia do Pagamento", default=10)
+    indice_reajuste = StringField("Índice de Reajuste", default="IGP-M")
+    multa_percentual = IntegerField("Multa (%)", default=5)
+    juros_percentual = IntegerField("Juros (%)", default=1)
+
+    cidade_foro = StringField("Foro", default="Ibirité")
+    cidade = StringField("Cidade", default="Ibirité - MG")
+    data_assinatura = DateField("Data de Assinatura", default=date.today())
+
+    clausulas = TextAreaField("Clausulas", validators=[DataRequired()])
+
+
+    submit = SubmitField("Salvar Contrato")
 
 class FormacaoAcademica(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -1575,7 +1649,7 @@ def listar_curriculos():
 @login_required
 @role_required('funcionario')
 def deletar_curriculo(curriculo_id): 
-    curriculo_a_deletar = Curriculo.query.get(curriculo_id)
+    curriculo_a_deletar = Curriculo.query.get_or_404(curriculo_id)
     db.session.delete(curriculo_a_deletar)
     db.session.commit()
     flash("Curriculo apagado com sucesso!", "success")
@@ -1603,6 +1677,183 @@ def download_curriculo_word(curriculo_id):
         mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         
     
+@app.route("/contrato/novo", methods=["POST", "GET"])
+@login_required
+@role_required('funcionario')
+def novo_contrato():
+    form = ContratoForm()
+
+    if form.validate_on_submit():
+        novo_contrato = Contrato()
+        novo_contrato.locador_nome = form.locador_nome.data
+        novo_contrato.locador_rg = form.locador_rg.data
+        novo_contrato.locador_cpf = form.locador_cpf.data
+        novo_contrato.locador_endereco = form.locador_endereco.data
+        
+        novo_contrato.locatario_nome = form.locatario_nome.data
+        novo_contrato.locatario_rg = form.locatario_rg.data
+        novo_contrato.locatario_cpf = form.locatario_cpf.data
+        novo_contrato.locatario_endereco = form.locatario_endereco.data
+        
+        novo_contrato.endereco_imovel = form.endereco_imovel.data
+        novo_contrato.finalidade = form.finalidade.data
+        novo_contrato.prazo_meses = form.prazo_meses.data
+        novo_contrato.data_inicio = form.data_inicio.data
+        novo_contrato.data_fim = form.data_fim.data
+        novo_contrato.dia_pagamento = form.dia_pagamento.data
+        novo_contrato.indice_reajuste = form.indice_reajuste.data
+        novo_contrato.multa_percentual = form.multa_percentual.data
+        novo_contrato.juros_percentual = form.juros_percentual.data
+
+        novo_contrato.cidade_foro = form.cidade_foro.data
+        novo_contrato.cidade = form.cidade.data
+        novo_contrato.data_assinatura = form.data_assinatura.data
+        novo_contrato.data_criacao = datetime.now()
+
+        db.session.add(novo_contrato)
+        db.session.commit()
+        flash("Contrato criado com sucesso!", "success")
+
+        return redirect(url_for('preview_contrato', id=novo_contrato.id))
+    
+    return render_template("novo_contrato.html", form=form)
+
+@app.route("/contrato/preview/<int:id>")
+@login_required
+@role_required('funcionario')
+def preview_contrato(id):
+    contrato = Contrato.query.get_or_404(id)
+    return render_template("template_contrato.html", contrato=contrato)
+
+    
+@app.route("/contrato/<int:id>/download_pdf")
+@login_required
+@role_required('funcionario')
+def download_contrato_pdf(id):
+
+    # 1. Busca os dados (igual a antes)
+    contrato = Contrato.query.get_or_404(id)
+    
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    # 2. Renderiza um template HTML para uma string (igual a antes)
+    # Lembre-se que tínhamos falado em criar um pdf_template.html limpo
+    html_renderizado = render_template("template_contrato.html", contrato=contrato, para_pdf = True)
+    
+    # 3. Prepara um "arquivo" em memória para receber o PDF
+    result = BytesIO()
+    
+    # 4. Mágica do xhtml2pdf: converte o HTML para PDF e salva no "result"
+    pdf = pisa.pisaDocument(BytesIO(html_renderizado.encode("UTF-8")), result)
+    
+    # 5. Se não houve erro na conversão...
+    if not pdf.err:
+        # Cria um nome de arquivo dinâmico
+        nome_arquivo = f"Contrato-{contrato.locatario_nome}.pdf"
+        # Retorna o PDF para o navegador como um download
+        flash("PDF gerado com sucesso!", "success")
+        return Response(
+            result.getvalue(),
+            mimetype="application/pdf",
+            headers={"Content-disposition": f"attachment; filename={nome_arquivo}"}
+        )
+        
+    
+    # Se houve algum erro, retorna uma mensagem simples
+    return flash("Ocorreu um erro ao gerar o PDF."), 500
+
+@app.route("/contrato/deletar/<int:id>")
+@login_required
+@role_required('funcionario')
+def deletar_contrato(id): 
+    contrato_a_deletar = Contrato.query.get_or_404(id)
+    db.session.delete(contrato_a_deletar)
+    db.session.commit()
+    flash("Contrato apagado com sucesso!", "success")
+    return redirect(url_for('listar_contratos'))
+
+@app.route("/contrato/editar/<int:id>", methods=["GET", "POST"])
+@login_required
+@role_required('funcionario')
+def editar_contrato(id):
+    contrato = Contrato.query.get_or_404(id)
+    form = ContratoForm()
+    
+    if form.validate_on_submit():
+        contrato.locador_nome = form.locador_nome.data
+        contrato.locador_rg = form.locador_rg.data
+        contrato.locador_cpf = form.locador_cpf.data
+        contrato.locador_endereco = form.locador_endereco.data
+        
+        contrato.locatario_nome = form.locatario_nome.data
+        contrato.locatario_rg = form.locatario_rg.data
+        contrato.locatario_cpf = form.locatario_cpf.data
+        contrato.locatario_endereco = form.locatario_endereco.data
+        
+        contrato.endereco_imovel = form.endereco_imovel.data
+        contrato.finalidade = form.finalidade.data
+        contrato.prazo_meses = form.prazo_meses.data
+        contrato.data_inicio = form.data_inicio.data
+        contrato.data_fim = form.data_fim.data
+        contrato.dia_pagamento = form.dia_pagamento.data
+        contrato.indice_reajuste = form.indice_reajuste.data
+        contrato.multa_percentual = form.multa_percentual.data
+        contrato.juros_percentual = form.juros_percentual.data
+
+        contrato.cidade_foro = form.cidade_foro.data
+        contrato.cidade = form.cidade.data
+        contrato.data_assinatura = form.data_assinatura.data
+
+        db.session.commit()
+        flash("Contrato editado com sucesso!", "success")
+        return redirect(url_for('listar_contratos'))
+    
+    elif request.method == "GET":
+        form.locador_nome.data = contrato.locador_nome
+        form.locador_rg.data = contrato.locador_rg
+        form.locador_cpf.data = contrato.locador_cpf
+        form.locador_endereco.data = contrato.locador_endereco
+        
+        form.locatario_nome.data = contrato.locatario_nome
+        form.locatario_rg.data = contrato.locatario_rg
+        form.locatario_cpf.data = contrato.locatario_cpf
+        form.locatario_endereco.data = contrato.locatario_endereco
+        
+        form.endereco_imovel.data = contrato.endereco_imovel
+        form.finalidade.data = contrato.finalidade 
+        form.prazo_meses.data = contrato.prazo_meses
+        form.data_inicio.data = contrato.data_inicio
+        form.data_fim.data = contrato.data_fim
+        form.valor_aluguel.data = contrato.valor_aluguel
+        form.dia_pagamento.data = contrato.dia_pagamento
+        form.indice_reajuste.data = contrato.indice_reajuste
+        form.multa_percentual.data = contrato.multa_percentual
+        form.juros_percentual.data = contrato.juros_percentual
+
+        form.cidade_foro.data = contrato.cidade_foro
+        form.cidade.data = contrato.cidade
+        form.data_assinatura.data = contrato.data_assinatura
+    
+    return render_template("novo_contrato.html", form=form, contrato=contrato)
+
+@app.route("/contratos") # Ou a URL que você preferir
+@login_required
+@role_required('funcionario')
+def listar_contratos():
+    # 1. Pega o termo de busca (igual antes)
+    termos_busca = request.args.get('busca', '')
+    
+    # 2. Muda a query para o modelo Contrato
+    query = Contrato.query
+
+    # 3. Muda o filtro para um campo do Contrato (ex: nome do locatário)
+    if termos_busca:
+        query = query.filter(Contrato.locatario_nome.ilike(f'%{termos_busca}%'))
+    
+    # 4. Executa a query
+    contratos = query.order_by(Contrato.locatario_nome).all()
+        
+    # 5. Renderiza o template de listagem de contratos
+    return render_template('listar_contratos.html', contratos=contratos, termos_busca=termos_busca)
 
 if __name__ == "__main__":
     app.run(debug=True)

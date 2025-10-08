@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-sm rounded-3 mx-auto" style="max-width: 900px;">
+    <div class="card-header bg-primary text-white text-center">
+      <h4 class="mb-0">
+        <i class="bi bi-file-earmark-text me-2"></i>Contratos Cadastrados
+      </h4>
+    </div>
+
+    <div class="card-body">
+      <!-- Campo de busca -->
+      <form method="GET" action="{{ url_for('listar_contratos') }}" class="row g-2 mb-4">
+        <div class="col-md-9 col-sm-8">
+          <input type="text" name="busca" class="form-control shadow-sm" placeholder="Buscar por locatário..."
+            value="{{ termos_busca }}">
+        </div>
+        <div class="col-md-3 col-sm-4 d-grid">
+          <button type="submit" class="btn btn-primary shadow-sm">
+            <i class="bi bi-search"></i> Pesquisar
+          </button>
+        </div>
+      </form>
+
+      {% if contratos|length == 0 %}
+      <div class="alert alert-info text-center m-0">
+        Nenhum contrato encontrado. Cadastre um novo para começar!
+      </div>
+      {% else %}
+      <!-- Tabela de resultados -->
+      <div class="table-responsive">
+        <table class="table align-middle table-hover table-striped">
+          <thead class="table-light">
+            <tr class="text-center">
+              <th>Locatário</th>
+              <th>Locador</th>
+              <th>Valor</th>
+              <th>Data de Início</th>
+              <th>Data de Criação</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for contrato in contratos %}
+            <tr class="text-center">
+              <td class="fw-semibold text-start ps-3">{{ contrato.locatario_nome }}</td>
+              <td>{{ contrato.locador_nome }}</td>
+              <td>R$ {{ contrato.valor_aluguel }}</td>
+              <td>{{ contrato.data_inicio }}</td>
+              <td>{{ contrato.data_criacao.strftime('%d/%m/%Y') }}</td>
+              <td>
+                <a href="{{ url_for('editar_contrato', id=contrato.id) }}"
+                  class="btn btn-sm btn-outline-secondary me-1">
+                  <i class="bi bi-pencil-square"></i>Editar
+                </a>
+                <a href="{{ url_for('download_contrato_pdf', id=contrato.id) }}"
+                  class="btn btn-sm btn-outline-info me-1">
+                  <i class="bi bi-file-earmark-pdf-fill"></i>Ver PDF
+                </a>
+                <a href="{{ url_for('deletar_contrato', id=contrato.id) }}"
+                  class="btn btn-sm btn-outline-danger"
+                  onclick="return confirm('Tem certeza que deseja excluir o contrato de {{ contrato.locatario_nome }}?');">
+                  <i class="bi bi-trash3"></i>Excluir
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

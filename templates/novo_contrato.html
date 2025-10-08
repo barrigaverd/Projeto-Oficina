@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0">
+      <i class="bi bi-file-earmark-plus me-2"></i>Novo Contrato de Locação
+    </h5>
+  </div>
+  <div class="card-body">
+
+    <form method="POST">
+      {{ form.hidden_tag() }}
+
+      <!-- DADOS DO LOCADOR -->
+      <h6 class="mt-3 text-primary fw-bold border-bottom pb-1">Dados do Locador</h6>
+      <div class="row mt-2">
+        <div class="col-md-6 mb-3">
+          {{ form.locador_nome.label(class="form-label") }}
+          {{ form.locador_nome(class="form-control") }}
+        </div>
+        <div class="col-md-3 mb-3">
+          {{ form.locador_rg.label(class="form-label") }}
+          {{ form.locador_rg(class="form-control") }}
+        </div>
+        <div class="col-md-3 mb-3">
+          {{ form.locador_cpf.label(class="form-label") }}
+          {{ form.locador_cpf(class="form-control") }}
+        </div>
+      </div>
+      <div class="mb-3">
+        {{ form.locador_endereco.label(class="form-label") }}
+        {{ form.locador_endereco(class="form-control") }}
+      </div>
+
+      <!-- DADOS DO LOCATÁRIO -->
+      <h6 class="mt-4 text-primary fw-bold border-bottom pb-1">Dados do Locatário</h6>
+      <div class="row mt-2">
+        <div class="col-md-6 mb-3">
+          {{ form.locatario_nome.label(class="form-label") }}
+          {{ form.locatario_nome(class="form-control") }}
+        </div>
+        <div class="col-md-3 mb-3">
+          {{ form.locatario_rg.label(class="form-label") }}
+          {{ form.locatario_rg(class="form-control") }}
+        </div>
+        <div class="col-md-3 mb-3">
+          {{ form.locatario_cpf.label(class="form-label") }}
+          {{ form.locatario_cpf(class="form-control") }}
+        </div>
+      </div>
+      <div class="mb-3">
+        {{ form.locatario_endereco.label(class="form-label") }}
+        {{ form.locatario_endereco(class="form-control") }}
+      </div>
+
+      <!-- DADOS DO IMÓVEL -->
+      <h6 class="mt-4 text-primary fw-bold border-bottom pb-1">Informações do Imóvel</h6>
+      <div class="mb-3">
+        {{ form.endereco_imovel.label(class="form-label") }}
+        {{ form.endereco_imovel(class="form-control") }}
+      </div>
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          {{ form.finalidade.label(class="form-label") }}
+          {{ form.finalidade(class="form-control") }}
+        </div>
+        <div class="col-md-2 mb-3">
+          {{ form.prazo_meses.label(class="form-label") }}
+          {{ form.prazo_meses(class="form-control") }}
+        </div>
+        <div class="col-md-3 mb-3">
+          {{ form.data_inicio.label(class="form-label") }}
+          {{ form.data_inicio(class="form-control") }}
+        </div>
+        <div class="col-md-3 mb-3">
+          {{ form.data_fim.label(class="form-label") }}
+          {{ form.data_fim(class="form-control") }}
+        </div>
+      </div>
+
+      <!-- VALORES -->
+      <h6 class="mt-4 text-primary fw-bold border-bottom pb-1">Valores e Condições</h6>
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          {{ form.valor_aluguel.label(class="form-label") }}
+          {{ form.valor_aluguel(class="form-control") }}
+        </div>
+        <div class="col-md-3 mb-3">
+          {{ form.dia_pagamento.label(class="form-label") }}
+          {{ form.dia_pagamento(class="form-control") }}
+        </div>
+        <div class="col-md-3 mb-3">
+          {{ form.multa_percentual.label(class="form-label") }}
+          {{ form.multa_percentual(class="form-control") }}
+        </div>
+        <div class="col-md-3 mb-3">
+          {{ form.juros_percentual.label(class="form-label") }}
+          {{ form.juros_percentual(class="form-control") }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.indice_reajuste.label(class="form-label") }}
+          {{ form.indice_reajuste(class="form-control") }}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.cidade_foro.label(class="form-label") }}
+          {{ form.cidade_foro(class="form-control") }}
+        </div>
+      </div>
+
+      <!-- OUTRAS INFORMAÇÕES -->
+      <h6 class="mt-4 text-primary fw-bold border-bottom pb-1">Outras Informações</h6>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.cidade.label(class="form-label") }}
+          {{ form.cidade(class="form-control") }}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.data_assinatura.label(class="form-label") }}
+          {{ form.data_assinatura(class="form-control") }}
+        </div>
+      </div>
+
+      <!-- DATA DE CRIAÇÃO (SOMENTE LEITURA) -->
+      {% if contrato %}
+      <div class="mt-4 text-muted">
+        <small><i class="bi bi-calendar3 me-1"></i> Criado em:
+          {{ contrato.data_criacao.strftime('%d/%m/%Y %H:%M') }}
+        </small>
+      </div>
+      {% endif %}
+
+      <!-- BOTÕES -->
+      <div class="mt-4 d-flex justify-content-between">
+        <button type="button" class="btn btn-secondary" onclick="retornar()">
+          <i class="bi bi-arrow-left-circle me-1"></i>Voltar
+        </button>
+        {{ form.submit(class="btn btn-success") }}
+      </div>
+
+    </form>
+  </div>
+</div>
+
+{% endblock %}

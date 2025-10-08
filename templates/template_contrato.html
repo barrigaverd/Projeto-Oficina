@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Contrato de Locação - {{ contrato.locatario_nome }}</title>
+    <style>
+        body {
+            font-family: "Times New Roman", serif;
+            line-height: 1.6;
+            color: #222;
+            margin: 40px auto;
+            max-width: 900px;
+            background: #fff;
+        }
+
+        h1 {
+            text-align: center;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+
+        p {
+            text-align: justify;
+            margin: 10px 0;
+        }
+
+        .assinaturas {
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+        }
+
+        .assinaturas div {
+            width: 45%;
+        }
+
+        .btn-download {
+            display: block;
+            width: 220px;
+            text-align: center;
+            background-color: #198754;
+            color: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 40px auto 0;
+        }
+
+        .btn-download:hover {
+            background-color: #157347;
+        }
+    </style>
+</head>
+<body>
+
+<h1>CONTRATO DE LOCAÇÃO DE IMÓVEL</h1>
+
+<p><strong>LOCADOR:</strong> {{ contrato.locador_nome }}, portador da cédula de identidade R.G. nº {{ contrato.locador_rg }} e CPF nº {{ contrato.locador_cpf }}, residente e domiciliado à {{ contrato.locador_endereco }}.</p>
+
+<p><strong>LOCATÁRIO:</strong> {{ contrato.locatario_nome }}, portador da cédula de identidade R.G. nº {{ contrato.locatario_rg }} e CPF nº {{ contrato.locatario_cpf }}, residente e domiciliado à {{ contrato.locatario_endereco }}.</p>
+
+<h3>CLÁUSULA PRIMEIRA - DO OBJETO DA LOCAÇÃO</h3>
+<p>O objeto deste contrato é o imóvel situado em {{ contrato.endereco_imovel }}.</p>
+
+<h3>CLÁUSULA SEGUNDA - DA DESTINAÇÃO DO IMÓVEL</h3>
+<p>O imóvel é destinado exclusivamente para fins {{ contrato.finalidade }}.</p>
+
+<h3>CLÁUSULA TERCEIRA - DO PRAZO DE VIGÊNCIA</h3>
+<p>O prazo da locação é de {{ contrato.prazo_meses }} meses, iniciando-se em {{ contrato.data_inicio }} e encerrando-se em {{ contrato.data_fim }}.</p>
+
+<h3>CLÁUSULA QUARTA - DA FORMA DE PAGAMENTO</h3>
+<p>O aluguel mensal será de <strong>R$ {{ contrato.valor_aluguel }}</strong>, com vencimento todo dia {{ contrato.dia_pagamento }} do mês subsequente ao vencido, reajustado anualmente pelo índice {{ contrato.indice_reajuste }}.</p>
+
+<h3>CLÁUSULA QUINTA - DA MULTA E JUROS DE MORA</h3>
+<p>Em caso de atraso no pagamento, incidirá multa de {{ contrato.multa_percentual }}% e juros de {{ contrato.juros_percentual }}% ao mês.</p>
+
+<h3>CLÁUSULA SEXTA - DA CONSERVAÇÃO E BENFEITORIAS</h3>
+<p>O locatário é responsável pela conservação, limpeza e devolução do imóvel em perfeitas condições.</p>
+
+<h3>CLÁUSULA SÉTIMA - DAS TAXAS E TRIBUTOS</h3>
+<p>Todas as taxas e despesas como IPTU, água, luz e condomínio são de responsabilidade do locatário a partir do início da locação.</p>
+
+<h3>CLÁUSULA OITAVA - DOS SINISTROS</h3>
+<p>Em caso de sinistro que impeça a habitação, o contrato será rescindido automaticamente, sem necessidade de aviso prévio.</p>
+
+<h3>CLÁUSULA NONA - DA SUBLOCAÇÃO</h3>
+<p>É vedado ao locatário sublocar, transferir ou ceder o imóvel sem o consentimento do locador.</p>
+
+<h3>CLÁUSULA DÉCIMA - DO FORO</h3>
+<p>Fica eleito o foro da comarca de {{ contrato.cidade_foro }} para dirimir quaisquer dúvidas ou conflitos decorrentes deste contrato.</p>
+
+<p>Por estarem justos e contratados, firmam o presente instrumento em duas vias de igual teor.</p>
+
+<p style="margin-top: 40px; text-align: right;">{{ contrato.cidade }}, {{ contrato.data_assinatura }}.</p>
+
+<div class="assinaturas">
+    <div>
+        <p>__________________________________</p>
+        <p>Locador: {{ contrato.locador_nome }}</p>
+    </div>
+    <div>
+        <p>__________________________________</p>
+        <p>Locatário: {{ contrato.locatario_nome }}</p>
+    </div>
+</div>
+
+<a href="{{ url_for('download_contrato_pdf', id=contrato.id) }}" class="btn-download">
+    Baixar Contrato em PDF
+</a>
+
+</body>
+</html>
