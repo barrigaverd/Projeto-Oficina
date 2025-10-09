@@ -6,68 +6,98 @@
 <div class="d-flex justify-content-center">
   <div class="card shadow-sm w-100 mx-auto my-4" style="max-width: 600px;">
     <div class="card-header text-center bg-primary text-white fw-bold">
-      Etapa 2 — Formação Acadêmica
+      Etapa 2 — Formação Acadêmica e Cursos
     </div>
     <div class="card-body">
+      
       <form method="POST" action="">
         {{ form.hidden_tag() }}
+
+        <h5 class="mb-2">Formação Acadêmica</h5>
         <div id="formacao-container">
           {% for subfield in form.formacoes %}
-          <input class="form-control mb-2" value="{{ subfield.data or '' }}" name="{{ subfield.name }}">
+          <div class="form-item-wrapper d-flex mb-2">
+            {{ subfield(class='form-control me-2', placeholder='Formação...') }}
+            <button type="button" class="btn btn-danger btn-sm remove-item">&times;</button>
+          </div>
           {% endfor %}
         </div>
+        <button type="button" id="add-formacao" class="btn btn-outline-primary btn-sm mt-2">
+          <i class="bi bi-plus-circle"></i> Adicionar Formação
+        </button>
 
-        <div class="d-flex justify-content-between align-items-center mt-3">
-          <button type="button" id="add-formacao" class="btn btn-outline-primary btn-sm">
-            <i class="bi bi-plus-circle"></i> Adicionar Formação
-          </button>
+        <hr class="my-4">
+
+        <h5 class="mb-2">Cursos Complementares</h5>
+        <div id="curso-container">
+          {% for subfield in form.cursos %}
+          <div class="form-item-wrapper d-flex mb-2">
+            {{ subfield(class='form-control me-2', placeholder='Curso...') }}
+            <button type="button" class="btn btn-danger btn-sm remove-item">&times;</button>
+          </div>
+          {% endfor %}
+        </div>
+        <button type="button" id="add-curso" class="btn btn-outline-primary btn-sm mt-2">
+          <i class="bi bi-plus-circle"></i> Adicionar Curso
+        </button>
+        
+        <hr class="my-4">
+
+        <div class="d-flex justify-content-end">
           {{ form.submit(class='btn btn-primary') }}
         </div>
+        
       </form>
-    </div>
+      </div>
   </div>
 </div>
-
 {% endblock %}
 
 {% block scripts %}
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const addFormacao = document.getElementById("add-formacao");
-    const container = document.getElementById("formacao-container");
-    let contador = container.querySelectorAll("input").length;
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Lógica para Formações
+      const addFormacao = document.getElementById("add-formacao");
+      const formacaoContainer = document.getElementById("formacao-container");
+      let formacaoContador = formacaoContainer.querySelectorAll('.form-item-wrapper').length;
 
-    addFormacao.addEventListener("click", () => {
-      // Dentro do seu addEventListener para "Adicionar"
-      // Crie um 'div' para ser o pacote
-      const wrapperDiv = document.createElement('div');
-      // Dê a ele uma classe para podermos encontrá-lo depois e para estilização
-      wrapperDiv.className = 'form-item-wrapper d-flex mb-2'; 
+      addFormacao.addEventListener("click", () => {
+        const wrapperDiv = document.createElement('div');
+        wrapperDiv.className = 'form-item-wrapper d-flex mb-2';
+        wrapperDiv.innerHTML = `
+            <input name="formacoes-${formacaoContador}" class="form-control me-2" placeholder="Nova formação...">
+            <button type="button" class="btn btn-danger btn-sm remove-item">&times;</button>
+        `;
+        formacaoContainer.appendChild(wrapperDiv);
+        formacaoContador++;
+      });
 
-      // Use innerHTML com uma string-molde para criar o conteúdo. É rápido e fácil.
-      wrapperDiv.innerHTML = `
-          <input name="formacoes-${contador}" class="form-control me-2" placeholder="Nova formação...">
-          <button type="button" class="btn btn-danger btn-sm remove-item">&times;</button>
-      `;
+      // Lógica para Cursos
+      const addCurso = document.getElementById("add-curso");
+      const cursoContainer = document.getElementById("curso-container");
+      let cursoContador = cursoContainer.querySelectorAll('.form-item-wrapper').length;
 
-      // Adicione o pacote inteiro ao container
-      container.appendChild(wrapperDiv);
-      contador++;
+      addCurso.addEventListener("click", () => {
+        const wrapperDiv = document.createElement('div');
+        wrapperDiv.className = 'form-item-wrapper d-flex mb-2';
+        wrapperDiv.innerHTML = `
+            <input name="cursos-${cursoContador}" class="form-control me-2" placeholder="Novo curso...">
+            <button type="button" class="btn btn-danger btn-sm remove-item">&times;</button>
+        `;
+        cursoContainer.appendChild(wrapperDiv);
+        cursoContador++;
+      });
+
+      // Delegação de eventos para os botões de remover (funciona para ambos os containers)
+      const mainCardBody = document.querySelector('.card-body');
+      mainCardBody.addEventListener('click', function(event) {
+          if (event.target.classList.contains('remove-item')) {
+              const wrapperParaRemover = event.target.closest('.form-item-wrapper');
+              if (wrapperParaRemover) {
+                  wrapperParaRemover.remove();
+              }
+          }
+      });
     });
-    // Este código fica fora do listener do botão "Adicionar"
-    container.addEventListener('click', function(event) {
-        // 1. Verifica se o que foi clicado foi um botão de remover
-        if (event.target.classList.contains('remove-item')) {
-            
-            // 2. Encontra o "pacote" pai mais próximo do botão
-            const wrapperParaRemover = event.target.closest('.form-item-wrapper');
-            
-            // 3. Remove o pacote inteiro da tela
-            if (wrapperParaRemover) {
-                wrapperParaRemover.remove();
-            }
-        }
-    });
-  });
-</script>
+  </script>
 {% endblock %}

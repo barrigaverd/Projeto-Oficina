@@ -92,6 +92,12 @@
             <p>{{ formacao.descricao }}</p>
         </div>
         {% endfor %}
+        {% if curriculo.cursos %}
+        <p class="titulo-secao"><strong>Cursos Complementares</strong></p>
+            {% for curso in curriculo.cursos %}
+                <p>{{ curso.descricao }}</p>
+            {% endfor %}
+        {% endif %}
     </div>
 
     <div class="secao">

@@ -285,6 +285,7 @@ class Curriculo(db.Model):
     data_criacao = db.Column(db.Date)
     formacoes = db.relationship('FormacaoAcademica', backref = 'curriculo')
     experiencias = db.relationship('ExperienciaProfissional', backref = 'curriculo')
+    cursos = db.relationship('Curso', backref='curriculo', cascade="all, delete-orphan")
 
 class Contrato(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -358,6 +359,11 @@ class FormacaoAcademica(db.Model):
     descricao = db.Column(db.Text)
     curriculo_id = db.Column(db.Integer, db.ForeignKey("curriculo.id"))
 
+class Curso(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    descricao = db.Column(db.Text)
+    curriculo_id = db.Column(db.Integer, db.ForeignKey("curriculo.id"))
+
 class ExperienciaProfissional(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     empresa = db.Column(db.String(120))
@@ -379,6 +385,7 @@ class CurriculoPasso1Form(FlaskForm):
 
 class CurriculoPasso2Form(FlaskForm):
     formacoes = FieldList(StringField("Formação", validators=[Optional()]), min_entries=1)
+    cursos = FieldList(StringField("Curso", validators=[Optional()]), min_entries=1)
     submit = SubmitField("Avançar")
 
 class ExperienciaForm(Form):
@@ -1490,13 +1497,22 @@ def curriculo_passo2(curriculo_id):
 
     if form.validate_on_submit():
         lista_de_descricoes = form.formacoes.data
+        lista_de_cursos = form.cursos.data
         for formacoes in curriculo.formacoes:
             db.session.delete(formacoes)
+        for cursos in curriculo.cursos:
+            db.session.delete(cursos)
+
 
         for descricao in lista_de_descricoes:
             if descricao:
                 nova_formacao = FormacaoAcademica(descricao=descricao, curriculo_id=curriculo.id)
                 db.session.add(nova_formacao)
+
+        for descricao in lista_de_cursos:
+            if descricao:
+                novo_curso = Curso(descricao=descricao, curriculo_id=curriculo.id)
+                db.session.add(novo_curso)
 
         db.session.commit()
         flash("Formações cadastradas com sucesso!", "success")
@@ -1504,8 +1520,10 @@ def curriculo_passo2(curriculo_id):
         return redirect(url_for('curriculo_passo3', curriculo_id=curriculo.id))
     if request.method == "GET":
         formacoes_atuais = curriculo.formacoes
+        cursos_atuais = curriculo.cursos
         lista_de_descricoes = [formacao.descricao for formacao in formacoes_atuais]
-        form = CurriculoPasso2Form(formacoes=lista_de_descricoes)
+        lista_de_cursos = [curso.descricao for curso in cursos_atuais]
+        form = CurriculoPasso2Form(formacoes=lista_de_descricoes, cursos=lista_de_cursos)
 
     return render_template("curriculo_passo2.html", form=form)
 
@@ -1805,16 +1823,8 @@ def deletar_contrato(id):
 def editar_contrato(id):
     contrato = Contrato.query.get_or_404(id)
     form = ContratoForm()
-    
-    if request.method == 'POST':
-        print(f"--- DADOS RECEBIDOS DO FORMULÁRIO ---")
-        print(f"Valor do aluguel recebido: '{form.valor_aluguel.data}'")
-        print(f"O formulário é válido? {form.validate_on_submit()}")
-        if not form.validate():
-             print("Erros de validação:", form.errors)
 
     if form.validate_on_submit():
-        print("--- SALVANDO DADOS: DENTRO DO IF FORM.VALIDATE_ON_SUBMIT ---")
         contrato.locador_nome = form.locador_nome.data
         contrato.locador_rg = form.locador_rg.data
         contrato.locador_cpf = form.locador_cpf.data
@@ -1842,7 +1852,6 @@ def editar_contrato(id):
 
         contrato.valor_aluguel = valor_float # Salva o número float convertido
 
-        print(f"Valor convertido que será salvo: {contrato.valor_aluguel}")
 
         contrato.cidade_foro = form.cidade_foro.data
         contrato.cidade = form.cidade.data
