@@ -15,24 +15,22 @@
             line-height: 1.6;
         }
 
-        h1,
-        h2 {
+        /* Estilos para os novos parágrafos que substituem h1 e h2 */
+        .titulo-principal {
+            font-size: 28px;
+            text-align: center;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
             color: #333;
             text-transform: uppercase;
         }
 
-        h1 {
-            font-size: 28px;
-            text-align: center;
-
-            padding-bottom: 5px;
-            margin-bottom: 15px;
-        }
-
-        h2 {
+        .titulo-secao {
             margin-top: 30px;
             font-size: 18px;
             padding-bottom: 4px;
+            color: #333;
+            text-transform: uppercase;
         }
 
         p {
@@ -78,7 +76,7 @@
 
 <body>
 
-    <h1>{{ curriculo.nome }}</h1>
+    <p class="titulo-principal"><strong>{{ curriculo.nome }}</strong></p>
 
     <div class="dados">
         <p> {{ curriculo.estado_civil }} | {{ curriculo.idade }} anos </p>
@@ -87,10 +85,8 @@
         <p><strong>E-mail:</strong> {{ curriculo.email }}</p>
     </div>
 
-
-
     <div class="secao">
-        <h2>Formação Acadêmica</h2>
+        <p class="titulo-secao"><strong>Formação Acadêmica</strong></p>
         {% for formacao in curriculo.formacoes %}
         <div class="formacao">
             <p>{{ formacao.descricao }}</p>
@@ -99,7 +95,7 @@
     </div>
 
     <div class="secao">
-        <h2>Experiências Profissionais</h2>
+        <p class="titulo-secao"><strong>Experiências Profissionais</strong></p>
         {% for exp in curriculo.experiencias %}
         <div class="experiencia">
             <p><strong>Empresa:</strong> {{ exp.empresa }}</p>
@@ -114,16 +110,18 @@
         </div>
         {% endfor %}
     </div>
+    
     <div class="secao">
-        <h2>Objetivo</h2>
+        <p class="titulo-secao"><strong>Objetivo</strong></p>
         <p class="dados">{{ curriculo.objetivo }}</p>
     </div>
+
     {% if not para_pdf %}
     <div style="text-align: center;">
         <a href="{{ url_for('download_curriculo_pdf', curriculo_id=curriculo.id) }}" class="btn">
             Baixar como PDF
         </a>
-        <a href="{{ url_for('download_curriculo_word', curriculo_id=curriculo.id) }}"class="btn btn-primary ms-2">Baixar como Word</a>
+        <a href="{{ url_for('download_curriculo_word', curriculo_id=curriculo.id) }}" class="btn btn-primary ms-2">Baixar como Word</a>
         <a class="btn btn-close" href="{{ url_for('listar_curriculos') }}">Voltar para Lista</a>
     </div>
     {% endif %}
