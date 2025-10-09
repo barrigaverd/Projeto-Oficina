@@ -286,7 +286,6 @@ class Curriculo(db.Model):
     formacoes = db.relationship('FormacaoAcademica', backref = 'curriculo')
     experiencias = db.relationship('ExperienciaProfissional', backref = 'curriculo')
 
-texto_clausulas = """  """
 class Contrato(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     
@@ -319,8 +318,6 @@ class Contrato(db.Model):
     data_assinatura = db.Column(db.Date)
     data_criacao = db.Column(db.DateTime, default=datetime.utcnow)
 
-    clausulas = db.Column(db.Text) 
-
 
     def __repr__(self):
         return f"<Contrato {self.id} - {self.locatario_nome}>"
@@ -344,7 +341,7 @@ class ContratoForm(FlaskForm):
     prazo_meses = IntegerField("Prazo (meses)", default=12)
     data_inicio = DateField("Data de Início")
     data_fim = DateField("Data de Término")
-    valor_aluguel = FloatField("Valor do Aluguel (R$)")
+    valor_aluguel = StringField("Valor do Aluguel (R$)")
     dia_pagamento = IntegerField("Dia do Pagamento", default=10)
     indice_reajuste = StringField("Índice de Reajuste", default="IGP-M")
     multa_percentual = IntegerField("Multa (%)", default=5)
@@ -353,9 +350,6 @@ class ContratoForm(FlaskForm):
     cidade_foro = StringField("Foro", default="Ibirité")
     cidade = StringField("Cidade", default="Ibirité - MG")
     data_assinatura = DateField("Data de Assinatura", default=date.today())
-
-    clausulas = TextAreaField("Clausulas", validators=[DataRequired()])
-
 
     submit = SubmitField("Salvar Contrato")
 
@@ -1704,6 +1698,19 @@ def novo_contrato():
         novo_contrato.indice_reajuste = form.indice_reajuste.data
         novo_contrato.multa_percentual = form.multa_percentual.data
         novo_contrato.juros_percentual = form.juros_percentual.data
+        valor_str = form.valor_aluguel.data or '0'
+
+        # Tenta converter para um número float, tratando os formatos brasileiros
+        try:
+            # 1. Remove o separador de milhar (ponto)
+            # 2. Troca o separador decimal (vírgula) por ponto
+            valor_float = float(valor_str.replace('.', '').replace(',', '.'))
+        except ValueError:
+            # Se o usuário digitar um texto inválido (ex: "mil reais"), salva 0.0
+            valor_float = 0.0
+
+        # Salva o número float e limpo no banco de dados
+        novo_contrato.valor_aluguel = valor_float
 
         novo_contrato.cidade_foro = form.cidade_foro.data
         novo_contrato.cidade = form.cidade.data
@@ -1761,6 +1768,27 @@ def download_contrato_pdf(id):
     # Se houve algum erro, retorna uma mensagem simples
     return flash("Ocorreu um erro ao gerar o PDF."), 500
 
+@app.route("/contrato/<int:id>/download_word")
+@login_required
+@role_required('funcionario')
+def download_contrato_word(id):
+    contrato = Contrato.query.get_or_404(id)
+    html_renderizado = render_template("template_contrato.html", contrato=contrato, para_pdf = True)
+    
+    parser = HtmlToDocx()
+
+    docx = parser.parse_html_string(html_renderizado)
+
+    buffer = BytesIO()
+    docx.save(buffer)
+    buffer.seek(0)
+    
+    return send_file(
+        buffer, 
+        as_attachment=True, 
+        download_name=f'Contrato-{contrato.locador_nome}.docx', 
+        mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+
 @app.route("/contrato/deletar/<int:id>")
 @login_required
 @role_required('funcionario')
@@ -1778,7 +1806,15 @@ def editar_contrato(id):
     contrato = Contrato.query.get_or_404(id)
     form = ContratoForm()
     
+    if request.method == 'POST':
+        print(f"--- DADOS RECEBIDOS DO FORMULÁRIO ---")
+        print(f"Valor do aluguel recebido: '{form.valor_aluguel.data}'")
+        print(f"O formulário é válido? {form.validate_on_submit()}")
+        if not form.validate():
+             print("Erros de validação:", form.errors)
+
     if form.validate_on_submit():
+        print("--- SALVANDO DADOS: DENTRO DO IF FORM.VALIDATE_ON_SUBMIT ---")
         contrato.locador_nome = form.locador_nome.data
         contrato.locador_rg = form.locador_rg.data
         contrato.locador_cpf = form.locador_cpf.data
@@ -1798,6 +1834,15 @@ def editar_contrato(id):
         contrato.indice_reajuste = form.indice_reajuste.data
         contrato.multa_percentual = form.multa_percentual.data
         contrato.juros_percentual = form.juros_percentual.data
+        valor_str = form.valor_aluguel.data or '0' # Pega o texto do form ou '0' se estiver vazio
+        try:
+            valor_float = float(valor_str.replace('.', '').replace(',', '.')) # Remove o separador de milhar e troca a vírgula
+        except ValueError:
+            valor_float = 0.0 # Define um valor padrão em caso de erro
+
+        contrato.valor_aluguel = valor_float # Salva o número float convertido
+
+        print(f"Valor convertido que será salvo: {contrato.valor_aluguel}")
 
         contrato.cidade_foro = form.cidade_foro.data
         contrato.cidade = form.cidade.data
@@ -1828,6 +1873,7 @@ def editar_contrato(id):
         form.indice_reajuste.data = contrato.indice_reajuste
         form.multa_percentual.data = contrato.multa_percentual
         form.juros_percentual.data = contrato.juros_percentual
+        form.valor_aluguel.data = contrato.valor_aluguel
 
         form.cidade_foro.data = contrato.cidade_foro
         form.cidade.data = contrato.cidade

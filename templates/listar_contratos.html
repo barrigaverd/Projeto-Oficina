@@ -35,7 +35,6 @@
               <th>Locatário</th>
               <th>Locador</th>
               <th>Valor</th>
-              <th>Data de Início</th>
               <th>Data de Criação</th>
               <th>Ações</th>
             </tr>
@@ -46,14 +45,13 @@
               <td class="fw-semibold text-start ps-3">{{ contrato.locatario_nome }}</td>
               <td>{{ contrato.locador_nome }}</td>
               <td>R$ {{ contrato.valor_aluguel }}</td>
-              <td>{{ contrato.data_inicio }}</td>
               <td>{{ contrato.data_criacao.strftime('%d/%m/%Y') }}</td>
               <td>
                 <a href="{{ url_for('editar_contrato', id=contrato.id) }}"
                   class="btn btn-sm btn-outline-secondary me-1">
                   <i class="bi bi-pencil-square"></i>Editar
                 </a>
-                <a href="{{ url_for('download_contrato_pdf', id=contrato.id) }}"
+                 <a href="{{ url_for('preview_contrato', id=contrato.id) }}"
                   class="btn btn-sm btn-outline-info me-1">
                   <i class="bi bi-file-earmark-pdf-fill"></i>Ver PDF
                 </a>
