@@ -1,9 +1,12 @@
+import email
 from enum import unique
+from fileinput import filename
 from http import client
 from os import replace
 import re
+import site
 from sqlite3.dbapi2 import Timestamp
-from flask import Flask, render_template, request, redirect, url_for, abort, Response, flash, send_file
+from flask import Flask, render_template, request, redirect, url_for, abort, Response, flash, send_file, current_app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from flask_bcrypt import Bcrypt
@@ -20,7 +23,8 @@ from werkzeug.utils import secure_filename
 from datetime import date
 from htmldocx import HtmlToDocx
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, IntegerField, SubmitField, FieldList, Form, FormField, DateField, BooleanField, FloatField
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import StringField, TextAreaField, IntegerField, SubmitField, FieldList, Form, FormField, DateField, BooleanField
 from wtforms.validators import DataRequired, Email, Optional
 
 
@@ -405,7 +409,44 @@ class CurriculoPasso4Form(FlaskForm):
     objetivo = TextAreaField("Objetivo", validators=[Optional()])
     submit = SubmitField("Finalizar")
 
+class Configuracao(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome_loja = db.Column(db.String(100))
+    cnpj = db.Column(db.String(20))
+    endereco = db.Column(db.String(200))
+    telefone = db.Column(db.String(20))
+    logomarca = db.Column(db.String(100))  # Armazenará o nome do arquivo da logo
+    texto_garantia = db.Column(db.Text)
+    email_contato = db.Column(db.String(100))
+    site = db.Column(db.String(100))
+
+class ConfiguracaoForm(FlaskForm):
+    nome_loja = StringField('Nome da Loja')
+    cnpj = StringField('CNPJ')
+    endereco = StringField('Endereço Completo')
+    telefone = StringField('Telefone Comercial')
+    logomarca = FileField('Logomarca', validators=[FileAllowed(['jpg', 'png'], 'Apenas imagens!')])
+    texto_garantia = TextAreaField('Texto Padrão da Garantia', render_kw={"rows": 10})
+    email_contato = StringField('Email de Contato')
+    site = StringField('Site')
+    submit = SubmitField('Salvar Configurações')
+
+
+
 #Funções principais
+@app.context_processor
+def inject_config():
+    # Busca a primeira (e única) linha de configuração do banco
+    config = Configuracao.query.first()
+
+    # Se nenhuma configuração foi salva ainda, retorna um dicionário vazio
+    # para evitar erros nos templates.
+    if not config:
+        return {} 
+
+    # Retorna um dicionário com a variável que estará disponível nos templates
+    return dict(config=config)
+
 @login_manager.user_loader
 def load_user(user_id_string): # O nome agora reflete que é uma string
     try:
@@ -1327,10 +1368,6 @@ def remover_foto_orcamento(foto_id):
 
     return redirect(url_for('detalhes_orcamento', id=orcamento_id) + "#fotos_equipamento")
 
-# app.py
-
-# ... (outras rotas)
-
 @app.route("/orcamento/pdf/<int:orcamento_id>")
 @login_required
 @role_required('funcionario')
@@ -1339,7 +1376,8 @@ def gerar_pdf_orcamento(orcamento_id):
     orcamento = Orcamento.query.get_or_404(orcamento_id)
     
     # 2. Renderiza o template HTML específico para o PDF
-    html_renderizado = render_template("template_pdf_orcamento.html", orcamento=orcamento)
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    html_renderizado = render_template("template_pdf_orcamento.html", orcamento=orcamento, base_dir=base_dir)
     
     # 3. Prepara um "arquivo" em memória para receber o PDF
     result = BytesIO()
@@ -1361,24 +1399,13 @@ def gerar_pdf_orcamento(orcamento_id):
     flash("Ocorreu um erro ao gerar o PDF.", "danger")
     return redirect(url_for('detalhes_orcamento', id=orcamento_id))
 
-
-
 @app.route("/orcamento/exibir_pdf/<int:orcamento_id>")
 @login_required
 @role_required('funcionario')
 def exibir_pdf_orcamento(orcamento_id):
-    """
-    Busca os dados de um orçamento e renderiza o template HTML 
-    formatado para PDF, para ser exibido no navegador.
-    """
-    # 1. Busca os dados do orçamento
     orcamento = Orcamento.query.get_or_404(orcamento_id)
     
-    # 2. Renderiza o template do PDF diretamente
     return render_template("template_pdf_orcamento.html", orcamento=orcamento)
-
-
-# app.py
 
 @app.route("/orcamento/converter/<int:orcamento_id>", methods=["POST"])
 @login_required
@@ -1447,7 +1474,6 @@ def converter_orcamento_para_os(orcamento_id):
 
     flash(f"Orçamento convertido com sucesso na OS #{nova_os.numero_formatado}!", "success")
     return redirect(url_for('detalhes_os', id=nova_os.id))
-
 
 @app.route("/curriculo/novo")
 @login_required
@@ -1656,7 +1682,6 @@ def listar_curriculos():
                                
     return render_template('listar_curriculos.html', curriculos=curriculos, termos_busca=termos_busca)
 
-
 @app.route("/curriculos/deletar/<int:curriculo_id>")
 @login_required
 @role_required('funcionario')
@@ -1688,7 +1713,6 @@ def download_curriculo_word(curriculo_id):
         download_name=f'Curriculo-{curriculo.nome}.docx', 
         mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         
-    
 @app.route("/contrato/novo", methods=["POST", "GET"])
 @login_required
 @role_required('funcionario')
@@ -1909,6 +1933,81 @@ def listar_contratos():
         
     # 5. Renderiza o template de listagem de contratos
     return render_template('listar_contratos.html', contratos=contratos, termos_busca=termos_busca)
+
+
+@app.route("/configuracoes", methods=["GET", "POST"])
+@login_required
+@role_required('funcionario')
+def configuracoes():
+    config = Configuracao.query.first()
+    if not config:
+        config = Configuracao()
+        db.session.add(config)
+    
+    form = ConfiguracaoForm()
+    if form.validate_on_submit():
+        config.nome_loja = form.nome_loja.data
+        config.cnpj = form.cnpj.data
+        config.endereco = form.endereco.data
+        config.telefone = form.telefone.data
+
+        if form.logomarca.data:
+            logo_file = form.logomarca.data
+            filename = secure_filename(logo_file.filename)
+            logo_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            config.logomarca = filename
+        
+        config.texto_garantia = form.texto_garantia.data
+        config.email_contato = form.email_contato.data
+        config.site = form.site.data
+        
+        db.session.commit()
+        flash("Configurações salvas com sucesso!", "success")
+        return redirect(url_for('configuracoes'))
+    elif request.method == "GET":
+        form.nome_loja.data = config.nome_loja
+        form.cnpj.data = config.cnpj
+        form.endereco.data = config.endereco
+        form.telefone.data = config.telefone
+        form.texto_garantia.data = config.texto_garantia
+        form.email_contato.data = config.email_contato
+        form.site.data = config.site
+    
+    return render_template("configuracoes.html", form=form, config=config)
+    
+
+@app.route("/configuracoes/reset", methods=["POST"])
+@login_required
+@role_required('funcionario')
+def configuracoes_reset():
+    config = Configuracao.query.first()
+    if config:
+        db.session.delete(config)
+    db.session.commit()
+    flash("Configurações resetadas com sucesso!", "success")
+    return redirect(url_for('configuracoes'))
+
+@app.route("/configuracoes/logo/remover", methods=["POST"])
+@login_required
+@role_required('funcionario')
+def configuracoes_remove_logo():
+    config = Configuracao.query.first()
+
+    if config and config.logomarca:
+        caminho_arquivo = os.path.join(app.config['UPLOAD_FOLDER'], config.logomarca)
+
+        try:
+            if os.path.exists(caminho_arquivo):
+                os.remove(caminho_arquivo)
+
+            config.logomarca = None
+            db.session.commit()
+            flash("Logomarca removida com sucesso!", "success")
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erro ao remover a logomarca: {e}", "danger")
+
+    return redirect(url_for('configuracoes'))
 
 if __name__ == "__main__":
     app.run(debug=True)

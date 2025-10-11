@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5 mb-5">
+  <div class="card shadow-sm rounded-3 mx-auto" style="max-width: 800px;">
+    <div class="card-header bg-primary text-white text-center py-3">
+      <h4 class="mb-0">
+        <i class="bi bi-gear-fill me-2"></i> Configurações do Sistema
+      </h4>
+    </div>
+
+    <div class="card-body p-4">
+
+      <h5 class="mb-3 border-bottom pb-2">Logomarca</h5>
+      {% if config and config.logomarca %}
+      <div class="text-center mb-3">
+        <p class="small text-muted mb-2">Logomarca atual:</p>
+        <img src="{{ url_for('static', filename='uploads/' ~ config.logomarca) }}"
+             alt="Logomarca" class="img-thumbnail" style="max-height: 120px; background-color: #f8f9fa;">
+        
+        <form action="{{ url_for('configuracoes_remove_logo') }}" method="POST" class="mt-2">
+            <button type="submit" class="btn btn-outline-danger btn-sm"
+                    onclick="return confirm('Tem certeza que deseja remover a logomarca?');">
+                <i class="bi bi-trash3"></i> Remover
+            </button>
+        </form>
+      </div>
+      {% endif %}
+
+      <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold">{{ form.logomarca.label }}</label>
+          {{ form.logomarca(class="form-control shadow-sm") }}
+        </div>
+
+        <h5 class="mb-3 mt-4 border-bottom pb-2">Informações da Empresa</h5>
+        <div class="row">
+          <div class="col-12 mb-3">
+            <label class="form-label fw-semibold">{{ form.nome_loja.label }}</label>
+            {{ form.nome_loja(class="form-control shadow-sm", placeholder="Ex: Oficina do Micro") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">{{ form.cnpj.label }}</label>
+            {{ form.cnpj(class="form-control shadow-sm", placeholder="00.000.000/0000-00") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">{{ form.telefone.label }}</label>
+            {{ form.telefone(class="form-control shadow-sm", placeholder="(00) 00000-0000") }}
+          </div>
+          <div class="col-12 mb-3">
+            <label class="form-label fw-semibold">{{ form.endereco.label }}</label>
+            {{ form.endereco(class="form-control shadow-sm", placeholder="Rua, número, bairro, cidade - UF") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">{{ form.email_contato.label }}</label>
+            {{ form.email_contato(class="form-control shadow-sm", placeholder="contato@seudominio.com") }}
+          </div>
+          <div class="col-md-6 mb-4">
+            <label class="form-label fw-semibold">{{ form.site.label }}</label>
+            {{ form.site(class="form-control shadow-sm", placeholder="https://seudominio.com") }}
+          </div>
+        </div>
+
+        <h5 class="mb-3 mt-4 border-bottom pb-2">Textos Padrão</h5>
+        <div class="mb-4">
+          <label class="form-label fw-semibold">{{ form.texto_garantia.label }}</label>
+          {{ form.texto_garantia(class="form-control shadow-sm", rows="4", placeholder="Digite o texto padrão de garantia...") }}
+        </div>
+
+        <div class="d-grid mt-4">
+          <button type="submit" class="btn btn-success btn-lg shadow-sm">
+            <i class="bi bi-save me-2"></i> Salvar Configurações
+          </button>
+        </div>
+      </form> <hr class="my-4">
+      <div class="text-end">
+        <p class="small text-muted mb-2">Ações irreversíveis</p>
+        
+        <form action="{{ url_for('configuracoes_reset') }}" method="POST" style="display: inline;">
+          <button type="submit" class="btn btn-danger btn-sm shadow-sm"
+                  onclick="return confirm('Tem certeza que deseja limpar TODAS as configurações? Esta ação não pode ser desfeita.');">
+            <i class="bi bi-eraser-fill me-1"></i> Resetar Configurações
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

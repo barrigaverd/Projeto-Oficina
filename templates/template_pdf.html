@@ -1,219 +1,189 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Ordem de Serviço #{{ ordem_servico.numero_formatado }}</title>
-    <style>
-        @page {
-            size: A4;
-            margin: 10mm;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            color: #333;
-            margin: 0;
-        }
-
-        .header-table,
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 16px;
-        }
-
-        .header-table td {
-            vertical-align: top;
-        }
-
-        .items-table th,
-        .items-table td {
-            border: 1px solid #ccc;
-            padding: 3px;
-            text-align: left;
-        }
-
-        .items-table th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-
-        .text-right {
-            text-align: right;
-        }
-
-        h1,
-        h2 {
-            margin: 0;
-        }
-
-        .section-header {
-            background-color: #f2f2f2;
-            padding: 3px;
-            font-weight: bold;
-            margin: 3px 0 3px 0;
-        }
-
-        .total-table {
-            width: 40%;
-            margin-left: auto;
-            border-collapse: collapse;
-            margin-top: 6px;
-        }
-
-        .total-table td {
-            border: 1px solid #a8a8a8;
-            padding: 3px;
-            font-weight: bold;
-        }
-
-        .fotos-table {
-            width: 100%;
-            border: none;
-            border-collapse: collapse;
-            text-align: center;
-        }
-
-        .fotos-table td {
-            border: none;
-            padding: 10px;
-
-            text-align: center;
-            width: 33%;
-            /* divide em 3 colunas */
-        }
-
-        .fotos-table img {
-            width: 150px;
-            /* tamanho fixo que xhtml2pdf respeita */
-            height: 150px;
-            /* garante que não estique */
-
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Ordem de Serviço #{{ ordem_servico.numero_formatado }}</title>
+  <style>
+    @page { size: A4; margin: 10mm; }
+    body { font-family: Arial, sans-serif; font-size: 12px; color: #333; margin: 0; }
+    table { width: 100%; border-collapse: collapse; }
+    td, th { vertical-align: top; }
+    h1, h2, h3, p { margin: 3px 0; }
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    .header-table td { padding-bottom: 5px; }
+    .items-table th, .items-table td {
+      border: 1px solid #ccc;
+      padding: 4px;
+    }
+    .items-table th { background: #f2f2f2; font-weight: bold; }
+    .total-table {
+      width: 40%;
+      margin-left: auto;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .total-table td {
+      border: 1px solid #a8a8a8;
+      padding: 4px;
+      font-weight: bold;
+    }
+    .section-title {
+      background: #f2f2f2;
+      font-weight: bold;
+      padding: 4px;
+      margin: 10px 0 4px;
+    }
+    .fotos-table { width: 100%; text-align: center; }
+    .fotos-table td { padding: 6px; }
+    .fotos-table img { width: 150px; height: 150px; object-fit: contain; }
+    .garantia-text { font-size: 11px; color: #555; margin-top: 10px; text-align: justify; }
+  </style>
 </head>
-
 <body>
-    <table class="header-table">
-        <tr>
-            <td>
-                <h1>Oficina do Micro</h1>
-                <p>
-                    Rua Freitas de Oliveira, 350, Loja C<br>
-                    Alvorada, Ibirité/MG
-                </p>
-            </td>
-            <td class="text-right">
-                <h2>Ordem de Serviço #{{ ordem_servico.numero_formatado }}</h2>
-                <p>Data: {{ ordem_servico.data_de_criacao.strftime('%d/%m/%Y') }}</p>
-                <br><br>
-                <div class="dados-usuario">
-                    <strong>Usuário do Portal:</strong> {{ ordem_servico.cliente.username_cliente }}<br>
-                    <strong>Senha do Portal:</strong> {{ ordem_servico.cliente.username_cliente.split('.')[0] }}@{{
-                    ordem_servico.data_de_criacao.year }}
-                </div>
 
-            </td>
-        </tr>
-    </table>
+  <!-- CABEÇALHO: LOGO E NOME DA LOJA NA MESMA LINHA -->
+  <table class="header-table">
+    <tr>
+      <td style="width: 15%;">
+        {% if config.logomarca %}
+        <img src="{{ base_dir }}/static/uploads/{{ config.logomarca }}" alt="Logomarca"
+             style="max-height: 60px;">
+        {% endif %}
+      </td>
+      <td style="width: 85%; text-align: left;">
+        <h1>{{ config.nome_loja }}</h1>
+        <p>{{ config.endereco }}</p>
+        <p>CNPJ: {{ config.cnpj }} | Telefone: {{ config.telefone }}</p>
+        {% if config.site %}<p>Site: {{ config.site }}</p>{% endif %}
+        {% if config.email_contato %}<p>E-mail: {{ config.email_contato }}</p>{% endif %}
+      </td>
+      <td class="text-right" style="width: 25%;">
+        <h2>Ordem de Serviço #{{ ordem_servico.numero_formatado }}</h2>
+        <p>Data: {{ ordem_servico.data_de_criacao.strftime('%d/%m/%Y') }}</p>
+      </td>
+    </tr>
+  </table>
 
-    <div class="section-header">Informações do Cliente</div>
-    <p>
-        <strong>Nome:</strong> {{ ordem_servico.cliente.nome }}<br>
-        <strong>Telefone:</strong> {{ ordem_servico.cliente.telefone_celular }}
-    </p>
+  <!-- INFORMAÇÕES DO CLIENTE E DETALHES DO EQUIPAMENTO NA MESMA LINHA -->
+  <table style="margin-top: 10px;">
+    <tr>
+      <td style="width: 50%; vertical-align: top;">
+        <div class="section-title">Informações do Cliente</div>
+        <p><strong>Nome:</strong> {{ ordem_servico.cliente.nome }}</p>
+        <p><strong>Telefone:</strong> {{ ordem_servico.cliente.telefone_celular }}</p>
+        {% if ordem_servico.cliente.username_cliente %}
+        <p><strong>Usuário:</strong> {{ ordem_servico.cliente.username_cliente }}</p>
+        {% endif %}
+        {% if ordem_servico.cliente.password_hash %}
+        <p><strong>Senha:</strong> {{ ordem_servico.cliente.username_cliente.split('.')[0] }}@{{ordem_servico.data_de_criacao.year }}</p>
+        {% endif %}
+      </td>
+      <td style="width: 50%; vertical-align: top;">
+        <div class="section-title">Detalhes do Equipamento</div>
+        <p><strong>Equipamento:</strong> {{ ordem_servico.equipamento }}</p>
+        <p><strong>Marca / Modelo:</strong> {{ ordem_servico.marca }} / {{ ordem_servico.modelo }}</p>
+        <p><strong>Defeito Relatado:</strong> {{ ordem_servico.defeito }}</p>
+      </td>
+    </tr>
+  </table>
 
-    <div class="section-header">Detalhes do Equipamento</div>
-    <p>
-        <strong>Equipamento:</strong> {{ ordem_servico.equipamento }}<br>
-        <strong>Marca / Modelo:</strong> {{ ordem_servico.marca }} / {{ ordem_servico.modelo }}<br>
-        <strong>Defeito Relatado:</strong> {{ ordem_servico.defeito }}
-    </p>
+  <!-- TEXTO DE GARANTIA LOGO ABAIXO -->
+  <div class="section-title">Sobre a Garantia do Serviço</div>
+  {% if config.texto_garantia %}
+  <div class="garantia-text">
+    {{ config.texto_garantia }}
+  </div>
+  {% endif %}
 
-    <div class="section-header">Fotos</div>
-    <table class="fotos-table">
-        {# Usa o filtro 'batch(3)' para agrupar as fotos em linhas de 3 #}
-        {% for row in ordem_servico.fotos|batch(3) %}
-        <tr>
-            {# Loop para cada foto dentro da linha #}
-            {% for foto in row %}
-            <td>
-                <img src="{{ base_dir }}/static/uploads/{{ foto.nome_arquivo }}">
-                <p>{{ foto.legenda or '' }}</p>
-            </td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
+  <!-- FOTOS -->
+  {% if ordem_servico.fotos %}
+  <div class="section-title">Fotos</div>
+  <table class="fotos-table">
+    {% for row in ordem_servico.fotos|batch(3) %}
+    <tr>
+      {% for foto in row %}
+      <td>
+        <img src="{{ base_dir }}/static/uploads/{{ foto.nome_arquivo }}" alt="">
+        <p>{{ foto.legenda or '' }}</p>
+      </td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
 
+  <!-- SERVIÇOS -->
+  {% if ordem_servico.itens_servico %}
+  <div class="section-title">Serviços Executados</div>
+  <table class="items-table">
+    <thead>
+      <tr>
+        <th>Descrição</th>
+        <th class="text-right">Qtd</th>
+        <th class="text-right">Valor Unit. (R$)</th>
+        <th class="text-right">Subtotal (R$)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in ordem_servico.itens_servico %}
+      <tr>
+        <td>{{ item.servico.descricao_servico }}</td>
+        <td class="text-right">{{ item.quantidade }}</td>
+        <td class="text-right">{{ "%.2f"|format(item.preco_cobrado|float) }}</td>
+        <td class="text-right">{{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
 
+  <!-- PEÇAS -->
+  {% if ordem_servico.itens_peca %}
+  <div class="section-title">Peças Utilizadas</div>
+  <table class="items-table">
+    <thead>
+      <tr>
+        <th>Descrição</th>
+        <th class="text-right">Qtd</th>
+        <th class="text-right">Valor Unit. (R$)</th>
+        <th class="text-right">Subtotal (R$)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in ordem_servico.itens_peca %}
+      <tr>
+        <td>{{ item.peca.nome_peca }}</td>
+        <td class="text-right">{{ item.quantidade }}</td>
+        <td class="text-right">{{ "%.2f"|format(item.preco_cobrado|float) }}</td>
+        <td class="text-right">{{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
 
-    <div class="section-header">Serviços</div>
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th>Descrição</th>
-                <th class="text-right">Qtd</th>
-                <th class="text-right">Preço Unit. (R$)</th>
-                <th class="text-right">Subtotal (R$)</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in ordem_servico.itens_servico %}
-            <tr>
-                <td>{{ item.servico.descricao_servico }}</td>
-                <td class="text-right">{{ item.quantidade }}</td>
-                <td class="text-right">{{ "%.2f"|format(item.preco_cobrado|float) }}</td>
-                <td class="text-right">{{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+  <!-- TOTAL GERAL -->
+  <table class="total-table">
+    <tr>
+      <td>Total Geral</td>
+      <td class="text-right">R$ {{ "%.2f"|format(ordem_servico.valor_calculado|float) }}</td>
+    </tr>
+  </table>
+<br><br><br>
+  <!-- ASSINATURAS -->
+  <table style="width:100%; margin-top: 40px; border: none;">
+    <tr>
+      <td style="width:50%; text-align:center; border:none;">
+        ____________________________________________<br>
+        <strong>{{ config.nome_loja }}</strong>
+      </td>
+      <td style="width:50%; text-align:center; border:none;">
+        ____________________________________________<br>
+        <strong>Cliente</strong>
+      </td>
+    </tr>
+  </table>
 
-    <div class="section-header">Peças</div>
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th>Descrição</th>
-                <th class="text-right">Qtd</th>
-                <th class="text-right">Preço Unit. (R$)</th>
-                <th class="text-right">Subtotal (R$)</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in ordem_servico.itens_peca %}
-            <tr>
-                <td>{{ item.peca.nome_peca }}</td>
-                <td class="text-right">{{ item.quantidade }}</td>
-                <td class="text-right">{{ "%.2f"|format(item.preco_cobrado|float) }}</td>
-                <td class="text-right">{{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <table class="total-table">
-        <tr>
-            <td>Total Geral:</td>
-            <td class="text-right">R$ {{ "%.2f"|format(ordem_servico.valor_calculado|float) }}</td>
-        </tr>
-    </table>
-
-    <!-- Assinaturas -->
-    <table class="items-table" style="margin-top: 40px; border: none;">
-        <tr>
-            <td style="border: none; text-align: center; padding-top: 40px;">
-                ____________________________________________<br>
-                <strong>Oficina do Micro</strong>
-            </td>
-            <td style="border: none; text-align: center; padding-top: 40px;">
-                ____________________________________________<br>
-                <strong>Cliente</strong>
-            </td>
-        </tr>
-    </table>
 </body>
-
 </html>
