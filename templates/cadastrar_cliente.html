@@ -125,6 +125,35 @@
     const tipoClienteSelect = document.getElementById('tipo_cliente');
     const campoCpf = document.getElementById('campo_cpf');
     const campoCnpj = document.getElementById('campo_cnpj');
+    const cpfElement = document.getElementById('cpf');
+    const cnpjElement = document.getElementById('cnpj');
+    const telElement = document.getElementById('telefone_celular');
+    const telAuxElement = document.getElementById('telefone_auxiliar');
+
+    if (cpfElement) {
+      const cpfMask = IMask(cpfElement, {
+        mask: '000.000.000-00'
+      });
+    }
+
+    if (cnpjElement) {
+      const cnpjMask = IMask(cnpjElement, {
+        mask: '00.000.000/0000-00'
+      });
+    }
+    if (telElement) {
+      const telMask = IMask(telElement, {
+        mask: '(00) 00000-0000',
+        maxLength: 10
+      });
+    }
+    if (telAuxElement) {
+      const telAuxMask = IMask(telAuxElement, {
+        mask: '(00) 00000-0000',
+        maxLength: 10
+      });
+    }
+
 
     tipoClienteSelect.addEventListener('change', function () {
       campoCpf.classList.add('d-none');
