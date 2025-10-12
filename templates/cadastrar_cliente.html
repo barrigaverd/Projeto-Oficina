@@ -69,6 +69,7 @@
         <div class="mb-3">
           <label for="cep" class="form-label">CEP:</label>
           <input type="text" class="form-control" id="cep" name="cep" placeholder="CEP">
+          <small id="cep-feedback" class="form-text text-muted"></small>
         </div>
 
         <div class="mb-3">
@@ -129,7 +130,13 @@
     const cnpjElement = document.getElementById('cnpj');
     const telElement = document.getElementById('telefone_celular');
     const telAuxElement = document.getElementById('telefone_auxiliar');
-    const cepElement = document.getElementById('cep');
+
+    const cepInput = document.getElementById('cep');
+    const logradouroInput = document.getElementById('logradouro');
+    const bairroInput = document.getElementById('bairro');
+    const cidadeInput = document.getElementById('cidade');
+    const estadoInput = document.getElementById('estado');
+    const cepFeedback = document.getElementById('cep-feedback');
 
     if (cpfElement) {
       const cpfMask = IMask(cpfElement, {
@@ -137,6 +144,51 @@
         maxLength: 11
       });
     }
+    if (cepInput) {
+      const cepMask = IMask(cepInput, {
+        mask: '00.000-000',
+        maxLength: 8
+      });
+    }
+
+    const limparEndereco = () => {
+      logradouroInput.value = '';
+      bairroInput.value = '';
+      cidadeInput.value = '';
+      estadoInput.value = '';
+    };
+    // "Escuta" quando o usuário sai do campo CEP
+    cepInput.addEventListener('blur', () => {
+        const cep = cepInput.value.replace(/\D/g, ''); // Remove tudo que não for número
+
+        if (cep.length !== 8) {
+            limparEndereco();
+            return;
+        }
+
+        cepFeedback.textContent = 'Buscando...';
+
+        // Faz a chamada para a API ViaCEP
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.erro) {
+                    cepFeedback.textContent = 'CEP não encontrado.';
+                    limparEndereco();
+                } else {
+                    cepFeedback.textContent = '';
+                    logradouroInput.value = data.logradouro;
+                    bairroInput.value = data.bairro;
+                    cidadeInput.value = data.localidade;
+                    estadoInput.value = data.uf;
+                }
+            })
+            .catch(error => {
+                cepFeedback.textContent = 'Erro ao buscar o CEP.';
+                console.error('Erro:', error);
+            });
+    });
+
 
     if (cnpjElement) {
       const cnpjMask = IMask(cnpjElement, {
@@ -156,12 +208,7 @@
         maxLength: 11
       });
     }
-    if (cepElement) {
-      const cepMask = IMask(cepElement, {
-        mask: '00000-000',
-        maxLength: 8
-      });
-    }
+    
 
 
 
