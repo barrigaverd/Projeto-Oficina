@@ -129,30 +129,40 @@
     const cnpjElement = document.getElementById('cnpj');
     const telElement = document.getElementById('telefone_celular');
     const telAuxElement = document.getElementById('telefone_auxiliar');
+    const cepElement = document.getElementById('cep');
 
     if (cpfElement) {
       const cpfMask = IMask(cpfElement, {
-        mask: '000.000.000-00'
+        mask: '000.000.000-00',
+        maxLength: 11
       });
     }
 
     if (cnpjElement) {
       const cnpjMask = IMask(cnpjElement, {
-        mask: '00.000.000/0000-00'
+        mask: '00.000.000/0000-00',
+        maxLength: 14
       });
     }
     if (telElement) {
       const telMask = IMask(telElement, {
         mask: '(00) 00000-0000',
-        maxLength: 10
+        maxLength: 11
       });
     }
     if (telAuxElement) {
       const telAuxMask = IMask(telAuxElement, {
         mask: '(00) 00000-0000',
-        maxLength: 10
+        maxLength: 11
       });
     }
+    if (cepElement) {
+      const cepMask = IMask(cepElement, {
+        mask: '00000-000',
+        maxLength: 8
+      });
+    }
+
 
 
     tipoClienteSelect.addEventListener('change', function () {

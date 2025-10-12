@@ -46,7 +46,7 @@
 
         <div class="mb-3">
           {{ form.telefone_principal.label(class='form-label fw-semibold') }}
-          {{ form.telefone_principal(class='form-control') }}
+          {{ form.telefone_principal(class='form-control', id='telefone_principal') }}
           {% for error in form.telefone_principal.errors %}
           <small class="text-danger">{{ error }}</small>
           {% endfor %}
@@ -68,4 +68,18 @@
   </div>
 </div>
 
+{% endblock %}
+{% block scripts %}
+<script>
+    // Espera a página carregar completamente
+    document.addEventListener('DOMContentLoaded', (event) => {
+      const telElement = document.getElementById('telefone_principal');
+      if (telElement) {
+        const telMask = IMask(telElement, {
+          mask: '(00) 00000-0000',
+          maxLength: 11
+        });
+      }
+    });
+</script>
 {% endblock %}

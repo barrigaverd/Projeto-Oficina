@@ -21,11 +21,11 @@
         </div>
         <div class="col-md-3 mb-3">
           {{ form.locador_rg.label(class="form-label") }}
-          {{ form.locador_rg(class="form-control") }}
+          {{ form.locador_rg(class="form-control", id="locador_rg") }}
         </div>
         <div class="col-md-3 mb-3">
           {{ form.locador_cpf.label(class="form-label") }}
-          {{ form.locador_cpf(class="form-control") }}
+          {{ form.locador_cpf(class="form-control", id="locador_cpf") }}
         </div>
       </div>
       <div class="mb-3">
@@ -42,11 +42,11 @@
         </div>
         <div class="col-md-3 mb-3">
           {{ form.locatario_rg.label(class="form-label") }}
-          {{ form.locatario_rg(class="form-control") }}
+          {{ form.locatario_rg(class="form-control", id="locatario_rg") }}
         </div>
         <div class="col-md-3 mb-3">
           {{ form.locatario_cpf.label(class="form-label") }}
-          {{ form.locatario_cpf(class="form-control") }}
+          {{ form.locatario_cpf(class="form-control", id="locatario_cpf") }}
         </div>
       </div>
       <div class="mb-3">
@@ -63,7 +63,7 @@
       <div class="row">
         <div class="col-md-4 mb-3">
           {{ form.finalidade.label(class="form-label") }}
-          {{ form.finalidade(class="form-control") }}
+          {{ form.finalidade(class="form-control", placeholder="Residenciais, comericiais, etc") }}
         </div>
         <div class="col-md-2 mb-3">
           {{ form.prazo_meses.label(class="form-label") }}
@@ -149,4 +149,41 @@
   </div>
 </div>
 
+{% endblock %}
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+
+        // --- CPF ---
+        const locadorCpfElement = document.getElementById('locador_cpf');
+        if (locadorCpfElement) {
+            const locadorCpfMask = IMask(locadorCpfElement, {
+                mask: '000.000.000-00'
+            });
+        }
+
+        const locatarioCpfElement = document.getElementById('locatario_cpf');
+        if (locatarioCpfElement) {
+            // CORREÇÃO: O nome da variável aqui agora está correto
+            const locatarioCpfMask = IMask(locatarioCpfElement, {
+                mask: '000.000.000-00'
+            });
+        }
+
+        // --- RG ---
+        const locadorRgElement = document.getElementById('locador_rg');
+        if (locadorRgElement) {
+            const locadorRgMask = IMask(locadorRgElement, {
+                mask: '00.000.000'
+            });
+        }
+
+        const locatarioRgElement = document.getElementById('locatario_rg');
+        if (locatarioRgElement) {
+            const locatarioRgMask = IMask(locatarioRgElement, {
+                mask: '00.000.000'
+            });
+        }
+    });
+</script>
 {% endblock %}
