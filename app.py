@@ -2009,5 +2009,36 @@ def configuracoes_remove_logo():
 
     return redirect(url_for('configuracoes'))
 
+@app.route("/orcamento/<int:id>/comprovante_entrada_pdf", methods=["POST"])
+@login_required
+@role_required('funcionario')
+def comprovante_entrada_pdf(id):
+    orcamento = Orcamento.query.get_or_404(id)
+        
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    html_renderizado = render_template("template_comprovante_entrada.html", orcamento=orcamento, para_pdf = True)
+    
+    result = BytesIO()
+    
+    pdf = pisa.pisaDocument(BytesIO(html_renderizado.encode("UTF-8")), result)
+    
+    # 5. Se não houve erro na conversão...
+    if not pdf.err:
+        # Cria um nome de arquivo dinâmico
+        nome_arquivo = f"Comprovante-Entrada-{orcamento.numero_formatado}.pdf"
+        # Retorna o PDF para o navegador como um download
+        flash("PDF gerado com sucesso!", "success")
+        return Response(
+            result.getvalue(),
+            mimetype="application/pdf",
+            headers={"Content-disposition": f"attachment; filename={nome_arquivo}"}
+        )
+        
+    
+    # Se houve algum erro, retorna uma mensagem simples
+    return flash("Ocorreu um erro ao gerar o PDF."), 500
+
+
 if __name__ == "__main__":
     app.run(debug=True)
