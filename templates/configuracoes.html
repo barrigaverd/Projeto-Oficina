@@ -39,15 +39,15 @@
         <div class="row">
           <div class="col-12 mb-3">
             <label class="form-label fw-semibold">{{ form.nome_loja.label }}</label>
-            {{ form.nome_loja(class="form-control shadow-sm", placeholder="Ex: Oficina do Micro") }}
+            {{ form.nome_loja(class="form-control shadow-sm") }}
           </div>
           <div class="col-md-6 mb-3">
             <label class="form-label fw-semibold">{{ form.cnpj.label }}</label>
-            {{ form.cnpj(class="form-control shadow-sm", placeholder="00.000.000/0000-00") }}
+            {{ form.cnpj(class="form-control shadow-sm", id="cnpj", placeholder="00.000.000/0000-00") }}
           </div>
           <div class="col-md-6 mb-3">
             <label class="form-label fw-semibold">{{ form.telefone.label }}</label>
-            {{ form.telefone(class="form-control shadow-sm", placeholder="(00) 00000-0000") }}
+            {{ form.telefone(class="form-control shadow-sm", id="telefone", placeholder="(00) 00000-0000") }}
           </div>
           <div class="col-12 mb-3">
             <label class="form-label fw-semibold">{{ form.endereco.label }}</label>
@@ -89,4 +89,25 @@
   </div>
 </div>
 
+{% endblock %}
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      const campo_cnpj = document.getElementById('cnpj');
+      const campo_telefone = document.getElementById('telefone');
+
+      if (campo_cnpj) {
+        const cnpjMask = IMask(campo_cnpj, {
+          mask: '00.000.000/0000-00',
+          maxLength: 14
+        })
+      };
+      if (campo_telefone) {
+        const telMask = IMask(campo_telefone, {
+          mask: '(00) 00000-0000',
+          maxLength: 11
+        });
+      };
+  })
+</script>
 {% endblock %}

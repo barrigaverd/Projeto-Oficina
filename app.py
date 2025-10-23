@@ -2009,15 +2009,23 @@ def configuracoes_remove_logo():
 
     return redirect(url_for('configuracoes'))
 
-@app.route("/orcamento/<int:id>/comprovante_entrada_pdf", methods=["POST"])
+@app.route("/orcamento/<int:id>/comprovante_entrada_pdf", methods=["GET"])
 @login_required
 @role_required('funcionario')
-def comprovante_entrada_pdf(id):
+def gerar_comprovante_entrada_pdf(id):
     orcamento = Orcamento.query.get_or_404(id)
         
+    config = Configuracao.query.first()
+    
     base_dir = os.path.dirname(os.path.abspath(__file__))
     
-    html_renderizado = render_template("template_comprovante_entrada.html", orcamento=orcamento, para_pdf = True)
+    html_renderizado = render_template(
+        "template_comprovante_entrada.html",
+          orcamento=orcamento,
+          config=config,
+          para_pdf = True,
+          base_dir=base_dir
+    )
     
     result = BytesIO()
     
@@ -2038,6 +2046,7 @@ def comprovante_entrada_pdf(id):
     
     # Se houve algum erro, retorna uma mensagem simples
     return flash("Ocorreu um erro ao gerar o PDF."), 500
+    
 
 
 if __name__ == "__main__":

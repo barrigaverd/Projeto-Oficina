@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      color: #000;
+      margin: 10px 25px;
+    }
+
+    /* Cabeçalho */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #000;
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+    }
+
+    .header img {
+      max-height: 55px;
+      /* ✅ Tamanho máximo controlado */
+      max-width: 140px;
+      object-fit: contain;
+    }
+
+    .empresa {
+      text-align: right;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    /* Títulos */
+    h2 {
+      text-align: center;
+      margin: 5px 0 10px;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    h3 {
+      background-color: #f2f2f2;
+      padding: 4px;
+      font-size: 13px;
+      border: 1px solid #ccc;
+      margin-bottom: 4px;
+    }
+
+    /* Tabelas */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 6px;
+    }
+
+    td {
+      padding: 3px 4px;
+      vertical-align: top;
+    }
+
+    /* Condições */
+    .condicoes {
+      font-size: 11px;
+      text-align: justify;
+      border: 1px solid #ccc;
+      padding: 8px;
+      margin-top: 5px;
+    }
+
+    .condicoes ol {
+      padding-left: 18px;
+      margin: 0;
+    }
+
+    /* Assinaturas */
+    .assinaturas {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 5px;
+    }
+
+    .assinatura-bloco {
+      width: 45%;             /* Mantém a largura */
+      text-align: center;     /* Mantém o texto centralizado */
+      font-size: 11px;        /* Mantém o tamanho da fonte */
+      padding-top: 40px;      /* Espaço ACIMA da linha para assinatura */
+      border-bottom: 1px solid #000; /* A linha de assinatura */
+      margin-top: 5px;        /* Pequeno espaçamento (opcional) */
+    }
+
+    /* Rodapé */
+    .footer {
+      font-size: 10.5px;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Cabeçalho -->
+  <div class="header"
+    style="display: table; width: 100%; margin-bottom: 10px; border-bottom: 1px solid #000; padding-bottom: 5px;">
+
+    <!-- Dados da Empresa -->
+    <div class="empresa"
+      style="display: table-cell; width: 75%; text-align: right; vertical-align: middle; font-size: 11px; line-height: 1.4;">
+      <strong>{{ config.nome_loja }}</strong><br>
+      {{ config.endereco }}<br>
+      CNPJ: {{ config.cnpj }}<br>
+      Tel: {{ config.telefone }}
+    </div>
+  </div>
+
+
+  <h2>COMPROVANTE DE ENTRADA - OS Nº {{ orcamento.numero_formatado or '_____' }}</h2>
+
+  <!-- Dados do Cliente -->
+  <h3>Dados do Cliente</h3>
+  <table>
+    <tr>
+      <td><strong>Nome:</strong> {{ orcamento.cliente.nome }}</td>
+      <td><strong>CPF/CNPJ:</strong> {{ orcamento.cliente.cpf or orcamento.cliente.cnpj }}</td>
+    </tr>
+    <tr>
+      <td><strong>Endereço:</strong> {{ orcamento.cliente.logradouro or '' }}, {{ orcamento.cliente.numero or '' }} {{
+        '- '+orcamento.cliente.complemento if orcamento.cliente.complemento else '' }}</td>
+      <td><strong>Bairro:</strong> {{ orcamento.cliente.bairro }}</td>
+    </tr>
+    <tr>
+      <td><strong>Cidade:</strong> {{ orcamento.cliente.cidade }}</td>
+      <td><strong>Telefone:</strong> {{ orcamento.cliente.telefone_celular }}</td>
+    </tr>
+  </table>
+
+  <!-- Equipamento -->
+  <h3>Equipamento</h3>
+  <table>
+    <tr>
+      <td><strong>Equipamento:</strong> {{ orcamento.equipamento }}</td>
+      <td><strong>Marca:</strong> {{ orcamento.marca }}</td>
+    </tr>
+    <tr>
+      <td><strong>Modelo:</strong> {{ orcamento.modelo }}</td>
+      <td><strong>Nº de Série:</strong> {{ orcamento.numero_de_serie }}</td>
+    </tr>
+    <tr>
+      <td colspan="2"><strong>Acessórios / Observações:</strong> {{ orcamento.observacoes_cliente or 'Não informado' }}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2"><strong>Problema Relatado:</strong> {{ orcamento.problema_informado }}</td>
+    </tr>
+  </table>
+
+  <!-- Condições -->
+  <h3>Condições de Serviço</h3>
+  <div class="condicoes">
+    <ol>
+      <li>O orçamento tem validade de 90 (noventa) dias após a data de emissão.</li>
+      <li>O prazo para retirada do equipamento é de 90 (noventa) dias após a conclusão do serviço.</li>
+      <li>Após este prazo, o equipamento poderá ser considerado abandonado e destinado à doação ou descarte.</li>
+      <li>Não nos responsabilizamos por dados, programas, arquivos ou softwares instalados no equipamento.</li>
+      <li>Não nos responsabilizamos por defeitos decorrentes de mau uso, quedas, umidade, vírus, curto-circuito ou
+        sobrecarga elétrica.</li>
+      <li>Qualquer serviço fora do descrito no orçamento será previamente comunicado ao cliente.</li>
+      <li>Equipamentos não retirados no prazo estipulado ficam sujeitos a cobrança de taxa de armazenamento.</li>
+    </ol>
+  </div>
+
+  <!-- Assinaturas -->
+  <div class="assinaturas">
+    <div class="assinatura-bloco">
+      {{ orcamento.cliente.nome }}<br>
+      <small>Cliente / Responsável</small>
+    </div>
+    <div class="assinatura-bloco">
+      {{ config.nome_loja }}<br>
+      <small>Oficina / Empresa</small>
+    </div>
+  </div>
+
+  <!-- Rodapé -->
+  <div class="footer">
+    Data de Entrada: {{ orcamento.data_de_criacao.strftime('%d/%m/%Y %H:%M') if orcamento.data_de_criacao else
+    '_____/_____/_____' }} |
+    Técnico Responsável: {{ orcamento.tecnico_responsavel or '__________________' }}
+  </div>
+
+</body>
+
+</html>
