@@ -98,6 +98,17 @@ def delete_user(username):
         print(f"Usuario {username} não encontrado!")
 
 
+@app.route('/sw.js')
+def service_worker():
+    resposta = current_app.send_static_file('js/sw.js')
+    resposta.mimetype = 'application/javascript'
+    return resposta
+
+@app.route('/offline.html')
+def offline():
+    return render_template('offline.html')
+
+
 #Classes
 class Cliente(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)

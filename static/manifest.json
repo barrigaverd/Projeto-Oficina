@@ -1,0 +1,8 @@
+{
+    "name":"Oficina do Micro",
+    "short_name":"Of.Micro",
+    "start_url":"/",
+    "display":"standalone",
+    "background_color":"#1B1C1D",
+    "theme_color":"#1B1C1D"
+}
