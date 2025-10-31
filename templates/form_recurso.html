@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-sm rounded-3 mx-auto" style="max-width: 700px;">
+    <div class="card-header bg-primary text-white text-center py-3">
+      <h4 class="mb-0">
+        {{ titulo }}
+      </h4>
+    </div>
+    <div class="card-body">
+      <form method="POST" action="">
+        {{ form.hidden_tag() }}
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            {{ form.tipo.label(class="form-label fw-semibold") }}
+            {{ form.tipo(class="form-select shadow-sm") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            {{ form.sistema_operacional.label(class="form-label fw-semibold") }}
+            {{ form.sistema_operacional(class="form-control shadow-sm") }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          {{ form.descricao.label(class="form-label fw-semibold") }}
+          {{ form.descricao(class="form-control shadow-sm") }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.link_download.label(class="form-label fw-semibold") }}
+          {{ form.link_download(class="form-control shadow-sm") }}
+        </div>
+
+        <div class="mt-4 d-flex justify-content-between">
+          <a href="{{ url_for('detalhes_impressora', id=recurso.impressora_id) }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left-circle me-1"></i>Voltar
+          </a>
+          {{ form.submit(class="btn btn-success") }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

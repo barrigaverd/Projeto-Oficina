@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="card shadow-sm rounded-3 mx-auto">
+    
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">
+        <i class="bi bi-printer-fill me-2"></i>
+        Gerenciar Recursos: {{ impressora.modelo }}
+      </h4>
+      <a href="{{ url_for('listar_impressoras') }}" class="btn btn-secondary btn-sm">
+        <i class="bi bi-arrow-left-circle me-1"></i> Voltar à Lista
+      </a>
+    </div>
+
+    <div class="card-body border-bottom">
+      <h5 class="mb-3 border-bottom pb-2">Adicionar Novo Recurso (Link)</h5>
+      <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            {{ form.tipo.label(class="form-label fw-semibold") }}
+            {{ form.tipo(class="form-select shadow-sm") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            {{ form.sistema_operacional.label(class="form-label fw-semibold") }}
+            {{ form.sistema_operacional(class="form-control shadow-sm") }}
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          {{ form.descricao.label(class="form-label fw-semibold") }}
+          {{ form.descricao(class="form-control shadow-sm") }}
+        </div>
+        
+        <div class="mb-3">
+          {{ form.link_download.label(class="form-label fw-semibold") }}
+          {{ form.link_download(class="form-control shadow-sm") }}
+        </div>
+        
+        <div class="text-end">
+          {{ form.submit(class="btn btn-primary") }}
+        </div>
+      </form>
+    </div>
+
+    <div class="card-body">
+      <h5 class="mb-3">Recursos Cadastrados</h5>
+      
+      {% if not recursos %}
+        <div class="alert alert-info text-center m-0">
+          Nenhum recurso (link) cadastrado para este modelo. Use o formulário acima para adicionar.
+        </div>
+      {% else %}
+        <div class="table-responsive">
+          <table class="table align-middle table-hover table-striped">
+            <thead class="table-light">
+              <tr class="text-center">
+                <th class="text-start ps-3">Tipo</th>
+                <th class="text-start">Descrição</th>
+                <th>S.O.</th>
+                <th>Link</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for recurso in recursos %}
+              <tr class="text-center">
+                <td class="text-start ps-3 fw-semibold">{{ recurso.tipo }}</td>
+                <td class="text-start">{{ recurso.descricao }}</td>
+                <td>{{ recurso.sistema_operacional or 'N/A' }}</td>
+                <td>
+                  <a href="{{ recurso.link_download }}" target="_blank" class="btn btn-sm btn-info">
+                    <i class="bi bi-download"></i> Baixar
+                  </a>
+                </td>
+                <td>
+                  <a href="{{ url_for('editar_recurso', id=recurso.id) }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                  <form action="{{ url_for('deletar_recurso', id=recurso.id) }}" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?');">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

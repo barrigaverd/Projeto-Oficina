@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="card shadow-sm rounded-3 mx-auto" style="max-width: 700px;">
+    <div class="card-header bg-primary text-white text-center py-3">
+      <h4 class="mb-0">
+        {{ titulo }} 
+      </h4>
+    </div>
+
+    <div class="card-body">
+      <form method="POST" action="">
+        {{ form.hidden_tag() }}
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">{{ form.modelo.label }}</label>
+          {{ form.modelo(class="form-control shadow-sm", placeholder="Ex: L3150") }}
+          {% for error in form.modelo.errors %}
+            <small class="text-danger">{{ error }}</small>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">{{ form.descricao.label }}</label>
+          {{ form.descricao(class="form-control shadow-sm", rows="4", placeholder="Ex: Multifuncional tanque de tinta, Wi-Fi...") }}
+          {% for error in form.descricao.errors %}
+            <small class="text-danger">{{ error }}</small>
+          {% endfor %}
+        </div>
+
+        <div class="mt-4 d-flex justify-content-between">
+          <button type="button" class="btn btn-secondary" onclick="retornar()">
+            <i class="bi bi-arrow-left-circle me-1"></i>Voltar
+          </button>
+          {{ form.submit(class="btn btn-success") }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

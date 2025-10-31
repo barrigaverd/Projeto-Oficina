@@ -24,7 +24,7 @@ from datetime import date
 from htmldocx import HtmlToDocx
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, TextAreaField, IntegerField, SubmitField, FieldList, Form, FormField, DateField, BooleanField
+from wtforms import StringField, TextAreaField, IntegerField, SubmitField, FieldList, Form, FormField, DateField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Email, Optional
 
 
@@ -443,7 +443,57 @@ class ConfiguracaoForm(FlaskForm):
     submit = SubmitField('Salvar Configurações')
 
 
+# Tabela 1: A "Categoria" (A Impressora)
+class Impressora(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    modelo = db.Column(db.String(100), nullable=False, unique=True)
+    descricao = db.Column(db.Text)
 
+    # O "relacionamento" que conecta esta impressora aos seus arquivos
+    recursos = db.relationship('RecursoImpressora', backref='impressora', lazy=True, cascade="all, delete-orphan")
+
+# Tabela 2: Os "Links" (Os Resets e Drivers)
+class RecursoImpressora(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    # A Chave Estrangeira que "amarra" este link a uma impressora
+    impressora_id = db.Column(db.Integer, db.ForeignKey('impressora.id'), nullable=False)
+
+    # Campos para descrever o link, como você sugeriu
+    tipo = db.Column(db.String(50), nullable=False) # Ex: "Reset", "Driver", "Scanner"
+    descricao = db.Column(db.Text) # Ex: "Driver de Impressora (Win 10/11 x64)"
+    sistema_operacional = db.Column(db.String(50)) # Ex: "Windows 10/11", "Windows 7", "macOS"
+    link_download = db.Column(db.Text, nullable=False)
+
+class ImpressoraForm(FlaskForm):
+    modelo = StringField('Modelo da Impressora', validators=[DataRequired()])
+    descricao = TextAreaField('Descrição (Opcional)')
+    submit = SubmitField('Salvar')
+
+class RecursoForm(FlaskForm):
+    # Usamos um SelectField para o 'tipo' para padronizar a entrada
+    tipo = SelectField('Tipo de Recurso', 
+                       choices=[
+                           ('Reset', 'Reset'), 
+                           ('Driver', 'Driver'), 
+                           ('Scanner', 'Scanner'), 
+                           ('Manual', 'Manual'),
+                           ('Outro', 'Outro')
+                       ], 
+                       validators=[DataRequired()])
+
+    descricao = StringField('Descrição', 
+                            validators=[DataRequired()], 
+                            render_kw={"placeholder": "Ex: Reset para Windows 10/11"})
+
+    sistema_operacional = StringField('Sistema Operacional', 
+                                      validators=[Optional()], 
+                                      render_kw={"placeholder": "Ex: Windows 10/11 x64"})
+
+    link_download = TextAreaField('Link para Download', 
+                                  validators=[DataRequired()], 
+                                  render_kw={"rows": 3, "placeholder": "Cole o link completo (Google Drive, Mega, etc.)"})
+
+    submit = SubmitField('Adicionar Recurso')
 #Funções principais
 @app.context_processor
 def inject_config():
@@ -2058,7 +2108,178 @@ def gerar_comprovante_entrada_pdf(id):
     # Se houve algum erro, retorna uma mensagem simples
     return flash("Ocorreu um erro ao gerar o PDF."), 500
     
+@app.route("/utilidades/impressoras")
+@login_required
+@role_required('funcionario')
+def listar_impressoras():
+    termos_busca = request.args.get('busca', '')
+    query = Impressora.query
+
+    if termos_busca:
+        query = query.filter(Impressora.modelo.ilike(f'%{termos_busca}%'))
+
+    impressoras = query.order_by(Impressora.modelo).all()
+
+    # Vamos usar um novo template para esta página
+    return render_template(
+        'listar_impressoras.html', 
+        impressoras=impressoras, 
+        termos_busca=termos_busca
+    )
+
+@app.route("/utilidades/impressoras/nova", methods=["GET", "POST"])
+@login_required
+@role_required('funcionario')
+def nova_impressora():
+    form = ImpressoraForm()
+    if form.validate_on_submit():
+        # Verifica se o modelo já existe
+        modelo_existente = Impressora.query.filter_by(modelo=form.modelo.data).first()
+        if modelo_existente:
+            flash('Erro: Já existe uma impressora cadastrada com esse modelo.', 'danger')
+        else:
+            nova_imp = Impressora(
+                modelo=form.modelo.data,
+                descricao=form.descricao.data
+            )
+            db.session.add(nova_imp)
+            db.session.commit()
+            flash('Impressora cadastrada com sucesso!', 'success')
+            return redirect(url_for('listar_impressoras'))
+
+    # Vamos criar um template simples para o formulário
+    return render_template('form_impressora.html', form=form, titulo='Nova Impressora')
+
+@app.route("/utilidades/impressoras/editar/<int:id>", methods=["GET", "POST"])
+@login_required
+@role_required('funcionario')
+def editar_impressora(id):
+    impressora = Impressora.query.get_or_404(id)
+    form = ImpressoraForm()
+
+    if form.validate_on_submit():
+        impressora.modelo = form.modelo.data
+        impressora.descricao = form.descricao.data
+        db.session.commit()
+        flash('Impressora atualizada com sucesso!', 'success')
+        return redirect(url_for('listar_impressoras'))
+
+    elif request.method == "GET":
+        form.modelo.data = impressora.modelo
+        form.descricao.data = impressora.descricao
+
+    return render_template('form_impressora.html', form=form, titulo=f'Editar Impressora: {impressora.modelo}')
+
+@app.route("/utilidades/impressoras/deletar/<int:id>", methods=["POST"])
+@login_required
+@role_required('funcionario')
+def deletar_impressora(id):
+    # Usamos POST para segurança, e o botão no template já faz isso.
+    impressora = Impressora.query.get_or_404(id)
+
+    # Graças ao 'cascade' que definimos no modelo, 
+    # o banco de dados também apagará todos os 'Recursos' (links) 
+    # associados a esta impressora.
+
+    db.session.delete(impressora)
+    db.session.commit()
+    flash(f'Impressora "{impressora.modelo}" e todos os seus links foram apagados com sucesso!', 'success')
+    return redirect(url_for('listar_impressoras'))
 
 
+@app.route("/utilidades/impressoras/<int:id>/detalhes", methods=["GET", "POST"])
+@login_required
+@role_required('funcionario')
+def detalhes_impressora(id):
+    # 1. Busca a impressora (a "categoria")
+    impressora = Impressora.query.get_or_404(id)
+
+    # 2. Cria o formulário para adicionar um NOVO recurso
+    form = RecursoForm()
+
+    # 3. Lógica para salvar o NOVO recurso
+    if form.validate_on_submit():
+        novo_recurso = RecursoImpressora(
+            impressora_id = impressora.id,
+            tipo = form.tipo.data,
+            descricao = form.descricao.data,
+            sistema_operacional = form.sistema_operacional.data,
+            link_download = form.link_download.data
+        )
+        db.session.add(novo_recurso)
+        db.session.commit()
+        flash('Novo recurso adicionado com sucesso!', 'success')
+        return redirect(url_for('detalhes_impressora', id=impressora.id)) # Recarrega a página
+
+    # 4. No GET, apenas busca os recursos já existentes para listar
+    recursos_cadastrados = impressora.recursos
+
+    # 5. Renderiza um novo template
+    return render_template(
+        'detalhes_impressora.html', 
+        impressora=impressora, 
+        recursos=recursos_cadastrados, 
+        form=form
+    )
+
+@app.route("/utilidades/recurso/deletar/<int:id>", methods=["POST"])
+@login_required
+@role_required('funcionario')
+def deletar_recurso(id):
+    # 1. Busca o recurso (o link) que será deletado
+    recurso = RecursoImpressora.query.get_or_404(id)
+
+    # 2. IMPORTANTE: Precisamos saber para qual impressora voltar.
+    #    Guardamos o ID da impressora "pai" antes de deletar.
+    impressora_id = recurso.impressora_id
+
+    # 3. Deleta o recurso
+    db.session.delete(recurso)
+    db.session.commit()
+
+    flash('Recurso (link) removido com sucesso!', 'success')
+
+    # 4. Redireciona de volta para a página de detalhes da impressora
+    return redirect(url_for('detalhes_impressora', id=impressora_id))
+
+@app.route("/utilidades/recurso/editar/<int:id>", methods=["GET", "POST"])
+@login_required
+@role_required('funcionario')
+def editar_recurso(id):
+    # 1. Busca o recurso específico que queremos editar
+    recurso = RecursoImpressora.query.get_or_404(id)
+
+    # 2. Reutilizamos o mesmo formulário que já criamos
+    form = RecursoForm()
+
+    # 3. Lógica de salvamento (POST)
+    if form.validate_on_submit():
+        # Atualiza os dados do objeto 'recurso'
+        recurso.tipo = form.tipo.data
+        recurso.descricao = form.descricao.data
+        recurso.sistema_operacional = form.sistema_operacional.data
+        recurso.link_download = form.link_download.data
+
+        db.session.commit()
+        flash('Recurso atualizado com sucesso!', 'success')
+
+        # Redireciona de volta para a página de detalhes
+        return redirect(url_for('detalhes_impressora', id=recurso.impressora_id))
+
+    # 4. Lógica de carregamento (GET)
+    elif request.method == "GET":
+        # Preenche o formulário com os dados atuais do recurso
+        form.tipo.data = recurso.tipo
+        form.descricao.data = recurso.descricao
+        form.sistema_operacional.data = recurso.sistema_operacional
+        form.link_download.data = recurso.link_download
+
+    # 5. Renderiza um novo template para o formulário de edição
+    return render_template(
+        'form_recurso.html', 
+        form=form, 
+        recurso=recurso,  # Passamos 'recurso' para o template
+        titulo=f'Editar Recurso: {recurso.descricao[:30]}...'
+    )
 if __name__ == "__main__":
     app.run(debug=True)
