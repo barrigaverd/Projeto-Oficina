@@ -22,6 +22,20 @@
           </p>
         </div>
       </div>
+      <div class="card mb-3 border-warning">
+    <div class="card-body">
+        <h6 class="card-title text-warning-emphasis">Resetar Senha</h6>
+        <div class="mb-3">
+          <label for="nova_senha" class="form-label">Nova Senha</label>
+          <input type="password" class="form-control" id="nova_senha" name="nova_senha" placeholder="Digite a nova senha">
+        </div>
+        <div class="mb-3">
+          <label for="confirmar_senha" class="form-label">Confirmar Nova Senha</label>
+          <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha" placeholder="Confirme a nova senha">
+        </div>
+        <small class="form-text text-muted">Deixe em branco para não alterar a senha atual.</small>
+      </div>
+    </div>
 
       <div class="mb-3">
         <label for="telefone_celular" class="form-label">Telefone Celular:</label>
@@ -33,6 +47,16 @@
         <label for="telefone_auxiliar" class="form-label">Telefone Auxiliar:</label>
         <input class="form-control" type="tel" id="telefone_auxiliar" name="telefone_auxiliar"
           placeholder="Telefone com DDD" value="{{ cliente_a_editar.telefone_auxiliar }}">
+      </div>
+      <div class="form-check form-switch mb-3 p-3 border rounded-3">
+        <input class="form-check-input" type="checkbox" role="switch" id="tem_acesso_resets" name="tem_acesso_resets" 
+               {% if cliente_a_editar.tem_acesso_resets %}checked{% endif %}>
+        <label class="form-check-label fw-semibold" for="tem_acesso_resets">
+          <i class="bi bi-printer-fill me-1"></i> Conceder Acesso aos Resets/Drivers
+        </label>
+        <small class="form-text text-muted d-block">
+          Se marcado, este cliente poderá logar na área de membros e baixar os arquivos.
+        </small>
       </div>
 
       <!-- CPF e CNPJ -->

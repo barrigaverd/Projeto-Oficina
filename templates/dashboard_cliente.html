@@ -41,6 +41,11 @@
           </tr>
           {% endfor %}
           {% else %}
+          {% if current_user.tem_acesso_resets %}
+            <a href="{{ url_for('dashboard_resets') }}" class="btn btn-primary my-2">
+              <i class="bi bi-printer"></i> Acessar Downloads de Resets
+            </a>
+          {% endif %}
           <tr>
             <td colspan="5" class="text-center text-muted py-4">
               Nenhuma ordem de serviço cadastrada até o momento.

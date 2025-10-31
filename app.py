@@ -26,6 +26,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, TextAreaField, IntegerField, SubmitField, FieldList, Form, FormField, DateField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Email, Optional
+from sqlalchemy.orm import joinedload
 
 
 #função Fábrica de Decoradores de login
@@ -136,6 +137,8 @@ class Cliente(db.Model, UserMixin):
     estado = db.Column(db.String(10))
     #Outros
     anotacoes = db.Column(db.Text)
+
+    tem_acesso_resets = db.Column(db.Boolean, default=False, nullable=False)
 
     def get_id(self):
         return f"cliente-{self.id}"
@@ -670,6 +673,13 @@ def editar_cliente(id):
         cidade = request.form["cidade"]
         estado = request.form["estado"]
         anotacoes = request.form["anotacoes"]
+        tem_acesso = 'tem_acesso_resets' in request.form
+        nova_senha = request.form.get('nova_senha')
+        if nova_senha:
+            # Criptografa a nova senha
+            password_hash = bcrypt.generate_password_hash(nova_senha).decode('utf-8')
+            # Salva a nova senha criptografada no banco
+            cliente_a_editar.password_hash = password_hash
 
         cliente_a_editar.nome = nome_cliente
         cliente_a_editar.telefone_celular = telefone_celular
@@ -684,6 +694,8 @@ def editar_cliente(id):
         cliente_a_editar.cidade = cidade
         cliente_a_editar.estado = estado
         cliente_a_editar.anotacoes = anotacoes
+        cliente_a_editar.tem_acesso_resets = tem_acesso
+
         db.session.commit()
         flash("Cliente editado com sucesso!", "success")
 
@@ -2246,6 +2258,7 @@ def deletar_recurso(id):
 @login_required
 @role_required('funcionario')
 def editar_recurso(id):
+
     # 1. Busca o recurso específico que queremos editar
     recurso = RecursoImpressora.query.get_or_404(id)
 
@@ -2281,5 +2294,38 @@ def editar_recurso(id):
         recurso=recurso,  # Passamos 'recurso' para o template
         titulo=f'Editar Recurso: {recurso.descricao[:30]}...'
     )
+
+@app.route("/resets")
+@login_required
+@role_required('cliente')
+def dashboard_resets():
+    # --- PASSO 1: Verificação de Permissão ---
+    # Verifica se o cliente logado (current_user) tem a permissão
+    if not current_user.tem_acesso_resets:
+        flash("Você não tem permissão para acessar esta área.", "danger")
+        return redirect(url_for('dashboard_cliente')) # Volta para o dashboard normal
+
+    # --- PASSO 2: Lógica de Busca ---
+    # Exatamente igual à sua rota 'listar_impressoras'
+    termos_busca = request.args.get('busca', '')
+
+    # O 'options(joinedload(Impressora.recursos))' é uma otimização
+    # Ele busca as impressoras E seus links de uma só vez,
+    # o que torna a página muito mais rápida.
+    query = Impressora.query.options(joinedload(Impressora.recursos)).order_by(Impressora.modelo)
+
+    if termos_busca:
+        # Filtra pelo modelo da impressora
+        query = query.filter(Impressora.modelo.ilike(f'%{termos_busca}%'))
+
+    impressoras = query.all()
+
+    # --- PASSO 3: Renderizar o Template ---
+    return render_template(
+        'dashboard_resets.html', 
+        impressoras=impressoras, 
+        termos_busca=termos_busca
+    )
+
 if __name__ == "__main__":
     app.run(debug=True)
