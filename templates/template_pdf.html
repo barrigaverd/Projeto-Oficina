@@ -1,45 +1,106 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <title>Ordem de Serviço #{{ ordem_servico.numero_formatado }}</title>
   <style>
-    @page { size: A4; margin: 10mm; }
-    body { font-family: Arial, sans-serif; font-size: 12px; color: #333; margin: 0; }
-    table { width: 100%; border-collapse: collapse; }
-    td, th { vertical-align: top; }
-    h1, h2, h3, p { margin: 3px 0; }
-    .text-right { text-align: right; }
-    .text-center { text-align: center; }
-    .header-table td { padding-bottom: 5px; }
-    .items-table th, .items-table td {
+    @page {
+      size: A4;
+      margin: 10mm;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      color: #333;
+      margin: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    td,
+    th {
+      vertical-align: top;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 3px 0;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .header-table td {
+      padding-bottom: 5px;
+    }
+
+    .items-table th,
+    .items-table td {
       border: 1px solid #ccc;
       padding: 4px;
     }
-    .items-table th { background: #f2f2f2; font-weight: bold; }
+
+    .items-table th {
+      background: #f2f2f2;
+      font-weight: bold;
+    }
+
     .total-table {
       width: 40%;
       margin-left: auto;
       border-collapse: collapse;
       margin-top: 10px;
     }
+
     .total-table td {
       border: 1px solid #a8a8a8;
       padding: 4px;
       font-weight: bold;
     }
+
     .section-title {
       background: #f2f2f2;
       font-weight: bold;
       padding: 4px;
       margin: 10px 0 4px;
     }
-    .fotos-table { width: 100%; text-align: center; }
-    .fotos-table td { padding: 6px; }
-    .fotos-table img { width: 150px; height: 150px; object-fit: contain; }
-    .garantia-text { font-size: 11px; color: #555; margin-top: 10px; text-align: justify; }
+
+    .fotos-table {
+      width: 100%;
+      text-align: center;
+    }
+
+    .fotos-table td {
+      padding: 6px;
+    }
+
+    .fotos-table img {
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
+    }
+
+    .garantia-text {
+      font-size: 11px;
+      color: #555;
+      margin-top: 10px;
+      text-align: justify;
+    }
   </style>
 </head>
+
 <body>
 
   <!-- CABEÇALHO: LOGO E NOME DA LOJA NA MESMA LINHA -->
@@ -47,8 +108,7 @@
     <tr>
       <td style="width: 15%;">
         {% if config.logomarca %}
-        <img src="{{ base_dir }}/static/uploads/{{ config.logomarca }}" alt="Logomarca"
-             style="max-height: 60px;">
+        <img src="{{ base_dir }}/static/uploads/{{ config.logomarca }}" alt="Logomarca" style="max-height: 60px;">
         {% endif %}
       </td>
       <td style="width: 85%; text-align: left;">
@@ -75,8 +135,8 @@
         {% if ordem_servico.cliente.username_cliente %}
         <p><strong>Usuário:</strong> {{ ordem_servico.cliente.username_cliente }}</p>
         {% endif %}
-        {% if ordem_servico.cliente.password_hash %}
-        <p><strong>Senha:</strong> {{ ordem_servico.cliente.username_cliente.split('.')[0] }}@{{ordem_servico.data_de_criacao.year }}</p>
+        {% if ordem_servico.cliente.senha_plana_temporaria %}
+        <p><strong>Senha de Acesso:</strong> {{ ordem_servico.cliente.senha_plana_temporaria }}</p>
         {% endif %}
       </td>
       <td style="width: 50%; vertical-align: top;">
@@ -170,7 +230,7 @@
       <td class="text-right">R$ {{ "%.2f"|format(ordem_servico.valor_calculado|float) }}</td>
     </tr>
   </table>
-<br><br><br>
+  <br><br><br>
   <!-- ASSINATURAS -->
   <table style="width:100%; margin-top: 40px; border: none;">
     <tr>
@@ -186,4 +246,5 @@
   </table>
 
 </body>
+
 </html>

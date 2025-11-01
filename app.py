@@ -139,6 +139,7 @@ class Cliente(db.Model, UserMixin):
     anotacoes = db.Column(db.Text)
 
     tem_acesso_resets = db.Column(db.Boolean, default=False, nullable=False)
+    senha_plana_temporaria = db.Column(db.String(100), nullable=True) # Para guardar a senha em texto
 
     def get_id(self):
         return f"cliente-{self.id}"
@@ -680,6 +681,8 @@ def editar_cliente(id):
             password_hash = bcrypt.generate_password_hash(nova_senha).decode('utf-8')
             # Salva a nova senha criptografada no banco
             cliente_a_editar.password_hash = password_hash
+            cliente_a_editar.senha_plana_temporaria = nova_senha
+
 
         cliente_a_editar.nome = nome_cliente
         cliente_a_editar.telefone_celular = telefone_celular
