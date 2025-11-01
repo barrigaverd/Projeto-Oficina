@@ -2333,6 +2333,8 @@ def editar_recurso(id):
 @login_required
 @role_required('cliente')
 def dashboard_resets():
+    
+
     # --- PASSO 1: Verificação de Permissão ---
     # Verifica se o cliente logado (current_user) tem a permissão
     if not current_user.tem_acesso_resets:
@@ -2341,23 +2343,27 @@ def dashboard_resets():
 
     # --- PASSO 2: Lógica de Busca ---
     # Exatamente igual à sua rota 'listar_impressoras'
+    page = request.args.get('page', 1, type=int)
     termos_busca = request.args.get('busca', '')
 
     # O 'options(joinedload(Impressora.recursos))' é uma otimização
     # Ele busca as impressoras E seus links de uma só vez,
     # o que torna a página muito mais rápida.
+    
     query = Impressora.query.options(joinedload(Impressora.recursos)).order_by(Impressora.modelo)
 
     if termos_busca:
         # Filtra pelo modelo da impressora
         query = query.filter(Impressora.modelo.ilike(f'%{termos_busca}%'))
 
-    impressoras = query.all()
+    paginacao = query.paginate(page=page, per_page=15, error_out=False)
+    impressoras = paginacao.items
 
     # --- PASSO 3: Renderizar o Template ---
     return render_template(
         'dashboard_resets.html', 
         impressoras=impressoras, 
+        paginacao = paginacao, 
         termos_busca=termos_busca
     )
 
