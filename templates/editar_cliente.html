@@ -1,139 +1,178 @@
 {% extends 'base.html' %}
 {% block content %}
+
 <div class="text-md-start">
   <button class="btn btn-secondary btn-sm px-4" onclick="retornar()">Voltar</button>
 </div>
+
 <div class="card mt-3 shadow-sm">
   <h4 class="card-header text-center">Editar Cliente</h4>
+
   <form class="card-body row g-4" method="post">
 
-    <!-- Coluna 1 -->
+    <!-- COLUNA 1 -->
     <div class="col-md-6">
+
+      <!-- Nome -->
       <div class="mb-3">
         <label for="nome" class="form-label">Nome:</label>
-        <input class="form-control" type="text" id="nome" name="nome" value="{{ cliente_a_editar.nome }}" required>
+        <input type="text" class="form-control" id="nome" name="nome"
+               value="{{ cliente_a_editar.nome }}" required>
       </div>
 
+      <!-- Nome de Usuário -->
       <div class="card mb-3">
         <div class="card-body p-2">
           <h6 class="card-title m-0">Nome de usuário:</h6>
-          <p class="mb-0 fw-semibold text-primary">
-            {{ cliente_a_editar.username_cliente }}
-          </p>
+          <p class="mb-0 fw-semibold text-primary">{{ cliente_a_editar.username_cliente }}</p>
         </div>
       </div>
-      <div class="card mb-3 border-warning">
-    <div class="card-body">
-        <h6 class="card-title text-warning-emphasis">Resetar Senha</h6>
-        <div class="mb-3">
-          <label for="nova_senha" class="form-label">Nova Senha</label>
-          <input type="password" class="form-control" id="nova_senha" name="nova_senha" placeholder="Digite a nova senha">
-        </div>
-        <div class="mb-3">
-          <label for="confirmar_senha" class="form-label">Confirmar Nova Senha</label>
-          <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha" placeholder="Confirme a nova senha">
-        </div>
-        <small class="form-text text-muted">Deixe em branco para não alterar a senha atual.</small>
-      </div>
-    </div>
 
+      <!-- Reset de Senha -->
+      <div class="card mb-3 border-warning">
+        <div class="card-body">
+          <h6 class="card-title text-warning-emphasis">Resetar Senha</h6>
+
+          <div class="mb-3">
+            <label for="nova_senha" class="form-label">Nova Senha</label>
+            <input type="password" class="form-control" id="nova_senha" name="nova_senha"
+                   placeholder="Digite a nova senha">
+          </div>
+
+          <div class="mb-3">
+            <label for="confirmar_senha" class="form-label">Confirmar Nova Senha</label>
+            <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha"
+                   placeholder="Confirme a nova senha">
+          </div>
+
+          <small class="form-text text-muted">
+            Deixe em branco para não alterar a senha atual.
+          </small>
+        </div>
+      </div>
+
+      <!-- Telefones -->
       <div class="mb-3">
         <label for="telefone_celular" class="form-label">Telefone Celular:</label>
-        <input class="form-control" type="tel" id="telefone_celular" name="telefone_celular"
-          value="{{ cliente_a_editar.telefone_celular }}">
+        <input type="tel" class="form-control" id="telefone_celular" name="telefone_celular"
+               value="{{ cliente_a_editar.telefone_celular }}">
       </div>
 
       <div class="mb-3">
         <label for="telefone_auxiliar" class="form-label">Telefone Auxiliar:</label>
-        <input class="form-control" type="tel" id="telefone_auxiliar" name="telefone_auxiliar"
-          placeholder="Telefone com DDD" value="{{ cliente_a_editar.telefone_auxiliar }}">
+        <input type="tel" class="form-control" id="telefone_auxiliar" name="telefone_auxiliar"
+               placeholder="Telefone com DDD" value="{{ cliente_a_editar.telefone_auxiliar }}">
       </div>
-      <div class="form-check form-switch mb-3 p-3 border rounded-3">
-        <input class="form-check-input" type="checkbox" role="switch" id="tem_acesso_resets" name="tem_acesso_resets" 
-               {% if cliente_a_editar.tem_acesso_resets %}checked{% endif %}>
-        <label class="form-check-label fw-semibold" for="tem_acesso_resets">
-          <i class="bi bi-printer-fill me-1"></i> Conceder Acesso aos Resets/Drivers
+
+      <!-- Permissões -->
+      <div class="mb-3 p-3 border rounded-3">
+        <label class="form-label fw-semibold">
+          <i class="bi bi-printer-fill me-1"></i> Permissões de Acesso (Resets/Drivers)
         </label>
-        <small class="form-text text-muted d-block">
-          Se marcado, este cliente poderá logar na área de membros e baixar os arquivos.
+
+        <input type="text" id="impressora-search" class="form-control form-control-sm mb-2"
+               placeholder="Filtrar modelos...">
+
+        <small class="form-text text-muted d-block mb-2">
+          Marque os modelos que este cliente terá permissão para acessar.
         </small>
+
+        <div class="overflow-auto" style="max-height: 200px;" id="impressora-list">
+          {% for impressora in todas_impressoras %}
+            <div class="form-check impressora-item" data-modelo="{{ impressora.modelo.lower() }}">
+              <input class="form-check-input" type="checkbox" name="impressora_permitida"
+                     value="{{ impressora.id }}" id="imp-{{ impressora.id }}"
+                     {% if impressora in cliente_a_editar.impressoras_permitidas %}checked{% endif %}>
+              <label class="form-check-label" for="imp-{{ impressora.id }}">
+                {{ impressora.modelo }}
+              </label>
+            </div>
+          {% endfor %}
+        </div>
       </div>
 
-      <!-- CPF e CNPJ -->
-      <div class="mb-3 {% if cliente_a_editar.cpf %}{% else %}d-none{% endif %}" id="campo_cpf">
+      <!-- CPF / CNPJ -->
+      <div class="mb-3 {% if not cliente_a_editar.cpf %}d-none{% endif %}" id="campo_cpf">
         <label for="cpf" class="form-label">CPF:</label>
-        <input type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF"
-          value="{{ cliente_a_editar.cpf }}">
+        <input type="text" class="form-control" id="cpf" name="cpf"
+               placeholder="CPF" value="{{ cliente_a_editar.cpf }}">
       </div>
 
-      <div class="mb-3 {% if cliente_a_editar.cnpj %}{% else %}d-none{% endif %}" id="campo_cnpj">
+      <div class="mb-3 {% if not cliente_a_editar.cnpj %}d-none{% endif %}" id="campo_cnpj">
         <label for="cnpj" class="form-label">CNPJ:</label>
-        <input type="text" class="form-control" id="cnpj" name="cnpj" placeholder="CNPJ"
-          value="{{ cliente_a_editar.cnpj }}">
+        <input type="text" class="form-control" id="cnpj" name="cnpj"
+               placeholder="CNPJ" value="{{ cliente_a_editar.cnpj }}">
       </div>
-    </div>
 
-    <!-- Coluna 2 -->
+    </div> <!-- /col-md-6 -->
+
+
+    <!-- COLUNA 2 -->
     <div class="col-md-6">
       <h6 class="fw-bold mb-3">Endereço</h6>
 
       <div class="mb-3">
         <label for="cep" class="form-label">CEP:</label>
-        <input type="text" class="form-control" id="cep" name="cep" placeholder="CEP"
-          value="{{ cliente_a_editar.cep }}">
+        <input type="text" class="form-control" id="cep" name="cep"
+               placeholder="CEP" value="{{ cliente_a_editar.cep }}">
+        <small id="cep-feedback" class="form-text text-muted"></small>
       </div>
 
       <div class="mb-3">
         <label for="logradouro" class="form-label">Logradouro:</label>
-        <input type="text" class="form-control" id="logradouro" name="logradouro" placeholder="Rua, avenida..."
-          value="{{ cliente_a_editar.logradouro }}">
+        <input type="text" class="form-control" id="logradouro" name="logradouro"
+               placeholder="Rua, avenida..." value="{{ cliente_a_editar.logradouro }}">
       </div>
 
       <div class="mb-3">
         <label for="numero" class="form-label">Número:</label>
-        <input type="text" class="form-control" id="numero" name="numero" placeholder="Número"
-          value="{{ cliente_a_editar.numero }}">
+        <input type="text" class="form-control" id="numero" name="numero"
+               placeholder="Número" value="{{ cliente_a_editar.numero }}">
       </div>
 
       <div class="mb-3">
         <label for="complemento" class="form-label">Complemento:</label>
-        <input type="text" class="form-control" id="complemento" name="complemento" placeholder="Apto, casa..."
-          value="{{ cliente_a_editar.complemento }}">
+        <input type="text" class="form-control" id="complemento" name="complemento"
+               placeholder="Apto, casa..." value="{{ cliente_a_editar.complemento }}">
       </div>
 
       <div class="mb-3">
         <label for="bairro" class="form-label">Bairro:</label>
-        <input type="text" class="form-control" id="bairro" name="bairro" placeholder="Bairro"
-          value="{{ cliente_a_editar.bairro }}">
+        <input type="text" class="form-control" id="bairro" name="bairro"
+               placeholder="Bairro" value="{{ cliente_a_editar.bairro }}">
       </div>
 
       <div class="mb-3">
         <label for="cidade" class="form-label">Cidade:</label>
-        <input type="text" class="form-control" id="cidade" name="cidade" placeholder="Cidade"
-          value="{{ cliente_a_editar.cidade }}">
+        <input type="text" class="form-control" id="cidade" name="cidade"
+               placeholder="Cidade" value="{{ cliente_a_editar.cidade }}">
       </div>
 
       <div class="mb-3">
         <label for="estado" class="form-label">Estado:</label>
-        <input type="text" class="form-control" id="estado" name="estado" placeholder="Estado"
-          value="{{ cliente_a_editar.estado }}">
+        <input type="text" class="form-control" id="estado" name="estado"
+               placeholder="Estado" value="{{ cliente_a_editar.estado }}">
       </div>
 
       <div class="mb-3">
         <label for="anotacoes" class="form-label">Anotações:</label>
         <textarea class="form-control" id="anotacoes" name="anotacoes"
-          rows="4">{{ cliente_a_editar.anotacoes }}</textarea>
+                  rows="4">{{ cliente_a_editar.anotacoes }}</textarea>
       </div>
+    </div> <!-- /col-md-6 -->
+
+    <!-- BOTÃO -->
+    <div class="col-12 text-center">
+      <button type="submit" class="btn btn-primary px-4">
+        💾 Salvar Cliente
+      </button>
     </div>
 
-    <!-- Botão -->
-    <div class="col-12 text-center">
-      <button class="btn btn-primary px-4" type="submit">💾 Salvar Cliente</button>
-    </div>
   </form>
 </div>
 
 {% endblock %}
+
 
 {% block scripts %}
 <script>
@@ -141,13 +180,84 @@
     const tipoClienteSelect = document.getElementById('tipo_cliente');
     const campoCpf = document.getElementById('campo_cpf');
     const campoCnpj = document.getElementById('campo_cnpj');
+    const searchInput = document.getElementById('impressora-search');
+    const impressoraItems = document.querySelectorAll('.impressora-item');
+    const cepInput = document.getElementById('cep');
+    const logradouroInput = document.getElementById('logradouro');
+    const bairroInput = document.getElementById('bairro');
+    const cidadeInput = document.getElementById('cidade');
+    const estadoInput = document.getElementById('estado');
+    const cepFeedback = document.getElementById('cep-feedback');
 
+    if (cepInput) {
+      const cepMask = IMask(cepInput, {
+        mask: '00.000-000',
+        maxLength: 8
+      });
+    }
+    const limparEndereco = () => {
+      logradouroInput.value = '';
+      bairroInput.value = '';
+      cidadeInput.value = '';
+      estadoInput.value = '';
+    };
+    cepInput.addEventListener('blur', () => {
+        const cep = cepInput.value.replace(/\D/g, ''); // Remove tudo que não for número
+
+        if (cep.length !== 8) {
+            limparEndereco();
+            return;
+        }
+
+        cepFeedback.textContent = 'Buscando...';
+
+        // Faz a chamada para a API ViaCEP
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.erro) {
+                    cepFeedback.textContent = 'CEP não encontrado.';
+                    limparEndereco();
+                } else {
+                    cepFeedback.textContent = '';
+                    logradouroInput.value = data.logradouro;
+                    bairroInput.value = data.bairro;
+                    cidadeInput.value = data.localidade;
+                    estadoInput.value = data.uf;
+                }
+            })
+            .catch(error => {
+                cepFeedback.textContent = 'Erro ao buscar o CEP.';
+                console.error('Erro:', error);
+            });
+    });
+    // Alterna entre CPF e CNPJ
     if (tipoClienteSelect) {
       tipoClienteSelect.addEventListener('change', function () {
         campoCpf.classList.add('d-none');
         campoCnpj.classList.add('d-none');
         if (this.value === 'fisica') campoCpf.classList.remove('d-none');
         if (this.value === 'juridica') campoCnpj.classList.remove('d-none');
+      });
+    }
+    impressoraItems.forEach(item => {
+      item.style.display = 'none';
+    });
+    // Filtro de impressoras
+    if (searchInput) {
+      searchInput.addEventListener('keyup', () => {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+
+        impressoraItems.forEach(item => {
+          const modelo = item.dataset.modelo;
+
+          // Só mostra impressoras que combinam com o termo digitado
+          if (searchTerm && modelo.includes(searchTerm)) {
+            item.style.display = 'block';
+          } else {
+            item.style.display = 'none';
+          }
+        });
       });
     }
   });

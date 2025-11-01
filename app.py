@@ -109,7 +109,11 @@ def service_worker():
 def offline():
     return render_template('offline.html')
 
-
+# Tabela "Ponte" (Muitos-para-Muitos)
+cliente_impressora_association = db.Table('cliente_impressora', db.metadata,
+    db.Column('cliente_id', db.Integer, db.ForeignKey('cliente.id'), primary_key=True),
+    db.Column('impressora_id', db.Integer, db.ForeignKey('impressora.id'), primary_key=True)
+)
 #Classes
 class Cliente(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
@@ -138,7 +142,12 @@ class Cliente(db.Model, UserMixin):
     #Outros
     anotacoes = db.Column(db.Text)
 
-    tem_acesso_resets = db.Column(db.Boolean, default=False, nullable=False)
+    impressoras_permitidas = db.relationship(
+        'Impressora', 
+        secondary=cliente_impressora_association, 
+        lazy='dynamic', 
+        backref=db.backref('clientes_com_acesso', lazy=True)
+    )
     senha_plana_temporaria = db.Column(db.String(100), nullable=True) # Para guardar a senha em texto
 
     def get_id(self):
@@ -660,6 +669,8 @@ def deletar_cliente(id):
 @role_required('funcionario')
 def editar_cliente(id):
     cliente_a_editar = Cliente.query.get_or_404(id)
+    todas_impressoras = Impressora.query.options(joinedload(Impressora.clientes_com_acesso)).order_by(Impressora.modelo).all()
+
     if request.method == "POST": 
         nome_cliente = request.form["nome"]
         telefone_celular = request.form["telefone_celular"]
@@ -674,7 +685,15 @@ def editar_cliente(id):
         cidade = request.form["cidade"]
         estado = request.form["estado"]
         anotacoes = request.form["anotacoes"]
-        tem_acesso = 'tem_acesso_resets' in request.form
+
+        cliente_a_editar.impressoras_permitidas = []
+        ids_impressoras_permitidas = request.form.getlist("impressora_permitida")
+        for impressora_id_str in ids_impressoras_permitidas:
+            impressora_id = int(impressora_id_str)
+            impressora = Impressora.query.get(impressora_id)
+            if impressora:
+                cliente_a_editar.impressoras_permitidas.append(impressora)
+
         nova_senha = request.form.get('nova_senha')
         if nova_senha:
             # Criptografa a nova senha
@@ -697,14 +716,17 @@ def editar_cliente(id):
         cliente_a_editar.cidade = cidade
         cliente_a_editar.estado = estado
         cliente_a_editar.anotacoes = anotacoes
-        cliente_a_editar.tem_acesso_resets = tem_acesso
 
         db.session.commit()
         flash("Cliente editado com sucesso!", "success")
 
         return redirect(url_for("listar_clientes"))
     
-    return render_template("editar_cliente.html", cliente_a_editar = cliente_a_editar)
+    return render_template(
+        "editar_cliente.html", 
+        cliente_a_editar = cliente_a_editar,
+        todas_impressoras = todas_impressoras
+        )
     
 @app.route("/clientes", methods = ["GET"])
 @role_required('funcionario')
@@ -2333,37 +2355,42 @@ def editar_recurso(id):
 @login_required
 @role_required('cliente')
 def dashboard_resets():
-    
-
-    # --- PASSO 1: Verificação de Permissão ---
-    # Verifica se o cliente logado (current_user) tem a permissão
-    if not current_user.tem_acesso_resets:
+    # --- PASSO 1: Verificação de Permissão (NOVA LÓGICA) ---
+    # Verifica se o cliente tem PELO MENOS UMA impressora permitida.
+    # .count() é mais rápido do que carregar todos os objetos.
+    if current_user.impressoras_permitidas.count() == 0:
         flash("Você não tem permissão para acessar esta área.", "danger")
         return redirect(url_for('dashboard_cliente')) # Volta para o dashboard normal
 
-    # --- PASSO 2: Lógica de Busca ---
-    # Exatamente igual à sua rota 'listar_impressoras'
+    # --- PASSO 2: Lógica de Busca (NOVA LÓGICA) ---
     page = request.args.get('page', 1, type=int)
     termos_busca = request.args.get('busca', '')
 
-    # O 'options(joinedload(Impressora.recursos))' é uma otimização
-    # Ele busca as impressoras E seus links de uma só vez,
-    # o que torna a página muito mais rápida.
-    
-    query = Impressora.query.options(joinedload(Impressora.recursos)).order_by(Impressora.modelo)
+    # A MUDANÇA PRINCIPAL:
+    # Em vez de Impressora.query, buscamos DENTRO da lista do usuário
+    query = current_user.impressoras_permitidas.options(
+        joinedload(Impressora.recursos) # A otimização que já tínhamos
+    ).order_by(Impressora.modelo)
 
     if termos_busca:
         # Filtra pelo modelo da impressora
         query = query.filter(Impressora.modelo.ilike(f'%{termos_busca}%'))
 
-    paginacao = query.paginate(page=page, per_page=15, error_out=False)
-    impressoras = paginacao.items
+    # A paginação funciona exatamente da mesma forma
+    paginacao = query.paginate(
+        page=page, 
+        per_page=10,
+        error_out=False
+    )
+    impressoras_da_pagina = paginacao.items
 
     # --- PASSO 3: Renderizar o Template ---
+    # O template 'dashboard_resets.html' não precisa de NENHUMA MUDANÇA,
+    # pois ele já espera as variáveis 'impressoras' e 'paginacao'.
     return render_template(
         'dashboard_resets.html', 
-        impressoras=impressoras, 
-        paginacao = paginacao, 
+        impressoras=impressoras_da_pagina, 
+        paginacao=paginacao,
         termos_busca=termos_busca
     )
 

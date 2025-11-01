@@ -1,61 +1,77 @@
-{% extends 'base_publica.html' %}
-
+{% extends 'base_publica.html' %} 
 {% block content %}
 
-<div class="card shadow-sm mt-4">
-  <h5 class="card-header text-center fw-bold">
-    Minhas Ordens de Serviço
-  </h5>
-  <div class="card-body">
-    <div class="table-responsive">
-      <table class="table table-hover table-striped align-middle mb-0">
-        <thead class="table-dark">
-          <tr class="text-center">
-            <th style="width: 15%;">Número OS</th>
-            <th style="width: 25%;">Cliente</th>
-            <th style="width: 25%;">Equipamento</th>
-            <th style="width: 15%;">Valor Total</th>
-            <th style="width: 20%;">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% if current_user.ordens_servico %}
-          {% for ordem in current_user.ordens_servico %}
-          <tr class="text-center">
-            <td class="fw-semibold">{{ ordem.numero_formatado }}</td>
-            <td>{{ ordem.cliente.nome }}</td>
-            <td>{{ ordem.equipamento }}</td>
-            <td class="fw-bold text-success">
-              R$ {{ "%.2f"|format(ordem.valor_calculado|float) }}
-            </td>
-            <td>
-              <a href="{{url_for('ver_os_cliente', id=ordem.id)}}" class="btn btn-outline-primary btn-sm"
-                title="Ver detalhes">
-                <i class="bi bi-eye"></i>
-              </a>
-              <a href="{{url_for('exibir_pdf_os', os_id=ordem.id)}}" target="_blank"
-                class="btn btn-outline-danger btn-sm" title="Visualizar PDF">
-                <i class="bi bi-file-earmark-pdf-fill"></i>
-              </a>
-            </td>
-          </tr>
-          {% endfor %}
-          {% else %}
-          {% if current_user.tem_acesso_resets %}
-            <a href="{{ url_for('dashboard_resets') }}" class="btn btn-primary my-2">
-              <i class="bi bi-printer"></i> Acessar Downloads de Resets
-            </a>
-          {% endif %}
-          <tr>
-            <td colspan="5" class="text-center text-muted py-4">
-              Nenhuma ordem de serviço cadastrada até o momento.
-            </td>
-          </tr>
-          {% endif %}
-        </tbody>
-      </table>
+{% if current_user.impressoras_permitidas.count() > 0 %}
+
+    <div class="container mt-4">
+      <h2 class="mb-3">Sua Área de Downloads</h2>
+      <p class="lead text-muted">Seja bem-vindo! Clique no botão abaixo para acessar seus arquivos de resets e drivers.</p>
+      <div class="d-grid gap-2 my-4">
+        <a href="{{ url_for('dashboard_resets') }}" class="btn btn-primary btn-lg py-3">
+          <i class="bi bi-printer-fill me-2"></i> Acessar Downloads
+        </a>
+      </div>
+      <p><a href="{{ url_for('logout_cliente') }}" class="text-danger">Sair da conta</a></p>
     </div>
-  </div>
-</div>
+
+{% else %}
+
+    <div class="card shadow-sm mt-4">
+      <h5 class="card-header text-center fw-bold">Minhas Ordens de Serviço</h5>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover table-striped align-middle mb-0">
+            <thead class="table-dark">
+              <tr class="text-center">
+                <th style="width: 15%">Número OS</th>
+                <th style="width: 25%">Cliente</th>
+                <th style="width: 25%">Equipamento</th>
+                <th style="width: 15%">Valor Total</th>
+                <th style="width: 20%">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if current_user.ordens_servico %} 
+                {% for ordem in current_user.ordens_servico %}
+                  <tr class="text-center">
+                    <td class="fw-semibold">{{ ordem.numero_formatado }}</td>
+                    <td>{{ ordem.cliente.nome }}</td>
+                    <td>{{ ordem.equipamento }}</td>
+                    <td class="fw-bold text-success">
+                      R$ {{ "%.2f"|format(ordem.valor_calculado|float) }}
+                    </td>
+                    <td>
+                      <a
+                        href="{{url_for('ver_os_cliente', id=ordem.id)}}"
+                        class="btn btn-outline-primary btn-sm"
+                        title="Ver detalhes"
+                      >
+                        <i class="bi bi-eye"></i>
+                      </a>
+                      <a
+                        href="{{url_for('exibir_pdf_os', os_id=ordem.id)}}"
+                        target="_blank"
+                        class="btn btn-outline-danger btn-sm"
+                        title="Visualizar PDF"
+                      >
+                        <i class="bi bi-file-earmark-pdf-fill"></i>
+                      </a>
+                    </td>
+                  </tr>
+                {% endfor %} 
+              {% else %}
+                <tr>
+                  <td colspan="5" class="text-center text-muted py-4">
+                    Nenhuma ordem de serviço cadastrada até o momento.
+                  </td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+{% endif %}
 
 {% endblock %}
