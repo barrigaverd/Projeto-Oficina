@@ -55,5 +55,36 @@
     Cadastrar Cliente
   </a>
 </div>
+{% if paginacao.pages > 1 %}
+<nav aria-label="Navegação das páginas">
+  <ul class="pagination justify-content-center mt-4">
+
+    <li class="page-item {% if not paginacao.has_prev %}disabled{% endif %}">
+      <a class="page-link" href="{{ url_for('listar_clientes', page=paginacao.prev_num, termo_busca=termo_busca) }}">Anterior</a>
+    </li>
+
+    {% for num_pagina in paginacao.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+      {% if num_pagina %}
+        {% if num_pagina == paginacao.page %}
+          <li class="page-item active" aria-current="page">
+            <a class="page-link" href="#">{{ num_pagina }}</a>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('listar_clientes', page=num_pagina, termo_busca=termo_busca) }}">{{ num_pagina }}</a>
+          </li>
+        {% endif %}
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">...</span></li>
+      {% endif %}
+    {% endfor %}
+
+    <li class="page-item {% if not paginacao.has_next %}disabled{% endif %}">
+      <a class="page-link" href="{{ url_for('listar_clientes', page=paginacao.next_num, termo_busca=termo_busca) }}">Próximo</a>
+    </li>
+
+  </ul>
+</nav>
+{% endif %}
 
 {% endblock %}

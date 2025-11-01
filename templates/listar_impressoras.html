@@ -44,18 +44,16 @@
               <td class="fw-semibold text-start ps-3">{{ impressora.modelo }}</td>
               <td class="text-muted">{{ impressora.descricao or 'N/A' }}</td>
               <td>
-                <a href="{{ url_for('detalhes_impressora', id=impressora.id) }}"
-                  class="btn btn-sm btn-info me-1">
+                <a href="{{ url_for('detalhes_impressora', id=impressora.id) }}" class="btn btn-sm btn-info me-1">
                   <i class="bi bi-link-45deg"></i> Gerenciar Links
                 </a>
-                
+
                 <a href="{{ url_for('editar_impressora', id=impressora.id) }}"
                   class="btn btn-sm btn-outline-secondary me-1">
                   <i class="bi bi-pencil-square"></i> Editar
                 </a>
-                
-                <a href="{{ url_for('deletar_impressora', id=impressora.id) }}"
-                  class="btn btn-sm btn-outline-danger"
+
+                <a href="{{ url_for('deletar_impressora', id=impressora.id) }}" class="btn btn-sm btn-outline-danger"
                   onclick="return confirm('Tem certeza que deseja excluir a impressora {{ impressora.modelo }}? Todos os links associados serão perdidos.');">
                   <i class="bi bi-trash3"></i> Excluir
                 </a>
@@ -65,6 +63,40 @@
           </tbody>
         </table>
       </div>
+      {% endif %}
+      {% if paginacao.pages > 1 %}
+      <nav aria-label="Navegação das páginas">
+        <ul class="pagination justify-content-center mt-4">
+
+          <li class="page-item {% if not paginacao.has_prev %}disabled{% endif %}">
+            <a class="page-link"
+              href="{{ url_for('listar_impressoras', page=paginacao.prev_num, termo_busca=termo_busca) }}">Anterior</a>
+          </li>
+
+          {% for num_pagina in paginacao.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+          {% if num_pagina %}
+          {% if num_pagina == paginacao.page %}
+          <li class="page-item active" aria-current="page">
+            <a class="page-link" href="#">{{ num_pagina }}</a>
+          </li>
+          {% else %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('listar_impressoras', page=num_pagina, termo_busca=termo_busca) }}">{{
+              num_pagina }}</a>
+          </li>
+          {% endif %}
+          {% else %}
+          <li class="page-item disabled"><span class="page-link">...</span></li>
+          {% endif %}
+          {% endfor %}
+
+          <li class="page-item {% if not paginacao.has_next %}disabled{% endif %}">
+            <a class="page-link"
+              href="{{ url_for('listar_impressoras', page=paginacao.next_num, termo_busca=termo_busca) }}">Próximo</a>
+          </li>
+
+        </ul>
+      </nav>
       {% endif %}
     </div>
   </div>

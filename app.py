@@ -706,14 +706,24 @@ def editar_cliente(id):
 @app.route("/clientes", methods = ["GET"])
 @role_required('funcionario')
 def listar_clientes():
+    page = request.args.get("page", 1, type=int)
+
     termo_busca = request.args.get("termo_busca")
     query_clientes = Cliente.query
     
     if termo_busca:
         query_clientes = query_clientes.filter(Cliente.nome.ilike(f"%{termo_busca}%"))
+
+    paginacao = query_clientes.order_by(Cliente.nome).paginate(page=page, per_page=15, error_out=False)
+
+    clientes_da_pagina = paginacao.items
         
-    clientes = query_clientes.all()
-    return render_template("listar_clientes.html", clientes = clientes)
+    return render_template(
+        "listar_clientes.html",
+         clientes = clientes_da_pagina,
+         paginacao = paginacao,
+         termo_busca = termo_busca
+         )
 
 @app.route("/cliente/<int:id>")
 @role_required('funcionario')
@@ -806,15 +816,24 @@ def deletar_os(id):
 @app.route("/servicos")
 @role_required('funcionario')
 def listar_servicos():
+    page = request.args.get("page", 1, type=int)
     termo_busca = request.args.get("termo_busca")
     servico_query = Servico.query
 
     if termo_busca:
         servico_query = servico_query.filter(Servico.descricao_servico.ilike(f"%{termo_busca}%"))
-    
-    servicos = servico_query.all()
 
-    return render_template("listar_servicos.html", servicos = servicos)
+    paginacao = servico_query.order_by(Servico.descricao_servico).paginate(
+        page=page, per_page=15, error_out=False
+    )
+    servicos_por_pagina = paginacao.items
+
+    return render_template(
+        "listar_servicos.html",
+          servicos = servicos_por_pagina,
+          paginacao = paginacao,
+          termo_busca = termo_busca
+          )
 
 @app.route("/servicos/cadastrar", methods = ["GET", "POST"])
 @role_required('funcionario')
@@ -876,15 +895,21 @@ def deletar_servico(id):
 @app.route("/peca", methods = ["GET"])
 @role_required('funcionario')
 def listar_pecas():
+    page = request.args.get("page", 1, type=int)
     termo_busca = request.args.get("termo_busca")
     pecas_query = Peca.query
 
     if termo_busca:
         pecas_query = pecas_query.filter(Peca.nome_peca.ilike(f"%{termo_busca}%"))
-    
-    pecas = pecas_query.all()
 
-    return render_template("listar_pecas.html", pecas = pecas)
+    paginacao = pecas_query.order_by(Peca.nome_peca).paginate(
+        page=page, per_page=15, error_out=False
+    )
+
+    pecas = paginacao.items
+    
+
+    return render_template("listar_pecas.html", pecas = pecas, paginacao = paginacao, termo_busca = termo_busca)
 
 @app.route("/peca/cadastrar", methods = ["GET", "POST"])
 @role_required('funcionario')
@@ -1744,16 +1769,18 @@ def download_curriculo_pdf(curriculo_id):
 @login_required
 @role_required('funcionario')
 def listar_curriculos():
+    page = request.args.get('page', 1, type=int)
     termos_busca = request.args.get('busca', '')
     query = Curriculo.query
 
     if termos_busca:
         query = query.filter(Curriculo.nome.ilike(f'%{termos_busca}%'))
-    
-    curriculos = query.order_by(Curriculo.nome).all()
-        
-                               
-    return render_template('listar_curriculos.html', curriculos=curriculos, termos_busca=termos_busca)
+
+    paginacao = query.order_by(Curriculo.nome).paginate(page=page, per_page=15, error_out=False)
+
+    curriculos = paginacao.items
+                                      
+    return render_template('listar_curriculos.html', curriculos=curriculos, pagincacao = paginacao, termos_busca=termos_busca)
 
 @app.route("/curriculos/deletar/<int:curriculo_id>")
 @login_required
@@ -1992,6 +2019,7 @@ def editar_contrato(id):
 @role_required('funcionario')
 def listar_contratos():
     # 1. Pega o termo de busca (igual antes)
+    page = request.args.get('page', 1, type=int)
     termos_busca = request.args.get('busca', '')
     
     # 2. Muda a query para o modelo Contrato
@@ -2000,12 +2028,12 @@ def listar_contratos():
     # 3. Muda o filtro para um campo do Contrato (ex: nome do locatário)
     if termos_busca:
         query = query.filter(Contrato.locatario_nome.ilike(f'%{termos_busca}%'))
-    
-    # 4. Executa a query
-    contratos = query.order_by(Contrato.locatario_nome).all()
+
+    paginacao = query.order_by(Contrato.locatario_nome).paginate(page=page, per_page=15, error_out=False)
+    contratos = paginacao.items
         
     # 5. Renderiza o template de listagem de contratos
-    return render_template('listar_contratos.html', contratos=contratos, termos_busca=termos_busca)
+    return render_template('listar_contratos.html', contratos=contratos, paginacao = paginacao, termos_busca=termos_busca)
 
 
 @app.route("/configuracoes", methods=["GET", "POST"])
@@ -2124,18 +2152,21 @@ def gerar_comprovante_entrada_pdf(id):
 @login_required
 @role_required('funcionario')
 def listar_impressoras():
+    page = request.args.get('page', 1, type=int)
     termos_busca = request.args.get('busca', '')
     query = Impressora.query
 
     if termos_busca:
         query = query.filter(Impressora.modelo.ilike(f'%{termos_busca}%'))
 
-    impressoras = query.order_by(Impressora.modelo).all()
+    paginacao = query.order_by(Impressora.modelo).paginate(page=page, per_page=15, error_out=False)
+    impressoras = paginacao.items
 
     # Vamos usar um novo template para esta página
     return render_template(
         'listar_impressoras.html', 
         impressoras=impressoras, 
+        paginacao = paginacao, 
         termos_busca=termos_busca
     )
 
