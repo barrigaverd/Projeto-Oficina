@@ -1,11 +1,11 @@
 {% extends 'base_publica.html' %}
 {% block content %}
 <div class="container mt-4">
-  <h2 class="mb-4">Downloads de Resets e Drivers</h2>
+  <h2 class="mb-4">Sua Área de Downloads</h2>
 
   <form method="GET" action="{{ url_for('dashboard_resets') }}" class="row g-2 mb-4">
     <div class="col-md-9">
-      <input type="text" name="busca" class="form-control shadow-sm" placeholder="Buscar por modelo de impressora..." value="{{ termos_busca }}">
+      <input type="text" name="busca" class="form-control shadow-sm" placeholder="Buscar por categoria..." value="{{ termos_busca }}">
     </div>
     <div class="col-md-3 d-grid">
       <button type="submit" class="btn btn-primary shadow-sm"><i class="bi bi-search"></i> Pesquisar</button>
@@ -19,7 +19,7 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading-{{ impressora.id }}">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ impressora.id }}" aria-expanded="false" aria-controls="collapse-{{ impressora.id }}">
-          <strong><i class="bi bi-printer me-2"></i>{{ impressora.modelo }}</strong>
+          <strong><i class="bi bi-folder me-2"></i>{{ impressora.modelo }}</strong>
         </button>
       </h2>
       <div id="collapse-{{ impressora.id }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ impressora.id }}" data-bs-parent="#accordionResets">
@@ -42,7 +42,7 @@
                 </a>
               </li>
             {% else %}
-              <li class="list-group-item">Nenhum link cadastrado para este modelo.</li>
+              <li class="list-group-item">Nenhum link cadastrado para esta categoria.</li>
             {% endfor %}
           </ul>
 
@@ -54,7 +54,7 @@
   </div>
   {% else %}
     <div class="alert alert-info text-center">
-      Nenhum modelo de impressora encontrado para sua busca.
+      Nenhuma categoria encontrada para sua busca.
     </div>
   {% endif %}
   {% if paginacao.pages > 1 %}

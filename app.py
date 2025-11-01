@@ -478,8 +478,8 @@ class RecursoImpressora(db.Model):
     link_download = db.Column(db.Text, nullable=False)
 
 class ImpressoraForm(FlaskForm):
-    modelo = StringField('Modelo da Impressora', validators=[DataRequired()])
-    descricao = TextAreaField('Descrição (Opcional)')
+    modelo = StringField('Nome da Categoria', validators=[DataRequired()])
+    descricao = TextAreaField('Descrição da Categoria (Opcional)')
     submit = SubmitField('Salvar')
 
 class RecursoForm(FlaskForm):
@@ -2216,7 +2216,7 @@ def nova_impressora():
             return redirect(url_for('listar_impressoras'))
 
     # Vamos criar um template simples para o formulário
-    return render_template('form_impressora.html', form=form, titulo='Nova Impressora')
+    return render_template('form_impressora.html', form=form, titulo='Nova Categoria de Link')
 
 @app.route("/utilidades/impressoras/editar/<int:id>", methods=["GET", "POST"])
 @login_required
@@ -2236,7 +2236,7 @@ def editar_impressora(id):
         form.modelo.data = impressora.modelo
         form.descricao.data = impressora.descricao
 
-    return render_template('form_impressora.html', form=form, titulo=f'Editar Impressora: {impressora.modelo}')
+    return render_template('form_impressora.html', form=form, titulo=f'Editar Categoria: {impressora.modelo}')
 
 @app.route("/utilidades/impressoras/deletar/<int:id>", methods=["POST"])
 @login_required

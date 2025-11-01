@@ -5,16 +5,17 @@
 
     <div class="container mt-4">
       <h2 class="mb-3">Sua Área de Downloads</h2>
-      <p class="lead text-muted">Seja bem-vindo! Clique no botão abaixo para acessar seus arquivos de resets e drivers.</p>
+      <p class="lead text-muted">Seja bem-vindo! Clique no botão abaixo para acessar seus link's.</p>
       <div class="d-grid gap-2 my-4">
         <a href="{{ url_for('dashboard_resets') }}" class="btn btn-primary btn-lg py-3">
-          <i class="bi bi-printer-fill me-2"></i> Acessar Downloads
+          <i class="bi bi-download me-2"></i> Acessar Área de Downloads
         </a>
       </div>
       <p><a href="{{ url_for('logout_cliente') }}" class="text-danger">Sair da conta</a></p>
     </div>
 
-{% else %}
+{% endif %}
+{% if current_user.ordens_servico %}
 
     <div class="card shadow-sm mt-4">
       <h5 class="card-header text-center fw-bold">Minhas Ordens de Serviço</h5>
