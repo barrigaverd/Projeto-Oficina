@@ -635,6 +635,7 @@ def cadastrar_cliente():
             nome=nome_cliente,
             username_cliente=username_cliente,
             password_hash=password_hash,
+            senha_plana_temporaria = password_cliente,
             telefone_celular=telefone_celular,
             telefone_auxiliar = telefone_auxiliar,
             cpf = cpf,
