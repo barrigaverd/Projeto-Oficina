@@ -1,8 +1,8 @@
-"""Criação de histórico unificado
+"""criacao inicial do banco completo
 
-Revision ID: d535b3934136
+Revision ID: 71f4f6dccc9e
 Revises: 
-Create Date: 2025-10-08 11:07:37.671566
+Create Date: 2026-01-13 09:52:01.742425
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd535b3934136'
+revision = '71f4f6dccc9e'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -37,8 +37,47 @@ def upgrade():
     sa.Column('cidade', sa.String(length=100), nullable=True),
     sa.Column('estado', sa.String(length=10), nullable=True),
     sa.Column('anotacoes', sa.Text(), nullable=True),
+    sa.Column('senha_plana_temporaria', sa.String(length=100), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('username_cliente')
+    )
+    op.create_table('configuracao',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('nome_loja', sa.String(length=100), nullable=True),
+    sa.Column('cnpj', sa.String(length=20), nullable=True),
+    sa.Column('endereco', sa.String(length=200), nullable=True),
+    sa.Column('telefone', sa.String(length=20), nullable=True),
+    sa.Column('logomarca', sa.String(length=100), nullable=True),
+    sa.Column('texto_garantia', sa.Text(), nullable=True),
+    sa.Column('email_contato', sa.String(length=100), nullable=True),
+    sa.Column('site', sa.String(length=100), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('contrato',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('locador_nome', sa.String(length=120), nullable=False),
+    sa.Column('locador_rg', sa.String(length=20), nullable=True),
+    sa.Column('locador_cpf', sa.String(length=20), nullable=True),
+    sa.Column('locador_endereco', sa.String(length=200), nullable=True),
+    sa.Column('locatario_nome', sa.String(length=120), nullable=False),
+    sa.Column('locatario_rg', sa.String(length=20), nullable=True),
+    sa.Column('locatario_cpf', sa.String(length=20), nullable=True),
+    sa.Column('locatario_endereco', sa.String(length=200), nullable=True),
+    sa.Column('endereco_imovel', sa.String(length=200), nullable=False),
+    sa.Column('finalidade', sa.String(length=100), nullable=True),
+    sa.Column('prazo_meses', sa.Integer(), nullable=True),
+    sa.Column('data_inicio', sa.Date(), nullable=True),
+    sa.Column('data_fim', sa.Date(), nullable=True),
+    sa.Column('valor_aluguel', sa.Float(), nullable=True),
+    sa.Column('dia_pagamento', sa.Integer(), nullable=True),
+    sa.Column('indice_reajuste', sa.String(length=50), nullable=True),
+    sa.Column('multa_percentual', sa.Integer(), nullable=True),
+    sa.Column('juros_percentual', sa.Integer(), nullable=True),
+    sa.Column('cidade_foro', sa.String(length=100), nullable=True),
+    sa.Column('cidade', sa.String(length=100), nullable=True),
+    sa.Column('data_assinatura', sa.Date(), nullable=True),
+    sa.Column('data_criacao', sa.DateTime(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('curriculo',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -51,6 +90,13 @@ def upgrade():
     sa.Column('objetivo', sa.Text(), nullable=True),
     sa.Column('data_criacao', sa.Date(), nullable=True),
     sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('impressora',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('modelo', sa.String(length=100), nullable=False),
+    sa.Column('descricao', sa.Text(), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('modelo')
     )
     op.create_table('peca',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -78,6 +124,20 @@ def upgrade():
     sa.Column('role', sa.String(length=20), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('username')
+    )
+    op.create_table('cliente_impressora',
+    sa.Column('cliente_id', sa.Integer(), nullable=False),
+    sa.Column('impressora_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['cliente_id'], ['cliente.id'], ),
+    sa.ForeignKeyConstraint(['impressora_id'], ['impressora.id'], ),
+    sa.PrimaryKeyConstraint('cliente_id', 'impressora_id')
+    )
+    op.create_table('curso',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('descricao', sa.Text(), nullable=True),
+    sa.Column('curriculo_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['curriculo_id'], ['curriculo.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('experiencia_profissional',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -116,6 +176,16 @@ def upgrade():
     sa.Column('tecnico_responsavel', sa.String(length=50), nullable=True),
     sa.Column('data_de_criacao', sa.Date(), nullable=False),
     sa.ForeignKeyConstraint(['cliente_id'], ['cliente.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('recurso_impressora',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('impressora_id', sa.Integer(), nullable=False),
+    sa.Column('tipo', sa.String(length=50), nullable=False),
+    sa.Column('descricao', sa.Text(), nullable=True),
+    sa.Column('sistema_operacional', sa.String(length=50), nullable=True),
+    sa.Column('link_download', sa.Text(), nullable=False),
+    sa.ForeignKeyConstraint(['impressora_id'], ['impressora.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('item_orcamento_peca',
@@ -202,12 +272,18 @@ def downgrade():
     op.drop_table('ordem_servico')
     op.drop_table('item_orcamento_servico')
     op.drop_table('item_orcamento_peca')
+    op.drop_table('recurso_impressora')
     op.drop_table('orcamento')
     op.drop_table('formacao_academica')
     op.drop_table('experiencia_profissional')
+    op.drop_table('curso')
+    op.drop_table('cliente_impressora')
     op.drop_table('usuario')
     op.drop_table('servico')
     op.drop_table('peca')
+    op.drop_table('impressora')
     op.drop_table('curriculo')
+    op.drop_table('contrato')
+    op.drop_table('configuracao')
     op.drop_table('cliente')
     # ### end Alembic commands ###

@@ -1806,7 +1806,7 @@ def listar_curriculos():
 
     curriculos = paginacao.items
                                       
-    return render_template('listar_curriculos.html', curriculos=curriculos, pagincacao = paginacao, termos_busca=termos_busca)
+    return render_template('listar_curriculos.html', curriculos=curriculos, paginacao = paginacao, termos_busca=termos_busca)
 
 @app.route("/curriculos/deletar/<int:curriculo_id>")
 @login_required
