@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="bi bi-receipt me-2"></i>Gerador de Recibo Rápido</h4>
+                    <button class="btn btn-sm btn-light" onclick="retornar()">
+                        <i class="bi bi-arrow-left me-1"></i>Voltar
+                    </button>
+                </div>
+                <div class="card-body bg-dark text-light">
+                    <p class="text-secondary small">Preencha os dados abaixo para gerar um recibo em PDF instantaneamente. Estes dados são temporários e não serão salvos no banco de dados.</p>
+                    <hr class="border-secondary">
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Valor (R$)</label>
+                                {{ form.valor(class="form-control bg-secondary text-white border-0", placeholder="Ex: 150,00") }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Data de Emissão</label>
+                                {{ form.data_emissao(class="form-control bg-secondary text-white border-0", type="date") }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Recebemos de (Nome/Razão Social)</label>
+                            {{ form.pagador(class="form-control bg-secondary text-white border-0", placeholder="Nome do cliente") }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">CPF/CNPJ do Pagador (Opcional)</label>
+                            {{ form.document_pagador(class="form-control bg-secondary text-white border-0", placeholder="000.000.000-00") }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Referente a</label>
+                            {{ form.referente_a(class="form-control bg-secondary text-white border-0", placeholder="Ex: Formatação de PC e troca de SSD") }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Cidade/Estado</label>
+                            {{ form.cidade(class="form-control bg-secondary text-white border-0") }}
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-success btn-lg shadow">
+                                <i class="bi bi-file-earmark-pdf-fill me-2"></i>Gerar Recibo agora
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<style>
+    /* Configurações de Página Compactas */
+    @page {
+        size: A4;
+        margin: 1cm;
+    }
+
+    body {
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 11px;
+        line-height: 1.3;
+        color: #000000;
+    }
+
+    .table-full { width: 100%; border-collapse: collapse; }
+
+    /* Cabeçalho Organizado */
+    .header-border {
+        border-bottom: 2px solid #eeeeee;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+
+    .company-name {
+        font-size: 17px;
+        font-weight: bold;
+        line-height: 1.1;
+    }
+
+    .company-details {
+        font-size: 9px;
+        line-height: 1.2;
+        margin-top: 2px;
+        color: #333;
+    }
+
+    .logo-img {
+        height: 38px;
+        width: auto;
+    }
+
+    /* Título e Destaque do Valor */
+    .receipt-title {
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+
+    .highlight-box {
+        border: 1px solid #dee2e6;
+        padding: 8px;
+        text-align: center;
+        margin: 10px 0;
+    }
+
+    .highlight-value {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    /* Conteúdo Principal */
+    .receipt-content {
+        border: 1px solid #eeeeee;
+        padding: 12px;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .referente-block {
+        margin-top: 8px;
+        border-left: 4px solid #007bff;
+        padding: 8px;
+        font-style: italic;
+        background-color: #f9f9f9;
+    }
+
+    .extenso {
+        text-transform: capitalize;
+        font-weight: normal;
+        font-style: italic;
+    }
+
+    /* Rodapé e Assinatura */
+    .signature-section {
+        margin-top: 25px;
+        text-align: center;
+    }
+
+    .signature-line {
+        border-top: 1px solid #000;
+        width: 50%;
+        margin: 18px auto 5px auto;
+    }
+</style>
+</head>
+<body>
+
+<div class="header-border">
+    <table class="table-full">
+        <tr>
+            <td style="vertical-align: middle;">
+                <table style="border-collapse: collapse;">
+                    <tr>
+                        {% if config and config.logomarca %}
+                        <td style="vertical-align: middle; padding-right: 12px;">
+                            <img src="{{ base_dir }}/static/uploads/{{ config.logomarca }}" class="logo-img">
+                        </td>
+                        {% endif %}
+                        <td style="vertical-align: middle;">
+                            <div class="company-name">{{ config.nome_loja or "Oficina do Micro" }}</div>
+                            <div class="company-details">
+                                {% if config.cnpj %}<strong>CNPJ:</strong> {{ config.cnpj }}{% endif %}
+                                {% if config.telefone %} | <strong>Tel:</strong> {{ config.telefone }}{% endif %}
+                                {% if config.endereco %}<br>{{ config.endereco }}{% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="receipt-title">Recibo de Pagamento</div>
+
+<div class="highlight-box">
+    <div style="font-size: 9px; color: #555;">VALOR RECEBIDO</div>
+    <div class="highlight-value">R$ {{ recibo.valor }}</div>
+</div>
+
+<div class="receipt-content">
+    Recebemos de <strong>{{ recibo.pagador|upper }}</strong>
+    {% if recibo.documento %} (Doc: {{ recibo.documento }}){% endif %},
+    a importância de <strong>R$ {{ recibo.valor }}</strong> 
+    <span class="extenso">({{ recibo.valor_extenso }})</span> referente a:
+
+    <div class="referente-block">
+        "{{ recibo.referente }}"
+    </div>
+
+    <p style="margin-top: 10px; font-size: 11px;">
+        Pelo que firmamos o presente recibo, dando plena e total quitação da importância recebida.
+    </p>
+</div>
+
+<div class="signature-section">
+    <div style="font-size: 12px; margin-bottom: 15px;">
+        {{ recibo.cidade }}, {{ recibo.data }}.
+    </div>
+
+    <div class="signature-line"></div>
+    <div style="font-weight: bold; font-size: 13px;">
+        {{ config.nome_loja or "Assinatura do Responsável" }}
+    </div>
+    {% if config.cnpj %}
+        <div style="font-size: 9px; color: #333;">CNPJ: {{ config.cnpj }}</div>
+    {% endif %}
+</div>
+
+</body>
+</html>

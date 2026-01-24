@@ -1,4 +1,5 @@
 import email
+from num2words import num2words
 from enum import unique
 from fileinput import filename
 from http import client
@@ -19,6 +20,7 @@ from functools import wraps
 from io import BytesIO
 from xhtml2pdf import pisa
 import os
+from datetime import datetime
 from werkzeug.utils import secure_filename
 from datetime import date
 from htmldocx import HtmlToDocx
@@ -507,7 +509,21 @@ class RecursoForm(FlaskForm):
                                   render_kw={"rows": 3, "placeholder": "Cole o link completo (Google Drive, Mega, etc.)"})
 
     submit = SubmitField('Adicionar Recurso')
+
+class ReciboSimplesForm(FlaskForm):
+    valor = StringField("Valor (R$)", validators=[DataRequired()])
+    pagador = StringField("Recebemos de", validators=[DataRequired()])
+    document_pagador = StringField("CPF/CNPJ (Opcional)") # No HTML usei document_pagador
+    referente_a = TextAreaField("Referente a", validators=[DataRequired()])
+    cidade = StringField("Cidade", default="Ibirité - MG")
+    data_emissao = DateField("Data", default=date.today)
+    submit = SubmitField("Gerar Recibo em PDF")
+
 #Funções principais
+@app.context_processor
+def inject_now():
+    return {'now': datetime.now}
+
 @app.context_processor
 def inject_config():
     # Busca a primeira (e única) linha de configuração do banco
@@ -1790,7 +1806,6 @@ def download_curriculo_pdf(curriculo_id):
     # Se houve algum erro, retorna uma mensagem simples
     return flash("Ocorreu um erro ao gerar o PDF."), 500
 
-
 @app.route("/curriculos")
 @login_required
 @role_required('funcionario')
@@ -2394,6 +2409,64 @@ def dashboard_resets():
         paginacao=paginacao,
         termos_busca=termos_busca
     )
+
+@app.route("/recibo/gerar", methods=["GET", "POST"])
+@login_required
+@role_required('funcionario')
+def gerar_recibo_rapido():
+    form = ReciboSimplesForm()
+    
+    if form.validate_on_submit():
+        try:
+            # 1. Tratamento do valor para conversão numérica
+            # Remove pontos de milhar e troca vírgula por ponto decimal
+            valor_str = form.valor.data.replace('.', '').replace(',', '.')
+            valor_float = float(valor_str)
+            
+            # 2. Geração do valor por extenso (Ex: "cento e cinquenta reais")
+            # O parâmetro to='currency' cuida dos termos "reais" e "centavos"
+            valor_extenso = num2words(valor_float, to='currency', lang='pt_BR')
+            
+            # 3. Organização dos dados para o template
+            dados_recibo = {
+                'valor': form.valor.data,
+                'valor_extenso': valor_extenso, # Enviando o extenso para o PDF
+                'pagador': form.pagador.data,
+                'documento': form.document_pagador.data,
+                'referente': form.referente_a.data,
+                'cidade': form.cidade.data,
+                'data': form.data_emissao.data.strftime('%d/%m/%Y')
+            }
+            
+            # 4. Preparação para o PDF
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            # Certifique-se de que 'config' está disponível (via context_processor ou query direta)
+            html_renderizado = render_template(
+                "template_recibo_pdf.html", 
+                recibo=dados_recibo, 
+                base_dir=base_dir
+            )
+            
+            # 5. Geração do arquivo PDF
+            result = BytesIO()
+            pdf = pisa.pisaDocument(BytesIO(html_renderizado.encode("UTF-8")), result)
+            
+            if not pdf.err:
+                nome_arquivo = f"Recibo_{form.pagador.data[:15]}.pdf"
+                return Response(
+                    result.getvalue(),
+                    mimetype="application/pdf",
+                    headers={"Content-disposition": f"attachment; filename={nome_arquivo}"}
+                )
+            
+            flash("Erro técnico ao gerar o PDF.", "danger")
+            
+        except ValueError:
+            flash("Valor numérico inválido. Use o formato 00,00", "warning")
+        except Exception as e:
+            flash(f"Ocorreu um erro inesperado: {str(e)}", "danger")
+        
+    return render_template("gerar_recibo.html", form=form)
 
 if __name__ == "__main__":
     app.run(debug=True)
