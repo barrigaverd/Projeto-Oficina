@@ -621,7 +621,32 @@ def home():
     total_clientes = Cliente.query.count()
     ordens_abertas = OrdemServico.query.filter(OrdemServico.status != "Concluído").count()
     ordens_concluidas = OrdemServico.query.filter(OrdemServico.status == "Concluído").count()
-    return render_template("home.html", total_clientes=total_clientes, ordens_abertas=ordens_abertas, ordens_concluidas=ordens_concluidas)
+    orcamento_aberto = Orcamento.query.filter(Orcamento.status != "Aprovado" or Orcamento.status != "Convertido em OS").count()
+    orcamento_concluido = Orcamento.query.filter(Orcamento.status == "Aprovado" or Orcamento.status == "Convertido em OS").count()
+
+    total_curriculos = Curriculo.query.count()
+    total_contratos = Contrato.query.count()
+    total_links = Impressora.query.count()
+
+    ordens_pagas = OrdemServico.query.filter_by(status='Concluído').all()
+    # Somamos os valores usando a @property via Python
+    faturamento_total = sum(os.valor_calculado for os in ordens_pagas) if ordens_pagas else 0.0
+
+    ultimas_os = OrdemServico.query.order_by(OrdemServico.data_de_criacao.desc()).limit(5).all()
+
+    return render_template(
+        "home.html",
+        total_clientes=total_clientes,
+        ordens_abertas=ordens_abertas,
+        ordens_concluidas=ordens_concluidas,
+        orcamento_aberto = orcamento_aberto,
+        orcamento_concluido = orcamento_concluido,
+        total_curriculos = total_curriculos,
+        total_contratos = total_contratos,
+        total_links = total_links,
+        ultimas_os = ultimas_os,
+        faturamento_total = faturamento_total
+        )
 
 @app.route("/clientes/cadastrar", methods=["GET", "POST"])
 @role_required('funcionario')
