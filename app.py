@@ -154,6 +154,13 @@ class Cliente(db.Model, UserMixin):
 
     def get_id(self):
         return f"cliente-{self.id}"
+    
+    @property
+    def whatsapp_limpo(self):
+        if self.telefone_celular:
+            # Importante: o 're' já está importado no topo do seu app.py
+            return re.sub(r'\D', '', self.telefone_celular)
+        return ""
 
 class OrdemServico(db.Model):
     id = db.Column(db.Integer, primary_key = True)
