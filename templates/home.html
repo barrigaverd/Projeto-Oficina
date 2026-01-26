@@ -9,14 +9,12 @@
         </div>
         <div class="dropdown">
             <button class="btn btn-primary dropdown-toggle shadow-sm" type="button" data-bs-toggle="dropdown">
-                <i class="bi bi-plus-lg me-1"></i>Novo Registro
+                <i class="bi bi-plus-lg me-1"></i>Registro
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow">
-                <li><a class="dropdown-item" href="{{ url_for('cadastrar_servico') }}">Nova Ordem de Serviço</a></li>
                 <li><a class="dropdown-item" href="{{ url_for('gerar_recibo_rapido') }}">Emitir Recibo</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="{{ url_for('cadastrar_cliente') }}">Novo Cliente</a></li>
-                <li><a class="dropdown-item" href="{{ url_for('novo_contrato') }}">Novo Contrato</a></li>
             </ul>
         </div>
     </div>

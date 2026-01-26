@@ -1,63 +1,118 @@
 {% extends 'base_publica.html' %}
 
 {% block content %}
-<div class="container col-xxl-8 px-4 py-5">
-  <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-
-    <div class="col-lg-6">
-      <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Conserto Especializado de Computadores, Impressoras e Eletrônicos</h1>
-      <p class="lead">Soluções rápidas e com garantia para seus equipamentos. Técnicos qualificados e atendimento de
-        confiança.</p>
-      <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-        <a href="{{ url_for('login_cliente') }}" class="btn btn-primary btn-lg px-4 me-md-2">Área do cliente</a>
-        <a href="{{ url_for('pagina_contato')}}" class="btn btn-outline-secondary btn-lg px-4">Entrar em Contato</a>
+<div class="bg-body-tertiary border-bottom shadow-sm overflow-hidden">
+  <div class="container col-xxl-8 px-4 py-5">
+    <div class="row flex-lg-row-reverse align-items-center g-5">
+      
+      <div class="col-lg-6 text-center">
+        <div class="lc-block">
+          <img src="{{ url_for('static', filename='fotos/logo_oficina.png') }}" 
+               alt="Logo Oficina do Micro" 
+               class="img-fluid rounded-4 shadow-sm img-float"
+               style="max-width: 80%; height: auto;">
+        </div>
       </div>
+
+      <div class="col-lg-6">
+        <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">
+          Conserto Especializado de <span class="text-primary">Computadores, Impressoras e Eletrônicos</span>
+        </h1>
+        <p class="lead text-body-secondary">
+          Soluções rápidas e com garantia para seus equipamentos. Técnicos qualificados e atendimento de confiança.
+        </p>
+        <div class="d-grid gap-3 d-md-flex justify-content-md-start mt-4">
+          <a href="{{ url_for('login_cliente') }}" class="btn btn-primary btn-lg px-4 me-md-2 shadow-sm">
+            <i class="bi bi-person-circle me-2"></i>Área do Cliente
+          </a>
+          <a href="{{ url_for('pagina_contato')}}" class="btn btn-outline-secondary btn-lg px-4">
+            <i class="bi bi-chat-dots me-2"></i>Entrar em Contato
+          </a>
+        </div>
+      </div>
+      
     </div>
-
-    <div class="col-lg-6 text-center">
-      <img src="{{ url_for('static', filename='fotos/logo_oficina.png') }}" 
-          alt="Logo Oficina do Micro" 
-          class="img-fluid rounded-3 shadow-sm"
-          style="max-width: 80%; height: auto;">
-    </div>
-
-
   </div>
 </div>
-<div class="container px-4 py-5">
-  <h2 class="pb-2 border-bottom text-center">Nossos Serviços</h2>
 
-  <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+<div class="container px-4 py-5" id="servicos">
+  <div class="text-center mb-5">
+    <h2 class="pb-2 border-bottom d-inline-block text-body-emphasis">Nossos Serviços</h2>
+  </div>
 
+  <div class="row g-4 row-cols-1 row-cols-lg-3">
     <div class="col">
-      <div class="card h-100">
-        <div class="card-body">
-          <h5 class="card-title">Reparo de Computadors</h5>
-          <p class="card-text">Diagnóstico completo, troca de peças, formatação, remoção de vírus e otimização de
-            performance para todas as marcas e modelos.</p>
+      <div class="card h-100 shadow-sm border-0 bg-body card-hover">
+        <div class="card-body p-4 text-center">
+          <div class="icon-shape bg-primary bg-opacity-10 text-primary rounded-circle mb-3 mx-auto">
+            <i class="bi bi-pc-display fs-2"></i>
+          </div>
+          <h5 class="card-title fw-bold text-body-emphasis">Reparo de Computadores</h5>
+          <p class="card-text text-body-secondary">
+            Diagnóstico completo, troca de peças, formatação, remoção de vírus e otimização de performance para todas as marcas e modelos.
+          </p>
         </div>
       </div>
     </div>
 
     <div class="col">
-      <div class="card h-100">
-        <div class="card-body">
-          <h5 class="card-title">Manutenção de Impressoras</h5>
-          <p class="card-text">Conserto de impressoras jato de tinta e tanque de tinta, manutenção preventiva para empresas e residências.</p>
+      <div class="card h-100 shadow-sm border-0 bg-body card-hover">
+        <div class="card-body p-4 text-center">
+          <div class="icon-shape bg-primary bg-opacity-10 text-primary rounded-circle mb-3 mx-auto">
+            <i class="bi bi-printer fs-2"></i>
+          </div>
+          <h5 class="card-title fw-bold text-body-emphasis">Manutenção de Impressoras</h5>
+          <p class="card-text text-body-secondary">
+            Conserto de impressoras jato de tinta e tanque de tinta, manutenção preventiva para empresas e residências.
+          </p>
         </div>
       </div>
     </div>
 
     <div class="col">
-      <div class="card h-100">
-        <div class="card-body">
-          <h5 class="card-title">Outros Serviços</h5>
-          <p class="card-text">Montagem de computadores personalizados, recuperação de dados, instalação de redes e
-            consultoria em TI para otimizar seus equipamentos.</p>
+      <div class="card h-100 shadow-sm border-0 bg-body card-hover">
+        <div class="card-body p-4 text-center">
+          <div class="icon-shape bg-primary bg-opacity-10 text-primary rounded-circle mb-3 mx-auto">
+            <i class="bi bi-gear-wide-connected fs-2"></i>
+          </div>
+          <h5 class="card-title fw-bold text-body-emphasis">Outros Serviços</h5>
+          <p class="card-text text-body-secondary">
+            Montagem de computadores personalizados, recuperação de dados, instalação de redes e consultoria em TI para otimizar seus equipamentos.
+          </p>
         </div>
       </div>
     </div>
-
   </div>
 </div>
+
+<style>
+  /* Efeito de flutuação na imagem do topo */
+  .img-float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+  }
+
+  /* Estilização dos círculos de ícone */
+  .icon-shape {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Efeito de elevação nos cards ao passar o mouse */
+  .card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 1rem 3rem rgba(0,0,0,.1) !important;
+  }
+</style>
 {% endblock %}
