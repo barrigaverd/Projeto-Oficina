@@ -12,3 +12,4 @@ static/uploads/
 # Arquivos de configuração de IDEs comuns
 .vscode/
 .idea/
+.agent/

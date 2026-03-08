@@ -52,6 +52,86 @@
       opacity: 0.8;
       font-size: 0.9rem;
     }
+
+    /* WhatsApp Floating Buttons */
+    .wa-float-container {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .wa-button {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+      color: white;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      overflow: hidden;
+      max-width: 50px;
+      white-space: nowrap;
+    }
+
+    .wa-button i {
+      font-size: 24px;
+      min-width: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wa-text {
+      margin-left: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      opacity: 0;
+      transform: translateX(20px);
+      transition: all 0.3s ease;
+    }
+
+    .wa-button:hover {
+      max-width: 300px;
+      color: white;
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+    }
+
+    .wa-button:hover .wa-text {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .wa-praça {
+      background: linear-gradient(135deg, #25D366 0%, #075E54 100%);
+    }
+
+    [data-bs-theme="dark"] .wa-button {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      .wa-button {
+        padding: 10px;
+        max-width: none;
+        width: 50px;
+        height: 50px;
+        justify-content: center;
+      }
+      .wa-text {
+        display: none;
+      }
+      .wa-button:hover {
+        max-width: 50px;
+      }
+    }
   </style>
 </head>
 
@@ -174,6 +254,18 @@
       });
     }
   </script>
+
+  <!-- WhatsApp Floating Buttons -->
+  <div class="wa-float-container">
+    <a href="https://wa.me/553135986616" class="wa-button wa-praça" target="_blank" title="Fale com a Loja da Praça">
+      <i class="bi bi-whatsapp"></i>
+      <span class="wa-text">Loja da Praça</span>
+    </a>
+    <a href="https://wa.me/553135330010" class="wa-button" target="_blank" title="Fale com a Loja Freitas de Oliveira">
+      <i class="bi bi-whatsapp"></i>
+      <span class="wa-text">Loja Alvorada</span>
+    </a>
+  </div>
 </body>
 
 </html>
