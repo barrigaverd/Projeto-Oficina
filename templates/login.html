@@ -1,24 +1,56 @@
 {% extends 'base_publica.html' %}
 
 {% block content %}
-<div class="row justify-content-center min-vh-100 d-flex align-items-center">
-  <div class="col-md-6 col-lg-4">
-    <div class="card p-4 shadow-sm">
-      <h2 class="fw-bold mb-4 text-center">Login Administrador</h2>
-      <form method="post">
-        <div class="mb-3">
-          <label class="form-label" for="usuario">Usuário:</label>
-          <input class="form-control form-control-lg" type="text" id="usuario" name="username"
-            placeholder="Digite seu usuário" required>
-        </div>
-        <div class="mb-3">
-          <label class="form-label" for="senha">Senha:</label>
-          <input class="form-control form-control-lg" type="password" id="senha" name="password"
-            placeholder="Digite sua senha" required>
-        </div>
-        <button class="btn btn-primary w-100 mt-2" type="submit">Entrar</button>
-      </form>
+<style>
+  .login-wrapper {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  .login-card {
+    width: 100%;
+    max-width: 420px;
+    border: none;
+    border-top: 3px solid #0d6efd;
+    box-shadow: 0 .5rem 2rem rgba(0,0,0,.1);
+  }
+  .login-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(13,110,253,.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+  }
+</style>
+
+<div class="login-wrapper">
+  <div class="card login-card p-4 p-md-5 bg-body">
+    <div class="login-icon mb-3">
+      <i class="bi bi-shield-lock fs-2 text-primary"></i>
     </div>
+    <h2 class="fw-bold text-center text-body-emphasis mb-1">Área do Administrador</h2>
+    <p class="text-center text-body-secondary mb-4" style="font-size:.9rem;">Acesso restrito — funcionários</p>
+
+    <form method="post">
+      <div class="mb-3">
+        <label class="form-label fw-semibold" for="usuario">Usuário</label>
+        <input class="form-control form-control-lg" type="text" id="usuario" name="username"
+          placeholder="Digite seu usuário" required>
+      </div>
+      <div class="mb-4">
+        <label class="form-label fw-semibold" for="senha">Senha</label>
+        <input class="form-control form-control-lg" type="password" id="senha" name="password"
+          placeholder="Digite sua senha" required>
+      </div>
+      <button class="btn btn-primary btn-lg w-100" type="submit">
+        <i class="bi bi-box-arrow-in-right me-2"></i>Entrar
+      </button>
+    </form>
   </div>
 </div>
 {% endblock %}

@@ -1,81 +1,200 @@
 {% extends 'base_publica.html' %}
 
 {% block content %}
-<div class="bg-body-tertiary border-bottom shadow-sm overflow-hidden">
-  <div class="container col-xxl-8 px-4 py-5">
-    <div class="row flex-lg-row-reverse align-items-center g-5">
-      
-      <div class="col-lg-6 text-center">
-        <div class="lc-block">
-          <img src="{{ url_for('static', filename='fotos/logo_oficina.png') }}" 
-               alt="Logo Oficina do Micro" 
-               class="img-fluid rounded-4 shadow-sm img-float"
-               style="max-width: 80%; height: auto;">
-        </div>
+<style>
+  .hero-wrapper {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(150deg, #eef2ff 0%, #f8f9fa 55%, #e8f4fd 100%);
+    border-bottom: 1px solid rgba(0,0,0,.06);
+  }
+  [data-bs-theme="dark"] .hero-wrapper {
+    background: linear-gradient(150deg, #111827 0%, #1B1C1D 55%, #0d1f2d 100%);
+  }
+  .hero-wrapper::after {
+    content: '';
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: rgba(13,110,253,.07);
+    top: -120px;
+    right: -80px;
+    pointer-events: none;
+  }
+
+  .img-float {
+    filter: drop-shadow(0 16px 28px rgba(0,0,0,.14));
+    animation: float 5s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+  }
+
+  .eyebrow {
+    font-size: .78rem;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .diferencial-item {
+    border-bottom: 2px solid transparent;
+    transition: border-color .25s;
+  }
+  .diferencial-item:hover { border-color: #0d6efd; }
+
+  .service-card {
+    border: 1px solid rgba(0,0,0,.08) !important;
+    border-top: 3px solid #0d6efd !important;
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .service-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 .75rem 2rem rgba(0,0,0,.1) !important;
+  }
+  [data-bs-theme="dark"] .service-card {
+    border-color: rgba(255,255,255,.08) !important;
+    border-top-color: #0d6efd !important;
+  }
+
+  .icon-circle {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cta-wrap {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+  }
+  .cta-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 15% 50%, rgba(255,255,255,.09) 0%, transparent 55%),
+                radial-gradient(ellipse at 85% 50%, rgba(255,255,255,.07) 0%, transparent 55%);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+</style>
+
+<!-- HERO -->
+<section class="hero-wrapper">
+  <div class="container col-xxl-10 px-4 py-5 py-lg-6">
+    <div class="row align-items-center g-5 flex-lg-row-reverse">
+
+      <div class="col-lg-5 text-center">
+        <img src="{{ url_for('static', filename='fotos/logo_oficina.png') }}"
+             alt="Logo Oficina do Micro"
+             class="img-fluid img-float"
+             style="max-width: 76%;">
       </div>
 
-      <div class="col-lg-6">
-        <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">
-          Conserto Especializado de <span class="text-primary">Computadores, Impressoras e Eletrônicos</span>
+      <div class="col-lg-7">
+        <p class="eyebrow text-primary mb-3">
+          <i class="bi bi-circle-fill me-1" style="font-size:.4rem; vertical-align:.2em;"></i>
+          Assistência Técnica Especializada
+        </p>
+        <h1 class="display-4 fw-bold lh-1 mb-4 text-body-emphasis">
+          Conserto Especializado de
+          <span class="text-primary">Computadores, Impressoras</span>
+          e Eletrônicos
         </h1>
-        <p class="lead text-body-secondary">
+        <p class="lead text-body-secondary mb-5" style="max-width:480px;">
           Soluções rápidas e com garantia para seus equipamentos. Técnicos qualificados e atendimento de confiança.
         </p>
-        <div class="d-grid gap-3 d-md-flex justify-content-md-start mt-4">
-          <a href="{{ url_for('login_cliente') }}" class="btn btn-primary btn-lg px-4 me-md-2 shadow-sm">
-            <i class="bi bi-person-circle me-2"></i>Área do Cliente
-          </a>
-          <a href="{{ url_for('pagina_contato')}}" class="btn btn-outline-secondary btn-lg px-4">
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{{ url_for('pagina_contato') }}" class="btn btn-primary btn-lg px-5 shadow-sm">
             <i class="bi bi-chat-dots me-2"></i>Entrar em Contato
           </a>
         </div>
       </div>
-      
+
     </div>
   </div>
-</div>
+</section>
 
-<div class="container px-4 py-5" id="servicos">
+<!-- DIFERENCIAIS -->
+<section class="border-bottom bg-body">
+  <div class="container px-4">
+    <div class="row row-cols-2 row-cols-md-4 g-0 text-center">
+      <div class="col border-end">
+        <div class="diferencial-item px-3 py-4 h-100">
+          <i class="bi bi-shield-check fs-2 text-primary d-block mb-2"></i>
+          <div class="fw-semibold text-body-emphasis">Garantia de Serviço</div>
+          <small class="text-body-secondary">Trabalho garantido</small>
+        </div>
+      </div>
+      <div class="col border-end">
+        <div class="diferencial-item px-3 py-4 h-100">
+          <i class="bi bi-tools fs-2 text-primary d-block mb-2"></i>
+          <div class="fw-semibold text-body-emphasis">Técnicos Qualificados</div>
+          <small class="text-body-secondary">Equipe experiente</small>
+        </div>
+      </div>
+      <div class="col border-end">
+        <div class="diferencial-item px-3 py-4 h-100">
+          <i class="bi bi-clock fs-2 text-primary d-block mb-2"></i>
+          <div class="fw-semibold text-body-emphasis">Atendimento Rápido</div>
+          <small class="text-body-secondary">Diagnóstico ágil</small>
+        </div>
+      </div>
+      <div class="col">
+        <div class="diferencial-item px-3 py-4 h-100">
+          <i class="bi bi-stars fs-2 text-primary d-block mb-2"></i>
+          <div class="fw-semibold text-body-emphasis">Mais de 15 Anos</div>
+          <small class="text-body-secondary">De experiência</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVIÇOS -->
+<section class="container px-4 py-5" id="servicos">
   <div class="text-center mb-5">
-    <h2 class="pb-2 border-bottom d-inline-block text-body-emphasis">Nossos Serviços</h2>
+    <p class="eyebrow text-primary mb-1">O que fazemos</p>
+    <h2 class="fw-bold text-body-emphasis">Nossos Serviços</h2>
   </div>
 
   <div class="row g-4 row-cols-1 row-cols-lg-3">
     <div class="col">
-      <div class="card h-100 shadow-sm border-0 bg-body card-hover">
-        <div class="card-body p-4 text-center">
-          <div class="icon-shape bg-primary bg-opacity-10 text-primary rounded-circle mb-3 mx-auto">
-            <i class="bi bi-pc-display fs-2"></i>
+      <div class="card service-card h-100 shadow-sm bg-body">
+        <div class="card-body p-4">
+          <div class="icon-circle bg-primary bg-opacity-10 mb-4">
+            <i class="bi bi-pc-display fs-3 text-primary"></i>
           </div>
-          <h5 class="card-title fw-bold text-body-emphasis">Reparo de Computadores</h5>
+          <h5 class="card-title fw-bold mb-2 text-body-emphasis">Reparo de Computadores</h5>
           <p class="card-text text-body-secondary">
             Diagnóstico completo, troca de peças, formatação, remoção de vírus e otimização de performance para todas as marcas e modelos.
           </p>
         </div>
       </div>
     </div>
-
     <div class="col">
-      <div class="card h-100 shadow-sm border-0 bg-body card-hover">
-        <div class="card-body p-4 text-center">
-          <div class="icon-shape bg-primary bg-opacity-10 text-primary rounded-circle mb-3 mx-auto">
-            <i class="bi bi-printer fs-2"></i>
+      <div class="card service-card h-100 shadow-sm bg-body">
+        <div class="card-body p-4">
+          <div class="icon-circle bg-primary bg-opacity-10 mb-4">
+            <i class="bi bi-printer fs-3 text-primary"></i>
           </div>
-          <h5 class="card-title fw-bold text-body-emphasis">Manutenção de Impressoras</h5>
+          <h5 class="card-title fw-bold mb-2 text-body-emphasis">Manutenção de Impressoras</h5>
           <p class="card-text text-body-secondary">
             Conserto de impressoras jato de tinta e tanque de tinta, manutenção preventiva para empresas e residências.
           </p>
         </div>
       </div>
     </div>
-
     <div class="col">
-      <div class="card h-100 shadow-sm border-0 bg-body card-hover">
-        <div class="card-body p-4 text-center">
-          <div class="icon-shape bg-primary bg-opacity-10 text-primary rounded-circle mb-3 mx-auto">
-            <i class="bi bi-gear-wide-connected fs-2"></i>
+      <div class="card service-card h-100 shadow-sm bg-body">
+        <div class="card-body p-4">
+          <div class="icon-circle bg-primary bg-opacity-10 mb-4">
+            <i class="bi bi-gear-wide-connected fs-3 text-primary"></i>
           </div>
-          <h5 class="card-title fw-bold text-body-emphasis">Outros Serviços</h5>
+          <h5 class="card-title fw-bold mb-2 text-body-emphasis">Outros Serviços</h5>
           <p class="card-text text-body-secondary">
             Montagem de computadores personalizados, recuperação de dados, instalação de redes e consultoria em TI para otimizar seus equipamentos.
           </p>
@@ -83,36 +202,19 @@
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<style>
-  /* Efeito de flutuação na imagem do topo */
-  .img-float {
-    animation: float 4s ease-in-out infinite;
-  }
+<!-- CTA FINAL -->
+<section class="container px-4 pb-5">
+  <div class="position-relative overflow-hidden rounded-4 cta-wrap text-white text-center px-4 py-5 shadow-lg">
+    <h3 class="fw-bold mb-2">Precisa de ajuda com seus equipamentos?</h3>
+    <p class="opacity-75 mb-4">Entre em contato conosco e resolva seu problema hoje mesmo.</p>
+    <div class="d-flex flex-wrap justify-content-center gap-3">
+      <a href="{{ url_for('pagina_contato') }}" class="btn btn-light btn-lg px-5 fw-semibold shadow-sm">
+        <i class="bi bi-chat-dots me-2"></i>Entre em Contato
+      </a>
+    </div>
+  </div>
+</section>
 
-  @keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
-    100% { transform: translateY(0px); }
-  }
-
-  /* Estilização dos círculos de ícone */
-  .icon-shape {
-    width: 70px;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* Efeito de elevação nos cards ao passar o mouse */
-  .card-hover {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .card-hover:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 1rem 3rem rgba(0,0,0,.1) !important;
-  }
-</style>
 {% endblock %}
