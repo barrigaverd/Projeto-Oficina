@@ -82,7 +82,9 @@
 
     <div class="col-12 text-center">
       <button class="btn btn-success btn-sm" type="submit">💾 Salvar</button>
-      <a class="btn btn-danger btn-sm" href="{{url_for('deletar_os', id=ordem_servico.id)}}">🗑 Excluir</a>
+      <form method="post" action="{{ url_for('deletar_os', id=ordem_servico.id) }}" class="d-inline">
+        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('Tem certeza que deseja excluir esta OS?');">?? Excluir</button>
+      </form>
       <a class="btn btn-secondary btn-sm" href="{{url_for('gerar_pdf_os', os_id=ordem_servico.id)}}">📄 PDF</a>
       <a class="btn btn-info btn-sm" href="{{url_for('exibir_pdf_os', os_id=ordem_servico.id)}}" target="_blank">👁 Exibir PDF</a>
       <a href="https://wa.me/55{{ ordem_servico.cliente.whatsapp_limpo }}?text=Olá, {{ ordem_servico.cliente.nome }}! Sua OS {{ ordem_servico.numero_formatado }} está pronta para retirada." 
@@ -162,7 +164,11 @@
         <td>{{ item.quantidade }}</td>
         <td>R$ {{ "%.2f"|format(item.preco_cobrado|float) }}</td>
         <td>R$ {{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}</td>
-        <td><a class="btn btn-danger btn-sm" href="{{url_for('remover_servico', id=item.id)}}">Remover</a></td>
+        <td>
+          <form method="post" action="{{ url_for('remover_servico', id=item.id) }}" class="d-inline">
+            <button class="btn btn-danger btn-sm" type="submit">Remover</button>
+          </form>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
@@ -219,7 +225,11 @@
         <td>{{ item.quantidade }}</td>
         <td>R$ {{ "%.2f"|format(item.preco_cobrado|float) }}</td>
         <td>R$ {{ "%.2f"|format((item.quantidade * item.preco_cobrado)|float) }}</td>
-        <td><a class="btn btn-danger btn-sm" href="{{url_for('remover_peca', id=item.id)}}">Remover</a></td>
+        <td>
+          <form method="post" action="{{ url_for('remover_peca', id=item.id) }}" class="d-inline">
+            <button class="btn btn-danger btn-sm" type="submit">Remover</button>
+          </form>
+        </td>
       </tr>
       {% endfor %}
     </tbody>

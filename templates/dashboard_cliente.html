@@ -11,7 +11,9 @@
           <i class="bi bi-download me-2"></i> Acessar Área de Downloads
         </a>
       </div>
-      <p><a href="{{ url_for('logout_cliente') }}" class="text-danger">Sair da conta</a></p>
+      <form method="post" action="{{ url_for('logout_cliente') }}">
+        <button type="submit" class="btn btn-link text-danger p-0 border-0">Sair da conta</button>
+      </form>
     </div>
 
 {% endif %}

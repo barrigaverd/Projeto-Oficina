@@ -41,10 +41,12 @@
           <td>R$ {{ "%.2f"|format(peca.preco_unitario|float) }}</td>
           <td class="text-end">
             <a class="btn btn-warning btn-sm" href="{{ url_for('editar_peca', id=peca.id) }}">Editar</a>
-            <a class="btn btn-danger btn-sm" href="{{ url_for('deletar_peca', id=peca.id) }}"
-              onclick="return confirm('Tem certeza que deseja excluir {{ peca.nome_peca }}?');">
-              Excluir
-            </a>
+            <form method="post" action="{{ url_for('deletar_peca', id=peca.id) }}" class="d-inline">
+              <button class="btn btn-danger btn-sm" type="submit"
+                onclick="return confirm('Tem certeza que deseja excluir {{ peca.nome_peca }}?');">
+                Excluir
+              </button>
+            </form>
           </td>
         </tr>
         {% endfor %}

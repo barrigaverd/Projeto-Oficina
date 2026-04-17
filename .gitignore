@@ -13,3 +13,8 @@ static/uploads/
 .vscode/
 .idea/
 .agent/
+
+# Segredos locais
+.env
+.env.*
+!.env.example

@@ -41,10 +41,12 @@
           <td>R$ {{ "%.2f"|format(servico.preco_unitario|float) }}</td>
           <td class="text-end">
             <a class="btn btn-warning btn-sm" href="{{ url_for('editar_servico', id=servico.id) }}">Editar</a>
-            <a class="btn btn-danger btn-sm" href="{{ url_for('deletar_servico', id=servico.id) }}"
-              onclick="return confirm('Tem certeza que deseja excluir {{ servico.descricao_servico }}?');">
-              Excluir
-            </a>
+            <form method="post" action="{{ url_for('deletar_servico', id=servico.id) }}" class="d-inline">
+              <button class="btn btn-danger btn-sm" type="submit"
+                onclick="return confirm('Tem certeza que deseja excluir {{ servico.descricao_servico }}?');">
+                Excluir
+              </button>
+            </form>
           </td>
         </tr>
         {% endfor %}

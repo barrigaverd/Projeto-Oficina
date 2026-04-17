@@ -55,11 +55,12 @@
                   class="btn btn-sm btn-outline-info me-1">
                   <i class="bi bi-file-earmark-pdf-fill"></i>Ver PDF
                 </a>
-                <a href="{{ url_for('deletar_contrato', id=contrato.id) }}"
-                  class="btn btn-sm btn-outline-danger"
-                  onclick="return confirm('Tem certeza que deseja excluir o contrato de {{ contrato.locatario_nome }}?');">
-                  <i class="bi bi-trash3"></i>Excluir
-                </a>
+                <form method="post" action="{{ url_for('deletar_contrato', id=contrato.id) }}" class="d-inline">
+                  <button type="submit" class="btn btn-sm btn-outline-danger"
+                    onclick="return confirm('Tem certeza que deseja excluir o contrato de {{ contrato.locatario_nome }}?');">
+                    <i class="bi bi-trash3"></i>Excluir
+                  </button>
+                </form>
               </td>
             </tr>
             {% endfor %}

@@ -37,10 +37,12 @@
       <div class="me-2">
         <a class="btn btn-warning btn-sm" href="{{ url_for('detalhes_cliente', id=cliente.id) }}">Pedidos</a>
         <a class="btn btn-warning btn-sm" href="{{ url_for('editar_cliente', id=cliente.id) }}">Editar</a>
-        <a class="btn btn-danger btn-sm" href="{{ url_for('deletar_cliente', id=cliente.id) }}"
-          onclick="return confirm('Tem certeza que deseja excluir {{ cliente.nome }}?');">
-          Excluir
-        </a>
+        <form method="post" action="{{ url_for('deletar_cliente', id=cliente.id) }}" class="d-inline">
+          <button class="btn btn-danger btn-sm" type="submit"
+            onclick="return confirm('Tem certeza que deseja excluir {{ cliente.nome }}?');">
+            Excluir
+          </button>
+        </form>
       </div>
     </div>
     {% endfor %}
