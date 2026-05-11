@@ -21,6 +21,7 @@
 <div class="card mt-4 shadow-sm">
   <h5 class="card-header text-center fw-bold">Detalhes da OS #{{ordem_servico.numero_formatado}}</h5>
   <form class="card-body row g-3" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="col-md-6">
       <label class="form-label" for="tecnico_responsavel">Técnico responsável:</label>
       <input class="form-control" type="text" id="tecnico_responsavel" name="tecnico_responsavel"
@@ -115,6 +116,7 @@
           {% endif %}
           <div class="card-footer text-end">
             <form action="{{ url_for('remover_foto', foto_id=foto.id) }}" method="post" class="d-inline">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <button type="submit" class="btn btn-outline-danger btn-sm">Remover</button>
             </form>
           </div>
@@ -130,6 +132,7 @@
   <h4 class="card-header text-center fw-bold">➕ Adicionar Foto</h4>
   <form class="card-body row g-3" method="post" action="{{ url_for('adicionar_foto', os_id=ordem_servico.id) }}"
     enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="col-md-5">
       <label for="foto" class="form-label">Selecionar Foto</label>
       <input type="file" class="form-control" name="foto" required>
@@ -179,6 +182,7 @@
 <div class="card mt-3" id="adicionar_servico">
   <h4 class="card-header text-center fw-bold">➕ Adicionar Serviço</h4>
   <form class="card-body row g-3" method="post" action="{{ url_for('adicionar_servico', os_id=ordem_servico.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="col-12">
       <label for="servico" class="form-label">Serviço:</label>
       <select name="servico_id" class="form-select" required>
@@ -240,6 +244,7 @@
 <div class="card mt-3" id="adicionar_peca">
   <h4 class="card-header text-center fw-bold">➕ Adicionar Peça</h4>
   <form class="card-body row g-3" method="post" action="{{ url_for('adicionar_peca', os_id=ordem_servico.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="col-12">
       <label for="peca" class="form-label">Peça:</label>
       <select name="peca_id" class="form-select" required>

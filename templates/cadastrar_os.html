@@ -25,6 +25,7 @@
   <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 45rem">
     <h5 class="card-header fw-bold text-center">Cadastrar Ordem de Serviço</h5>
     <form class="card-body row g-3" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
       <div class="col-md-6">
         <label class="form-label" for="equipamento">Equipamento:</label>

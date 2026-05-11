@@ -5,6 +5,7 @@
   <div class="card shadow-sm w-100 rounded-3 mx-auto my-3" style="max-width: 45rem">
     <h4 class="card-header text-center fw-bold">Cadastro de Cliente</h4>
     <form class="card-body row g-4" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
       <!-- Coluna 1 -->
       <div class="col-md-6">
@@ -123,14 +124,20 @@
 {% block scripts %}
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const tipoClienteSelect = document.getElementById('tipo_cliente');
-    const campoCpf = document.getElementById('campo_cpf');
-    const campoCnpj = document.getElementById('campo_cnpj');
-    const cpfElement = document.getElementById('cpf');
-    const cnpjElement = document.getElementById('cnpj');
-    const telElement = document.getElementById('telefone_celular');
-    const telAuxElement = document.getElementById('telefone_auxiliar');
+    // Função utilitária para aplicar máscara se o elemento existir
+    const aplicarMascara = (id, maskConfig) => {
+      const el = document.getElementById(id);
+      if (el) return IMask(el, maskConfig);
+      return null;
+    };
 
+    aplicarMascara('cpf', { mask: '000.000.000-00' });
+    aplicarMascara('cnpj', { mask: '00.000.000/0000-00' });
+    aplicarMascara('cep', { mask: '00.000-000' });
+    aplicarMascara('telefone_celular', { mask: '(00) 00000-0000' });
+    aplicarMascara('telefone_auxiliar', { mask: '(00) 00000-0000' });
+
+    // Lógica do CEP (ViaCEP)
     const cepInput = document.getElementById('cep');
     const logradouroInput = document.getElementById('logradouro');
     const bairroInput = document.getElementById('bairro');
@@ -138,111 +145,68 @@
     const estadoInput = document.getElementById('estado');
     const cepFeedback = document.getElementById('cep-feedback');
 
-    if (cpfElement) {
-      const cpfMask = IMask(cpfElement, {
-        mask: '000.000.000-00',
-        maxLength: 11
-      });
-    }
     if (cepInput) {
-      const cepMask = IMask(cepInput, {
-        mask: '00.000-000',
-        maxLength: 8
-      });
-    }
+      cepInput.addEventListener('blur', () => {
+        const cep = cepInput.value.replace(/\D/g, '');
+        if (cep.length !== 8) return;
 
-    const limparEndereco = () => {
-      logradouroInput.value = '';
-      bairroInput.value = '';
-      cidadeInput.value = '';
-      estadoInput.value = '';
-    };
-    // "Escuta" quando o usuário sai do campo CEP
-    cepInput.addEventListener('blur', () => {
-        const cep = cepInput.value.replace(/\D/g, ''); // Remove tudo que não for número
+        if (cepFeedback) cepFeedback.textContent = 'Buscando...';
 
-        if (cep.length !== 8) {
-            limparEndereco();
-            return;
-        }
-
-        cepFeedback.textContent = 'Buscando...';
-
-        // Faz a chamada para a API ViaCEP
         fetch(`https://viacep.com.br/ws/${cep}/json/`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.erro) {
-                    cepFeedback.textContent = 'CEP não encontrado.';
-                    limparEndereco();
-                } else {
-                    cepFeedback.textContent = '';
-                    logradouroInput.value = data.logradouro;
-                    bairroInput.value = data.bairro;
-                    cidadeInput.value = data.localidade;
-                    estadoInput.value = data.uf;
-                }
-            })
-            .catch(error => {
-                cepFeedback.textContent = 'Erro ao buscar o CEP.';
-                console.error('Erro:', error);
-            });
-    });
-
-
-    if (cnpjElement) {
-      const cnpjMask = IMask(cnpjElement, {
-        mask: '00.000.000/0000-00',
-        maxLength: 14
+          .then(response => response.json())
+          .then(data => {
+            if (data.erro) {
+              if (cepFeedback) cepFeedback.textContent = 'CEP não encontrado.';
+            } else {
+              if (cepFeedback) cepFeedback.textContent = '';
+              if (logradouroInput) logradouroInput.value = data.logradouro;
+              if (bairroInput) bairroInput.value = data.bairro;
+              if (cidadeInput) cidadeInput.value = data.localidade;
+              if (estadoInput) estadoInput.value = data.uf;
+            }
+          })
+          .catch(error => {
+            if (cepFeedback) cepFeedback.textContent = 'Erro ao buscar o CEP.';
+          });
       });
     }
-    if (telElement) {
-      const telMask = IMask(telElement, {
-        mask: '(00) 00000-0000',
-        maxLength: 11
+
+    // Alternar campos CPF/CNPJ
+    const tipoClienteSelect = document.getElementById('tipo_cliente');
+    const campoCpf = document.getElementById('campo_cpf');
+    const campoCnpj = document.getElementById('campo_cnpj');
+
+    if (tipoClienteSelect && campoCpf && campoCnpj) {
+      tipoClienteSelect.addEventListener('change', function() {
+        campoCpf.classList.add('d-none');
+        campoCnpj.classList.add('d-none');
+        if (this.value === 'fisica') campoCpf.classList.remove('d-none');
+        else if (this.value === 'juridica') campoCnpj.classList.remove('d-none');
       });
     }
-    if (telAuxElement) {
-      const telAuxMask = IMask(telAuxElement, {
-        mask: '(00) 00000-0000',
-        maxLength: 11
-      });
-    }
-    
 
+    // Sugestão de Usuário/Senha
+    const nomeClienteInput = document.getElementById('nome_cliente');
+    const usernameInput = document.getElementById('username_cliente');
+    const passwordInput = document.getElementById('password_cliente');
 
-
-    tipoClienteSelect.addEventListener('change', function () {
-      campoCpf.classList.add('d-none');
-      campoCnpj.classList.add('d-none');
-
-      if (this.value === 'fisica') {
-        campoCpf.classList.remove('d-none');
-      } else if (this.value === 'juridica') {
-        campoCnpj.classList.remove('d-none');
-      }
-    });
-  });
-
-  const nomeClienteInput = document.getElementById('nome_cliente');
-  const usernameInput = document.getElementById('username_cliente');
-  const passwordInput = document.getElementById('password_cliente');
-
-  nomeClienteInput.addEventListener('blur', function () {
-    if (usernameInput.value === '' && passwordInput.value === '') {
-      const nomeCompleto = nomeClienteInput.value.trim().toLowerCase();
-      if (nomeCompleto) {
-        const partesNome = nomeCompleto.split(' ');
-        const primeiroNome = partesNome[0].replace(/[^a-z0-9]/g, '');
-        const anoAtual = new Date().getFullYear();
-        let usernameSugerido = primeiroNome;
-        if (partesNome.length > 1) {
-          usernameSugerido += '.' + partesNome[partesNome.length - 1].charAt(0);
+    if (nomeClienteInput && usernameInput && passwordInput) {
+      nomeClienteInput.addEventListener('blur', function() {
+        if (usernameInput.value === '' && passwordInput.value === '') {
+          const nomeCompleto = nomeClienteInput.value.trim().toLowerCase();
+          if (nomeCompleto) {
+            const partesNome = nomeCompleto.split(' ');
+            const primeiroNome = partesNome[0].replace(/[^a-z0-9]/g, '');
+            const anoAtual = new Date().getFullYear();
+            let usernameSugerido = primeiroNome;
+            if (partesNome.length > 1) {
+              usernameSugerido += '.' + partesNome[partesNome.length - 1].charAt(0);
+            }
+            usernameInput.value = usernameSugerido;
+            passwordInput.value = primeiroNome + '@' + anoAtual;
+          }
         }
-        const senhaSugerida = primeiroNome + '@' + anoAtual;
-        usernameInput.value = usernameSugerido;
-        passwordInput.value = senhaSugerida;
-      }
+      });
     }
   });
 </script>

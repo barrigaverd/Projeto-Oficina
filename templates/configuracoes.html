@@ -19,10 +19,11 @@
              alt="Logomarca" class="img-thumbnail" style="max-height: 120px; background-color: #f8f9fa;">
         
         <form action="{{ url_for('configuracoes_remove_logo') }}" method="POST" class="mt-2">
-            <button type="submit" class="btn btn-outline-danger btn-sm"
-                    onclick="return confirm('Tem certeza que deseja remover a logomarca?');">
-                <i class="bi bi-trash3"></i> Remover
-            </button>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-outline-danger btn-sm"
+                  onclick="return confirm('Tem certeza que deseja remover a logomarca?');">
+            <i class="bi bi-trash3"></i> Remover
+          </button>
         </form>
       </div>
       {% endif %}
@@ -79,6 +80,7 @@
         <p class="small text-muted mb-2">Ações irreversíveis</p>
         
         <form action="{{ url_for('configuracoes_reset') }}" method="POST" style="display: inline;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button type="submit" class="btn btn-danger btn-sm shadow-sm"
                   onclick="return confirm('Tem certeza que deseja limpar TODAS as configurações? Esta ação não pode ser desfeita.');">
             <i class="bi bi-eraser-fill me-1"></i> Resetar Configurações

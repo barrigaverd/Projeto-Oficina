@@ -37,6 +37,7 @@
     <p class="text-center text-body-secondary mb-4" style="font-size:.9rem;">Acesse com suas credenciais</p>
 
     <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="mb-3">
         <label class="form-label fw-semibold" for="usuario">Usuário</label>
         <input class="form-control form-control-lg" type="text" id="usuario" name="username"
